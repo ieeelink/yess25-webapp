@@ -37,7 +37,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-brand-white shadow-md z-50">
+    <header className="fixed top-0 left-0 right-0 bg-brand-white z-50">
       {/* Loading Bar */}
       <div className={`h-1 bg-[#fe4a56] transition-all duration-300 ${loading ? 'loading-bar w-full' : 'w-0 opacity-0'}`}></div>
       
@@ -57,10 +57,10 @@ const Header = () => {
               <Link 
                 to="/tickets" 
                 className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
-                  isActive('/tickets') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+                  isActive('/events') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
                 }`}
               >
-                TICKETS
+                EVENTS
               </Link>
             </nav>
 

@@ -16,12 +16,16 @@ const SubFooter = () => {
     setIsContactOpen(!isContactOpen);
   };
 
+  const handleCloseContact = () => {
+    setIsContactOpen(false);
+  };
+
   const isActive = (path) => {
     return location.pathname === path;
   };
 
   return (
-    <header className="hidden md:block bg-brand-white text-brand-black pb-6">
+    <footer className="hidden md:block bg-brand-white text-brand-black pb-6">
       <div className="w-screen px-8">
         <div className="flex items-center justify-between h-20">
           <nav className="hidden md:flex w-full justify-between px-8">
@@ -45,12 +49,12 @@ const SubFooter = () => {
               >
                 CONTACT US
               </button>
-              <ContactPopup isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+              <ContactPopup isOpen={isContactOpen} onClose={handleCloseContact} />
             </div>
           </nav>
         </div>
       </div>
-    </header>
+    </footer>
   );
 };
 

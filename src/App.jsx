@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import TermsOfService from './pages/TermsOfService';
+import Tickets from './pages/Tickets';
 import { useEffect } from 'react';
 
 const ExternalRedirect = ({ to }) => {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<ExternalRedirect to="https://www.ieee-link.org/" />} />
         <Route path="/tos" element={<TermsOfService />} />
+        <Route path="/tickets" element={<Tickets />} />
       </Routes>
     </Router>
   );

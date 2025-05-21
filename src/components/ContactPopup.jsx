@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const socialLinks = [
   {
@@ -40,13 +40,32 @@ const socialLinks = [
 ];
 
 const ContactPopup = ({ isOpen, onClose }) => {
+  const popupRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="absolute bottom-full right-0 mb-2 bg-white rounded-lg p-6 shadow-lg w-80">
+    <div ref={popupRef} className="absolute bottom-full right-0 mb-2 bg-white rounded-lg p-6 shadow-lg w-80">
       <button
         onClick={onClose}
-        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+        aria-label="Close popup"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

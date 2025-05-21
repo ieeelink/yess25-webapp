@@ -1,42 +1,33 @@
-import React, { useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Header from '../components/Header';
 import SubFooter from '../components/SubFooter';
-import * as THREE from 'three';
-import NET from 'vanta/dist/vanta.net.min';
+import BgAnimation from '../components/BgAnimation';
+import { Link, useLocation } from 'react-router-dom';
+
 
 function Home() {
-  const homeContainerRef = useRef(null);
-  useEffect(() => {
-    const vantaEffect = NET({
-      el: homeContainerRef.current,
-      THREE: THREE,
-      mouseControls: true,
-      touchControls: true,
-      gyroControls: false,
-      minHeight: 200.00,
-      minWidth: 200.00,
-      scale: 1.00,
-      scaleMobile: 1.00,
-      color: 0xfe4a56,
-      backgroundColor: 0x000000,
-      points: 16.00,
-      maxDistance: 13.00,
-      spacing: 15.00 
-    });
-    return () => {
-      if (vantaEffect) vantaEffect.destroy();
-    };
-  }, []);
+  
+
   return (
-    <div className="min-h-screen flex flex-col" ref={homeContainerRef}>
-      <Header />
-      <div className="flex-grow flex flex-col items-center justify-center text-center px-4">
-        <h1 className="text-4xl font-bold mb-4">IEEE YESS'25</h1>
-        <p className="text-lg">Yearly Engineering Students Summit</p>
+    <>
+    <BgAnimation/>
+    <div className="relative min-h-screen flex flex-col">
+      <Header />     
+      <div className="flex-grow flex flex-col items-center justify-center text-center px-4 z-10 relative">
+        <h1 className="text-4xl font-bold mb-4 text-white">IEEE YESS'25</h1>
+        <p className="text-lg text-white">Yearly Engineering Students Summit</p>
+        <Link 
+          to="/tickets" 
+          className="mt-8 px-8 py-3 bg-[#fe4a56] text-white rounded-full font-medium hover:bg-[#ea1212] transition-all duration-300 hover:scale-110"
+        >
+          Get Your Tickets
+        </Link>
       </div>
+      
       <SubFooter />
     </div>
+    </>
   );
 }
 
-export default Home; 
+export default Home;
