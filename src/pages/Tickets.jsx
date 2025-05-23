@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../components/Header';
 import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
+import axios from 'axios';
 
 function Tickets() {
   const [formData, setFormData] = useState({
@@ -9,12 +10,12 @@ function Tickets() {
     email: '',
     phone: '',
     institution: '',
-    studentId: '',
-    ticketType: 'student',
-    dietaryRestrictions: '',
-    specialRequirements: '',
+    course: '',
     isIEEEMember: 'no',
-    ieeeMembershipNumber: ''
+    ieeeMembershipNumber: '',
+    gender: 'male',
+    foodPreference: 'veg',
+    yearOfStudy: '',
   });
 
   const handleChange = (e) => {
@@ -29,6 +30,14 @@ function Tickets() {
     e.preventDefault();
     // Handle form submission here
     console.log('Ticket registration submitted:', formData);
+    axios.post('api/payment', formData)
+      .then(response => {
+        console.log('Registration successful:', response.data);
+        window.location.href = response.data.response.redirectUrl;
+      })
+      .catch(error => {
+        console.error('Registration failed:', error);
+      });
   };
 
   return (
@@ -56,7 +65,23 @@ function Tickets() {
                   className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white placeholder-gray-400"
                 />
               </div>
-
+              <div>
+                <label htmlFor="gender" className="block text-sm font-medium text-white mb-1">
+                  Gender
+                </label>
+                <select
+                  id="gender"
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white [&>option]:bg-[#1a1a1a]"
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-white mb-1">
                   Email Address
@@ -103,28 +128,43 @@ function Tickets() {
               </div>
 
               <div>
-                <label htmlFor="studentId" className="block text-sm font-medium text-white mb-1">
+                <label htmlFor="course" className="block text-sm font-medium text-white mb-1">
                   Course/Stream
                 </label>
                 <input
                   type="text"
-                  id="studentId"
-                  name="studentId"
-                  value={formData.studentId}
+                  id="course"
+                  name="course"
+                  value={formData.course}
                   onChange={handleChange}
                   required
                   className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white placeholder-gray-400"
                 />
               </div>
-
               <div>
-                <label htmlFor="ticketType" className="block text-sm font-medium text-white mb-1">
+                <label htmlFor="foodPreference" className="block text-sm font-medium text-white mb-1">
+                  Food Preference
+                </label>
+                <select
+                  id="foodPreference"
+                  name="foodPreference"
+                  value={formData.foodPreference}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white [&>option]:bg-[#1a1a1a]"
+                >
+                  <option value="veg">Veg</option>
+                  <option value="non-veg">Non-Veg</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="yearOfStudy" className="block text-sm font-medium text-white mb-1">
                   Year of Study
                 </label>
                 <select
-                  id="ticketType"
-                  name="ticketType"
-                  value={formData.ticketType}
+                  id="yearOfStudy"
+                  name="yearOfStudy"
+                  value={formData.yearOfStudy}
                   onChange={handleChange}
                   required
                   className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white [&>option]:bg-[#1a1a1a]"
