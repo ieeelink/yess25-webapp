@@ -30,9 +30,12 @@ function Tickets() {
     e.preventDefault();
     // Handle form submission here
     console.log('Ticket registration submitted:', formData);
-    axios.post('api/payment', formData)
+    axios.post('/api/payment', formData)
       .then(response => {
         console.log('Registration successful:', response.data);
+        console.log(formData.email);
+        console.log(response.data.response.email)
+        document.cookie = `email=${response.data.response.email}; path=/; max-age=${14*24*60*60}`;
         window.location.href = response.data.response.redirectUrl;
       })
       .catch(error => {
