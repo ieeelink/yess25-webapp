@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, '../dist')));
 
 // CORS configuration
 app.use(cors({
-  origin: 'https://4982-45-115-89-156.ngrok-free.app', // Your frontend URL
+  origin: 'https://80eb-103-203-72-213.ngrok-free.app', // Your frontend URL
   methods: ['GET', 'POST'],
   credentials: true
 }));
@@ -86,8 +86,8 @@ app.post('/api/paymentstatus', async (req,res)=>{
 
     const merchantOrderId = result.map(doc => doc.merchantOrderId);
     const email = req.body.email;
-
     const name = result.map(doc => doc.fullName);
+       
     const response = await client.getOrderStatus(merchantOrderId);
     const paymentData = {
       fullName: name[0],
@@ -110,37 +110,76 @@ app.post('/api/paymentstatus', async (req,res)=>{
   }
 });
 
+app.post('/api/retrypayment', async (req,res)=>{
+  try {
+    await dbclient.connect();
+    const database = dbclient.db("yess25");
+    const collection = database.collection("tickets");
+    const result = await collection.find({ email: req.body.email }).toArray();
+
+    const merchantOrderId = randomUUID();
+    const email = req.body.email;
+    const name = result.map(doc => doc.fullName);
+    await collection.updateOne(
+      { email: email },
+      { $set: { merchantOrderId: merchantOrderId } }
+    );
+    const payment = StandardCheckoutPayRequest.builder()
+      .amount(500.00)
+      .merchantOrderId(merchantOrderId)
+      .redirectUrl(`https://80eb-103-203-72-213.ngrok-free.app/paymentStatus`)
+      .build();
+
+    const response = await client.pay(payment);
+    await collection.updateOne(
+      { email: email },
+      { $set: { orderId: response.orderId } }
+    );
+    response.merchantOrderId = merchantOrderId;
+    response.email = email;
+    response.name = name;
+    res.status(200).json({ response });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    await dbclient.close();
+  }
+});
+
 // Payment route
 app.post('/api/payment', async (req, res) => {
   console.log(req.body)
   const merchantOrderId = randomUUID();
+  
   try {
+    // Check for duplicate email
+    await dbclient.connect();
+    const database = dbclient.db("yess25");
+    const collection = database.collection("tickets");
+    const existingUser = await collection.findOne({ email: req.body.email });
+    
+    if (existingUser) {
+      return res.status(409).json({ 
+        error: 'Email already registered',
+        message: 'This email address has already been registered for the event'
+      });
+    }
+
+    // Only proceed with registration if email is not found
     const dbobid = await insertPaymentRequest(req.body, merchantOrderId);
     const payment = StandardCheckoutPayRequest.builder()
       .amount(500.00)
       .merchantOrderId(merchantOrderId)
-      .redirectUrl(`https://4982-45-115-89-156.ngrok-free.app/paymentStatus`)
+      .redirectUrl(`https://80eb-103-203-72-213.ngrok-free.app/paymentStatus`)
       .build();
 
     const response = await client.pay(payment);
     await insertOrderId(dbobid, response.orderId);
     response.merchantOrderId = merchantOrderId;
     response.email = req.body.email;
-    res.json({ response });
+    res.status(200).json({ response });
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post('/api/checkduplicateemail', async (req, res) => {
-  console.log(req.body)
-  try {
-    const dbclient = await connectToDatabase();
-    const collection = dbclient.db("paymentdb").collection("payments");
-    const result = await collection.find({ email: req.body.email }).toArray();
-    res.json({ exists: result.length > 0 });
-  } catch (error) {
-    console.error("Error checking email:", error);
     res.status(500).json({ error: error.message });
   } finally {
     await dbclient.close();

@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import TermsOfService from './pages/TermsOfService';
 import Tickets from './pages/Tickets';
 import Status from './pages/Status';
+import CheckStatus from './pages/CheckStatus';
 import { useEffect } from 'react';
 
 const ExternalRedirect = ({ to }) => {
@@ -23,6 +24,7 @@ function App() {
         <Route path="/tos" element={<TermsOfService />} />
         <Route path="/tickets" element={<Tickets />} />
         <Route path='/paymentStatus' element={<Status />} />
+        <Route path='/checkStatus' element={<CheckStatus/>} />
       </Routes>
     </Router>
   );

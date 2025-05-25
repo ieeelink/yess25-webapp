@@ -3,11 +3,16 @@ import Header from '../components/Header';
 import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+// Global constant for email
+let globalEmail = null;
 
 function Status() {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Get email from cookie
@@ -16,13 +21,14 @@ function Status() {
         // Read cookie from /cookie/ path
         const cookies = document.cookie.split(';');
         const emailCookie = cookies.find(cookie => cookie.trim().startsWith('email='));
-        const email = emailCookie ? decodeURIComponent(emailCookie.split('=')[1].trim()) : null;
+        globalEmail = emailCookie ? decodeURIComponent(emailCookie.split('=')[1].trim()) : null;
         
-        if (email) {
+        if (globalEmail) {
           // Send email to backend
-          const statusResponse = await axios.post('/api/paymentstatus', { email });
+          const statusResponse = await axios.post('/api/paymentstatus', { email: globalEmail });
           console.log('Payment status response:', statusResponse.data);
           setPaymentStatus(statusResponse.data);
+          document.cookie = 'email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         } else {
           setError('No registration email found. Please contact support.');
         }
@@ -37,14 +43,30 @@ function Status() {
     getEmailFromCookie();
   }, []);
 
+  const handleRetryPayment = async () => {
+    try {
+      setLoading(true);
+      document.cookie = `email=${globalEmail}; path=/; max-age=${14*24*60*60}`;
+      const response = await axios.post('/api/retrypayment', { email: globalEmail });
+      console.log(response);
+      if (response.status === 200) {
+        window.location.href = response.data.response.redirectUrl;
+      }
+    } catch (error) {
+      console.error('Error retrying payment:', error);
+      setError('Failed to retry payment. Please try again later.');
+      setLoading(false);
+    }
+  };
+
   const getStatusMessage = (status) => {
     switch (status) {
       case 'COMPLETED':
-        return 'Your registration has been confirmed.';
+        return 'Your registration has been confirmed. Tickets will be sent to your email after generation.';
       case 'FAILED':
         return 'There was an issue with your payment. Please try again.';
       case 'PENDING':
-        return 'Your payment is being processed. Please wait.';
+        return 'Your payment is not completed. If the payment is already debited from your account, please contact support.';
       default:
         return 'Unknown payment status.';
     }
@@ -99,6 +121,30 @@ function Status() {
                         <p><span className="font-medium">Name:</span> {paymentStatus.fullName}</p>
                         <p><span className="font-medium">Email:</span> {paymentStatus.email}</p>
                       </div>
+                    </div>
+                  )}
+
+                  {(paymentStatus.status === 'FAILED' || paymentStatus.status === 'PENDING') && (
+                    <div className="flex justify-center">
+                      <button
+                        onClick={handleRetryPayment}
+                        disabled={loading}
+                        className={`px-8 py-3 bg-[#fe4a56] text-white rounded-md hover:bg-[#8c0505] transition-colors focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2 text-lg font-semibold flex items-center justify-center gap-2 ${
+                          loading ? 'opacity-75 cursor-not-allowed' : ''
+                        }`}
+                      >
+                        {loading ? (
+                          <>
+                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing...
+                          </>
+                        ) : (
+                          'Retry Payment'
+                        )}
+                      </button>
                     </div>
                   )}
                 </div>

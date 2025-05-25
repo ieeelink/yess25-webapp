@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function Tickets() {
   const [formData, setFormData] = useState({
@@ -17,6 +18,8 @@ function Tickets() {
     foodPreference: 'veg',
     yearOfStudy: '',
   });
+  const [emailError, setEmailError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,22 +27,38 @@ function Tickets() {
       ...prevState,
       [name]: value
     }));
+    // Clear email error when user types in email field
+    if (name === 'email') {
+      setEmailError('');
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Ticket registration submitted:', formData);
+    setEmailError(''); // Clear any previous error
+    setIsLoading(true); // Start loading
+
     axios.post('/api/payment', formData)
       .then(response => {
-        console.log('Registration successful:', response.data);
-        console.log(formData.email);
-        console.log(response.data.response.email)
-        document.cookie = `email=${response.data.response.email}; path=/; max-age=${14*24*60*60}`;
-        window.location.href = response.data.response.redirectUrl;
-      })
-      .catch(error => {
-        console.error('Registration failed:', error);
+        if (response.status === 409) {
+          setEmailError('This email is already used');
+          setIsLoading(false);
+          return;
+        }
+        else if (response.status === 200) {
+          // Handle success response
+          console.log('Registration successful:', response.data);
+          document.cookie = `email=${response.data.response.email}; path=/; max-age=${14*24*60*60}`;
+          window.location.href = response.data.response.redirectUrl;
+        }
+        else{
+          setEmailError('Error checking Email. Please try again.');
+          setIsLoading(false);
+          return;
+        }
+      }).catch(error => {
+        console.error('Error checking email:', error);
+        setIsLoading(false); // Stop loading on error
       });
   };
 
@@ -49,7 +68,7 @@ function Tickets() {
     <div className="min-h-screen flex flex-col relative">
       <Header />
       
-      <main className="flex-grow flex items-center justify-center px-4 py-8">
+      <main className="flex-grow flex items-center justify-center px-4 py-8 mt-20 md:mt-0">
         <div className="w-full max-w-2xl">          
           <form onSubmit={handleSubmit} className="space-y-6 bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-lg border border-white/20">
             <h1 className="text-4xl font-bold text-white mb-8 text-center">Register for IEEE YESS'25</h1>
@@ -96,8 +115,11 @@ function Tickets() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white placeholder-gray-400"
+                  className={`w-full px-3 py-2 bg-white/5 border ${emailError ? 'border-red-500' : 'border-white/20'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white placeholder-gray-400`}
                 />
+                {emailError && (
+                  <p className="mt-1 text-sm text-red-500">{emailError}</p>
+                )}
               </div>
 
               <div>
@@ -254,12 +276,31 @@ function Tickets() {
               </div> */}
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <Link 
+                to="/checkStatus" 
+                className="text-gray-400 hover:text-white transition-colors text-sm underline order-2 md:order-1"
+              >
+                Check registration or retry failed payment
+              </Link>
               <button
                 type="submit"
-                className="px-8 py-3 bg-[#fe4a56] text-white rounded-md hover:bg-[#8c0505] transition-colors focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2 text-lg font-semibold"
+                disabled={isLoading}
+                className={`w-full md:w-auto px-8 py-3 bg-[#fe4a56] text-white rounded-md hover:bg-[#8c0505] transition-colors focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2 text-lg font-semibold flex items-center justify-center gap-2 order-1 md:order-2 ${
+                  isLoading ? 'opacity-75 cursor-not-allowed' : ''
+                }`}
               >
-                Register Now
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </>
+                ) : (
+                  'Register Now'
+                )}
               </button>
             </div>
           </form>
