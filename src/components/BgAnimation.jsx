@@ -20,7 +20,8 @@ function BgAnimation() {
           backgroundColor: 0x101010,
           points: 20.00,
           maxDistance: 2.00,
-          spacing: 15.00
+          spacing: 13.00,
+          
         })
       );
     }

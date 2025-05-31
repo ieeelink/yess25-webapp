@@ -12,7 +12,8 @@ const SubFooter = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const toggleContact = () => {
+  const toggleContact = (e) => {
+    e.stopPropagation();
     setIsContactOpen(!isContactOpen);
   };
 
@@ -25,17 +26,18 @@ const SubFooter = () => {
   };
 
   return (
-    <footer className="hidden md:block bg-brand-white text-brand-black pb-6">
-      <div className="w-screen px-8">
-        <div className="flex items-center justify-between h-20">
+    <footer className="bg-brand-white text-brand-black pb-3 md:pb-6">
+      <div className="w-screen px-4 md:px-8">
+        <div className="flex items-center justify-between h-12 md:h-20">
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex w-full justify-between px-8">
             <Link 
-              to="/events" 
+              to="/highlights" 
               className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
-                isActive('/events') ? 'text-[#fe4a56]' : 'text-white hover:text-[#8c0505]'
+                isActive('/highlights') ? 'text-[#fe4a56]' : 'text-white hover:text-[#8c0505]'
               }`}
             >
-              EVENTS
+              HIGHLIGHTS'24
             </Link>
             <div className="text-sm text-gray-400">
               © {new Date().getFullYear()} IEEE LINK. All rights reserved.
@@ -52,6 +54,11 @@ const SubFooter = () => {
               <ContactPopup isOpen={isContactOpen} onClose={handleCloseContact} />
             </div>
           </nav>
+
+          {/* Mobile Copyright */}
+          <div className="md:hidden w-full text-center text-sm text-gray-400">
+            © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+          </div>
         </div>
       </div>
     </footer>

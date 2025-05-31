@@ -41,26 +41,26 @@ const Header = () => {
       {/* Loading Bar */}
       <div className={`h-1 bg-[#fe4a56] transition-all duration-300 ${loading ? 'loading-bar w-full' : 'w-0 opacity-0'}`}></div>
       
-      <div className="py-2">
-        <div className="w-screen px-8">
-          <div className="flex items-center justify-between h-20">
+      <div className="py-2 md:py-2">
+        <div className="w-screen px-4 md:px-8">
+          <div className="flex items-center justify-between h-12 md:h-20">
             {/* Desktop Navigation */}
             <nav className="hidden md:flex w-full justify-between px-8">
               <Link 
                 to="/" 
                 className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
-                  isActive('/') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+                  isActive('/') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-[#8c0505]'
                 }`}
               >
                 HOME
               </Link>
               <Link 
-                to="/tickets" 
+                to="/aboutus" 
                 className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
-                  isActive('/events') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+                  isActive('/aboutus') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-[#8c0505]'
                 }`}
               >
-                EVENTS
+                ABOUT US
               </Link>
             </nav>
 
@@ -86,8 +86,8 @@ const Header = () => {
 
           {/* Mobile Navigation */}
           <div 
-            className={`md:hidden fixed inset-0 bg-black z-40 transition-transform duration-300 ease-in-out ${
-              isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            className={`md:hidden fixed inset-0 bg-black/90 z-40 transition-all duration-300 ease-in-out ${
+              isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
             }`}
           >
             <div className="h-full w-full flex flex-col items-center justify-center space-y-8">
@@ -101,31 +101,31 @@ const Header = () => {
                 Home
               </Link>
               <Link 
-                to="/about" 
+                to="/aboutus" 
                 className={`block px-3 py-2 rounded-md text-2xl font-medium hover:bg-gray-50 transition-all duration-300 hover:scale-105 ${
-                  isActive('/about') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+                  isActive('/aboutus') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Tickets
+                ABOUT US
               </Link>
               <Link 
-                to="/services" 
+                to="/events" 
                 className={`block px-3 py-2 rounded-md text-2xl font-medium hover:bg-gray-50 transition-all duration-300 hover:scale-105 ${
-                  isActive('/services') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+                  isActive('/events') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Services
+                EVENTS
               </Link>
               <Link 
-                to="/contact" 
+                to="/tickets" 
                 className={`block px-3 py-2 rounded-md text-2xl font-medium hover:bg-gray-50 transition-all duration-300 hover:scale-105 ${
-                  isActive('/contact') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+                  isActive('/tickets') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Contact
+                CONTACT US
               </Link>
             </div>
           </div>
