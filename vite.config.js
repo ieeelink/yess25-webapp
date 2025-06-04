@@ -14,5 +14,11 @@ export default defineConfig({
       '2d0c-103-203-72-160.ngrok-free.app',
       'localhost'
     ]
+  },
+  preview: {
+    host: true,
+    allowedHosts: [
+      '3433aqpbaz.ap-south-1.awsapprunner.com'
+    ]
   }
 })
