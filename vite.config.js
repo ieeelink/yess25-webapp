@@ -20,7 +20,8 @@ export default defineConfig({
     host: true,
     port: 3001,
     allowedHosts: [
-      '3433aqpbaz.ap-south-1.awsapprunner.com'
+      'v8fqt2tbhu.ap-south-1.awsapprunner.com',
+      'localhost'
     ]
   }
 })
