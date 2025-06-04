@@ -10,6 +10,7 @@ export default defineConfig({
   ],
   server: {
     host: true,
+    port: 3000,
     allowedHosts: [
       '2d0c-103-203-72-160.ngrok-free.app',
       'localhost'
@@ -17,6 +18,7 @@ export default defineConfig({
   },
   preview: {
     host: true,
+    port: 3001,
     allowedHosts: [
       '3433aqpbaz.ap-south-1.awsapprunner.com'
     ]
