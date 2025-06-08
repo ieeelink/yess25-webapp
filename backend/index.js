@@ -2,31 +2,30 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import dotenv from 'dotenv';
-import { StandardCheckoutClient, Env, StandardCheckoutPayRequest } from 'pg-sdk-node';
+import razorpay from 'razorpay';
 import { randomUUID } from 'crypto';
 import cors from 'cors';
 import { MongoClient } from 'mongodb';
 import path from 'path';
-import { error } from 'console';
+import fs from 'fs';
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const clientId = process.env.CLIENT_KEY;
-const clientSecret = process.env.CLIENT_SECRET;
-const clientVersion = process.env.CLIENT_VERSION;
-const env = Env.SANDBOX;
-const client = StandardCheckoutClient.getInstance(clientId, clientSecret, clientVersion, env);
-
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, '../dist')));
 
+var pgclient = new razorpay({
+  key_id: process.env.CLIENT_KEY,
+  key_secret: process.env.CLIENT_SECRET
+});
+
 // CORS configuration
 app.use(cors({
-  origin: 'https://80eb-103-203-72-213.ngrok-free.app', // Your frontend URL
+  origin: 'http://localhost:3001', // Your frontend URL
   methods: ['GET', 'POST'],
   credentials: true
 }));
@@ -37,7 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 const uri = process.env.MONGODB_URI;
 const dbclient = new MongoClient(uri);
 
-async function insertPaymentRequest(reqBody, merchantOrderId) {
+async function insertPaymentRequest(reqBody, yessTicketId) {
   try {
     await dbclient.connect();
     const database = dbclient.db("yess25");
@@ -46,7 +45,7 @@ async function insertPaymentRequest(reqBody, merchantOrderId) {
     const result = await collection.insertOne({
       ...reqBody,
       timestamp: new Date(),
-      merchantOrderId: merchantOrderId,
+      yessTicketId: yessTicketId,
     });
     
     console.log(`Payment request inserted with _id: ${result.insertedId}`);
@@ -58,17 +57,21 @@ async function insertPaymentRequest(reqBody, merchantOrderId) {
   }
 }
 
-async function insertOrderId(dbobid, orderId) {
+async function insertOrderDetails(emailID, orderId, status, amount_paid) {
   try {
     await dbclient.connect();
     const database = dbclient.db("yess25");
     const collection = database.collection("tickets");
     
     const result = await collection.updateOne(
-      { _id: dbobid },
-      { $set: { orderId: orderId } }
+      { email: emailID },
+      { $set: { 
+        orderId: orderId,
+        status: status,
+        amount_paid: amount_paid
+       } }
     );
-    
+    result(result.modifiedCount);
     console.log(`Document updated: ${result.modifiedCount} document(s) modified`);
   } catch (error) {
     console.error("Error updating document:", error);
@@ -146,19 +149,40 @@ app.post('/api/retrypayment', async (req,res)=>{
     await dbclient.close();
   }
 });
-
+async function createNewOrder(reqBody, amount, yessTicketId) {
+  try {
+    const order = await pgclient.orders.create({
+      "amount": amount*100,
+      "currency": "INR",
+      "partial_payment": false,
+      "receipt": yessTicketId,
+      "notes":{
+        "email": reqBody.email,
+        "name":reqBody.fullName
+      }
+    });
+    return order
+  } catch (error) {
+    console.error("Error creating order:", error);
+    return(error);
+  }
+}
 // Payment route
 app.post('/api/payment', async (req, res) => {
   console.log(req.body)
-  const merchantOrderId = randomUUID();
-  
+  const yessTicketId = randomUUID();
+  let ticketrate;
   try {
     // Check for duplicate email
     await dbclient.connect();
     const database = dbclient.db("yess25");
     const collection = database.collection("tickets");
     const existingUser = await collection.findOne({ email: req.body.email });
-    
+    if(req.body.isIEEEMember === 'yes'){
+      ticketrate = 500;
+    }else if(req.body.isIEEEMember ==='no'){
+      ticketrate = 1000;
+    }
     if (existingUser) {
       return res.status(409).json({ 
         error: 'Email already registered',
@@ -166,19 +190,28 @@ app.post('/api/payment', async (req, res) => {
       });
     }
 
+    const dbOrderInsert = await insertPaymentRequest(req.body, yessTicketId);
+    if (!dbOrderInsert) {
+      return res.status(500).json({ error: 'Failed to insert payment request' });
+    }
+    const order = await createNewOrder(req.body, ticketrate, yessTicketId);
+    if (order instanceof Error) {
+      return res.status(500).json({ error: order.message });
+    }
+    const dbStatusInsert = await insertOrderDetails(req.body.email, order.id, order.status, order.amount_paid);
     // Only proceed with registration if email is not found
-    const dbobid = await insertPaymentRequest(req.body, merchantOrderId);
-    const payment = StandardCheckoutPayRequest.builder()
-      .amount(500.00)
-      .merchantOrderId(merchantOrderId)
-      .redirectUrl(`https://80eb-103-203-72-213.ngrok-free.app/paymentStatus`)
-      .build();
+    // const dbobid = await insertPaymentRequest(req.body, merchantOrderId);
+    // const payment = StandardCheckoutPayRequest.builder()
+    //   .amount(500.00)
+    //   .merchantOrderId(merchantOrderId)
+    //   .redirectUrl(`https://80eb-103-203-72-213.ngrok-free.app/paymentStatus`)
+    //   .build();
 
-    const response = await client.pay(payment);
-    await insertOrderId(dbobid, response.orderId);
-    response.merchantOrderId = merchantOrderId;
-    response.email = req.body.email;
-    res.status(200).json({ response });
+    // const response = await client.pay(payment);
+    // await insertOrderId(dbobid, response.orderId);
+    // response.merchantOrderId = merchantOrderId;
+    // response.email = req.body.email;
+    res.status(200).json( order );
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {

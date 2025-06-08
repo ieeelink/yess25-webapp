@@ -16,10 +16,15 @@ export default {
         loading: {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(100%)' }
+        },
+        scroll: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' }
         }
       },
       animation: {
-        'loading': 'loading 1s ease-in-out infinite'
+        'loading': 'loading 1s ease-in-out infinite',
+        'scroll': 'scroll 30s linear infinite'
       }
     },
   },

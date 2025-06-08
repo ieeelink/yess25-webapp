@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const Header = () => {
+const Header = ({ onNavigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [currentSection, setCurrentSection] = useState('home');
   const location = useLocation();
 
   useEffect(() => {
@@ -28,16 +30,58 @@ const Header = () => {
     };
   }, [location]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 100); // Adjust this value based on your landing section height
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleHorizontalScroll = () => {
+      const container = document.querySelector('.scrollbar-hide');
+      if (container) {
+        const scrollLeft = container.scrollLeft;
+        const windowWidth = window.innerWidth;
+        const halfWindowWidth = windowWidth / 2;
+        
+        // Calculate which section is more than half visible
+        if (scrollLeft >= windowWidth - halfWindowWidth && scrollLeft < windowWidth * 2 - halfWindowWidth) {
+          setCurrentSection('about');
+        } else if (scrollLeft >= windowWidth * 2 - halfWindowWidth) {
+          setCurrentSection('highlights');
+        } else {
+          setCurrentSection('home');
+        }
+      }
+    };
+
+    const container = document.querySelector('.scrollbar-hide');
+    if (container) {
+      container.addEventListener('scroll', handleHorizontalScroll);
+      return () => container.removeEventListener('scroll', handleHorizontalScroll);
+    }
+  }, []);
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const isActive = (path) => {
-    return location.pathname === path;
+  const handleNavigation = (sectionId) => {
+    if (onNavigate) {
+      onNavigate(sectionId);
+      setCurrentSection(sectionId);
+    }
+    setIsMenuOpen(false);
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-brand-white z-50">
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+      isScrolled ? 'bg-[#151515]/90' : 'bg-brand-white'
+    }`}>
       {/* Loading Bar */}
       <div className={`h-1 bg-[#fe4a56] transition-all duration-300 ${loading ? 'loading-bar w-full' : 'w-0 opacity-0'}`}></div>
       
@@ -46,27 +90,43 @@ const Header = () => {
           <div className="flex items-center justify-between h-12 md:h-20">
             {/* Desktop Navigation */}
             <nav className="hidden md:flex w-full justify-between px-8">
-              <Link 
-                to="/" 
+              <button 
+                onClick={() => handleNavigation('home')}
                 className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
-                  isActive('/') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-[#8c0505]'
+                  currentSection === 'home' ? 'text-[#fe4a56]' : 'text-brand-white hover:text-[#8c0505]'
                 }`}
               >
                 HOME
-              </Link>
-              <Link 
-                to="/aboutus" 
+              </button>
+              <button 
+                onClick={() => handleNavigation('about')}
                 className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
-                  isActive('/aboutus') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-[#8c0505]'
+                  currentSection === 'about' ? 'text-[#fe4a56]' : 'text-brand-white hover:text-[#8c0505]'
                 }`}
               >
                 ABOUT US
-              </Link>
+              </button>
             </nav>
+
+            {/* Mobile Logo */}
+            <div className="md:hidden flex items-center">
+              <img 
+                src="/yess_icon.png" 
+                alt="YESS Logo" 
+                className="h-10 w-auto pl-3 pt-2"
+              />
+              <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                isScrolled ? 'max-w-[120px] opacity-100' : 'max-w-0 opacity-0'
+              }`}>
+                <span className="text-brand-white text-xl font-bold ml-2 whitespace-nowrap inline-block">
+                  YESS'25
+                </span>
+              </div>
+            </div>
 
             {/* Mobile menu button */}
             <button 
-              className="md:hidden p-2 rounded-md text-brand-white hover:text-brand-darkred hover:bg-gray-100 focus:outline-none transition-colors ml-auto relative z-50"
+              className="md:hidden p-2 rounded-md text-brand-white hover:text-brand-darkred hover:bg-gray-100 focus:outline-none transition-colors relative z-50"
               onClick={toggleMenu}
             >
               <svg 
@@ -91,38 +151,35 @@ const Header = () => {
             }`}
           >
             <div className="h-full w-full flex flex-col items-center">
-              <div className="flex-grow flex flex-col items-center justify-center space-y-8">
-                <Link 
-                  to="/" 
-                  className={`block px-3 py-2 rounded-md text-2xl font-medium hover:bg-gray-50 transition-all duration-300 hover:scale-105 ${
-                    isActive('/') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+              <div className="flex-grow flex flex-col items-center justify-center space-y-4">
+                <button 
+                  onClick={() => handleNavigation('home')}
+                  className={`block px-3 py-2 rounded-md font-medium transition-all duration-300 hover:scale-105 ${
+                    location.pathname === '/' ? 'text-[#fe4a56] text-xl' : 'text-brand-white hover:text-brand-darkred text-lg'
                   }`}
-                  onClick={() => setIsMenuOpen(false)}
                 >
                   HOME
-                </Link>
-                <Link 
-                  to="/highlights" 
-                  className={`block px-3 py-2 rounded-md text-2xl font-medium hover:bg-gray-50 transition-all duration-300 hover:scale-105 ${
-                    isActive('/highlights') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+                </button>
+                <button 
+                  onClick={() => handleNavigation('highlights')}
+                  className={`block px-3 py-2 rounded-md font-medium transition-all duration-300 hover:scale-105 ${
+                    location.pathname === '/highlights24' ? 'text-[#fe4a56] text-xl' : 'text-brand-white hover:text-brand-darkred text-lg'
                   }`}
-                  onClick={() => setIsMenuOpen(false)}
                 >
                   HIGHLIGHTS'24
-                </Link>
-                <Link 
-                  to="/aboutus" 
-                  className={`block px-3 py-2 rounded-md text-2xl font-medium hover:bg-gray-50 transition-all duration-300 hover:scale-105 ${
-                    isActive('/aboutus') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+                </button>
+                <button 
+                  onClick={() => handleNavigation('about')}
+                  className={`block px-3 py-2 rounded-md font-medium transition-all duration-300 hover:scale-105 ${
+                    location.pathname === '/aboutus' ? 'text-[#fe4a56] text-xl' : 'text-brand-white hover:text-brand-darkred text-lg'
                   }`}
-                  onClick={() => setIsMenuOpen(false)}
                 >
                   ABOUT US
-                </Link>
+                </button>
                 <Link 
                   to="/events" 
-                  className={`block px-3 py-2 rounded-md text-2xl font-medium hover:bg-gray-50 transition-all duration-300 hover:scale-105 ${
-                    isActive('/events') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+                  className={`block px-3 py-2 rounded-md font-medium transition-all duration-300 hover:scale-105 ${
+                    location.pathname === '/events' ? 'text-[#fe4a56] text-xl' : 'text-brand-white hover:text-brand-darkred text-lg'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -130,15 +187,14 @@ const Header = () => {
                 </Link>
                 <Link 
                   to="/tickets" 
-                  className={`block px-3 py-2 rounded-md text-2xl font-medium hover:bg-gray-50 transition-all duration-300 hover:scale-105 ${
-                    isActive('/tickets') ? 'text-[#fe4a56]' : 'text-brand-white hover:text-brand-darkred'
+                  className={`block px-3 py-2 rounded-md font-medium transition-all duration-300 hover:scale-105 ${
+                    location.pathname === '/tickets' ? 'text-[#fe4a56] text-xl' : 'text-brand-white hover:text-brand-darkred text-lg'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   TICKETS
                 </Link>
               </div>
-              
               
               {/* Contact Section */}
               <div className="w-full max-w-sm px-4 py-6 bg-transparent rounded-lg mb-8">

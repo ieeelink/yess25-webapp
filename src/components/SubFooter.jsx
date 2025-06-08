@@ -1,12 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import ContactPopup from './ContactPopup';
 
-
-const SubFooter = () => {
+const SubFooter = ({ onNavigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [currentSection, setCurrentSection] = useState('home');
   const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const container = document.querySelector('.scrollbar-hide');
+      if (container) {
+        const scrollLeft = container.scrollLeft;
+        const windowWidth = window.innerWidth;
+        const halfWindowWidth = windowWidth / 2;
+        
+        // Calculate which section is more than half visible
+        if (scrollLeft >= windowWidth - halfWindowWidth && scrollLeft < windowWidth * 2 - halfWindowWidth) {
+          setCurrentSection('highlights');
+        } else if (scrollLeft >= windowWidth * 2 - halfWindowWidth) {
+          setCurrentSection('about');
+        } else {
+          setCurrentSection('home');
+        }
+      }
+    };
+
+    const container = document.querySelector('.scrollbar-hide');
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -21,8 +47,11 @@ const SubFooter = () => {
     setIsContactOpen(false);
   };
 
-  const isActive = (path) => {
-    return location.pathname === path;
+  const handleNavigation = (sectionId) => {
+    if (onNavigate) {
+      onNavigate(sectionId);
+      setCurrentSection(sectionId);
+    }
   };
 
   return (
@@ -31,14 +60,14 @@ const SubFooter = () => {
         <div className="flex items-center justify-between h-12 md:h-20">
           {/* Desktop Navigation */}
           <nav className="hidden md:flex w-full justify-between px-8">
-            <Link 
-              to="/highlights" 
+            <button 
+              onClick={() => handleNavigation('highlights')}
               className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
-                isActive('/highlights') ? 'text-[#fe4a56]' : 'text-white hover:text-[#8c0505]'
+                currentSection === 'about' ? 'text-[#fe4a56]' : 'text-white hover:text-[#8c0505]'
               }`}
             >
               HIGHLIGHTS'24
-            </Link>
+            </button>
             <div className="text-sm text-gray-400">
               © {new Date().getFullYear()} IEEE LINK. All rights reserved.
             </div>
@@ -46,7 +75,7 @@ const SubFooter = () => {
               <button
                 onClick={toggleContact}
                 className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
-                  isActive('/contact') ? 'text-[#fe4a56]' : 'text-white hover:text-[#8c0505]'
+                  location.pathname === '/contact' ? 'text-[#fe4a56]' : 'text-white hover:text-[#8c0505]'
                 }`}
               >
                 CONTACT US

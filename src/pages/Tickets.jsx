@@ -16,9 +16,9 @@ function Tickets() {
     ieeeMembershipNumber: '',
     gender: 'male',
     foodPreference: 'veg',
-    yearOfStudy: '',
+    yearOfStudy: '1',
   });
-  const [emailError, setEmailError] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -27,36 +27,30 @@ function Tickets() {
       ...prevState,
       [name]: value
     }));
-    // Clear email error when user types in email field
-    if (name === 'email') {
-      setEmailError('');
+    // Clear error when user types in any field
+    if (error) {
+      setError('');
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setEmailError(''); // Clear any previous error
+    setError(''); // Clear any previous error
     setIsLoading(true); // Start loading
 
-    axios.post('/api/payment', formData)
+    // axios.post('http://localhost:3000/api/payment', formData)
+    axios.post('api/payment', formData)
       .then(response => {
-        if (response.status === 409) {
-          setEmailError('This email is already used');
-          setIsLoading(false);
-          return;
-        }
-        else if (response.status === 200) {
-          // Handle success response
-          console.log('Registration successful:', response.data);
-          document.cookie = `email=${response.data.response.email}; path=/; max-age=${14*24*60*60}`;
-          window.location.href = response.data.response.redirectUrl;
-        }
-        else{
-          setEmailError('Error checking Email. Please try again.');
-          setIsLoading(false);
-          return;
-        }
+        // Handle success response
+        console.log('Registration successful:', response.data);
+        document.cookie = `email=${response.data.response.email}; path=/; max-age=${14*24*60*60}`;
+        window.location.href = response.data.response.redirectUrl;
       }).catch(error => {
+        if (error.response && error.response.status === 409) {
+          setError(error.response.data.message || 'This email is already registered');
+        } else {
+          setError('Error processing your registration. Please try again.');
+        }
         console.error('Error checking email:', error);
         setIsLoading(false); // Stop loading on error
       });
@@ -117,11 +111,8 @@ function Tickets() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className={`w-full px-3 py-2 bg-white/5 border ${emailError ? 'border-red-500' : 'border-white/20'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white placeholder-gray-400`}
+                    className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white placeholder-gray-400"
                   />
-                  {emailError && (
-                    <p className="mt-1 text-sm text-red-500">{emailError}</p>
-                  )}
                 </div>
 
                 <div>
@@ -224,6 +215,7 @@ function Tickets() {
                           type="radio"
                           name="isIEEEMember"
                           value="no"
+                          checked={formData.isIEEEMember === 'no'}
                           onChange={handleChange}
                           className="w-4 h-4 text-[#fe4a56] bg-white/5 border-white/20 focus:ring-[#fe4a56] focus:ring-2"
                         />
@@ -305,6 +297,11 @@ function Tickets() {
                   )}
                 </button>
               </div>
+              {error && (
+                <div className="mt-4 text-center md:text-left">
+                  <p className="text-red-500 text-sm">{error}</p>
+                </div>
+              )}
             </form>
           </div>
         </main>

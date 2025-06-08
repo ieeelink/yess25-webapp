@@ -5,6 +5,7 @@ import Status from './pages/Status';
 import CheckStatus from './pages/CheckStatus';
 import AboutSection from './components/sections/AboutSection';
 import { useEffect } from 'react';
+import Highlights from './components/sections/Highlights';
 
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
@@ -24,6 +25,7 @@ function App() {
           <Route path='/paymentStatus' element={<Status />} />
           <Route path='/checkStatus' element={<CheckStatus/>} />
           <Route path='/aboutus' element={<AboutSection/>} />
+          <Route path='/highlights24' element={<Highlights/>}/>
 
       </Routes>
     </Router>

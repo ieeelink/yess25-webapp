@@ -11,13 +11,14 @@
   "author": "daniel paul",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "fs": "^0.0.1-security",
     "mongodb": "^6.16.0",
     "nodemon": "^3.1.10",
     "path": "^0.12.7",
-    "pg-sdk-node": "^2.0.2",
     "razorpay": "^2.9.6",
     "url": "^0.11.4"
   }

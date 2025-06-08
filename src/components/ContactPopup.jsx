@@ -61,7 +61,7 @@ const ContactPopup = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div ref={popupRef} className="absolute bottom-full right-0 mb-2 bg-white rounded-lg p-6 shadow-lg w-80">
+    <div ref={popupRef} className="absolute bottom-full right-0 mb-2 bg-white rounded-lg p-6 shadow-lg w-80 z-50">
       <button
         onClick={onClose}
         className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
