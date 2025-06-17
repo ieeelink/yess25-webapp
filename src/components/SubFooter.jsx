@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ContactPopup from './ContactPopup';
 
 const SubFooter = ({ onNavigate }) => {
@@ -7,6 +7,14 @@ const SubFooter = ({ onNavigate }) => {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState('home');
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const { state } = location;
+    if (state?.section) {
+      setCurrentSection(state.section);
+    }
+  }, [location]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,7 +56,9 @@ const SubFooter = ({ onNavigate }) => {
   };
 
   const handleNavigation = (sectionId) => {
-    if (onNavigate) {
+    if (location.pathname !== '/') {
+      navigate('/', { state: { section: sectionId } });
+    } else if (onNavigate) {
       onNavigate(sectionId);
       setCurrentSection(sectionId);
     }
@@ -68,8 +78,18 @@ const SubFooter = ({ onNavigate }) => {
             >
               HIGHLIGHTS'24
             </button>
-            <div className="text-sm text-gray-400">
-              © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+            <div className="flex flex-col items-center">
+              <div className="text-sm text-gray-400">
+                © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+              </div>
+              <div className="flex space-x-4 mt-2">
+                <Link to="/tos" className="text-sm text-gray-400 hover:text-[#fe4a56] transition-colors">
+                  Terms of Service
+                </Link>
+                <Link to="/privacy" className="text-sm text-gray-400 hover:text-[#fe4a56] transition-colors">
+                  Privacy Policy
+                </Link>
+              </div>
             </div>
             <div className="relative">
               <button
@@ -85,8 +105,18 @@ const SubFooter = ({ onNavigate }) => {
           </nav>
 
           {/* Mobile Copyright */}
-          <div className="md:hidden w-full text-center text-sm text-gray-400">
-            © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+          <div className="md:hidden w-full text-center">
+            <div className="text-sm text-gray-400">
+              © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+            </div>
+            <div className="flex justify-center space-x-4">
+              <Link to="/terms" className="text-sm text-gray-400 hover:text-[#fe4a56] transition-colors">
+                Terms of Service
+              </Link>
+              <Link to="/privacy" className="text-sm text-gray-400 hover:text-[#fe4a56] transition-colors">
+                Privacy Policy
+              </Link>
+            </div>
           </div>
         </div>
       </div>

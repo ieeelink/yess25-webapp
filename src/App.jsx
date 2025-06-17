@@ -6,6 +6,8 @@ import CheckStatus from './pages/CheckStatus';
 import AboutSection from './components/sections/AboutSection';
 import { useEffect } from 'react';
 import Highlights from './components/sections/Highlights';
+import ToS from './pages/ToS';
+import Privacy from './pages/Privacy'
 
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
@@ -26,7 +28,8 @@ function App() {
           <Route path='/checkStatus' element={<CheckStatus/>} />
           <Route path='/aboutus' element={<AboutSection/>} />
           <Route path='/highlights24' element={<Highlights/>}/>
-
+          <Route path='/tos' element={<ToS/>}/>
+      <Route path='/privacy' element={<Privacy/>}/>
       </Routes>
     </Router>
   );

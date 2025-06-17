@@ -62,10 +62,10 @@ function Highlights() {
           </div>
           <div className="w-full md:w-2/5 p-4 md:p-12 text-white order-2 md:order-1 flex flex-col justify-center">
             <h2 className="text-2xl font-bold mb-4 pb-10">Largest Engineering Student's meet in Kerala</h2>
-            <p className="mb-4 text-lg">
+            <p className="mb-4 text-lg nunito-sans-body">
               The 1-day event predominantly provided an opportunity for the student community to meet highly intelligent and motivated peers, enhanced their skills through trainings, workshops, and competitions, and geared them up to face the professional career ahead of them.
             </p>
-            <ul className="list-disc list-inside text-lg space-y-2">
+            <ul className="list-disc list-inside text-lg space-y-2 nunito-sans-body">
               <li>Largest student meet of IEEE Kerala Section</li>
               <li>Sessions led by pioneers of the industry</li>
               <li>Competitions to prove your mettle</li>

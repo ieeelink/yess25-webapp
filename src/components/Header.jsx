@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Header = ({ onNavigate }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [currentSection, setCurrentSection] = useState('home');
+  const [currentSection, setCurrentSection] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
@@ -41,6 +42,13 @@ const Header = ({ onNavigate }) => {
   }, []);
 
   useEffect(() => {
+    const { state } = location;
+    if (state?.section) {
+      setCurrentSection(state.section);
+    }
+  }, [location]);
+
+  useEffect(() => {
     const handleHorizontalScroll = () => {
       const container = document.querySelector('.scrollbar-hide');
       if (container) {
@@ -71,7 +79,9 @@ const Header = ({ onNavigate }) => {
   };
 
   const handleNavigation = (sectionId) => {
-    if (onNavigate) {
+    if (location.pathname !== '/') {
+      navigate('/', { state: { section: sectionId } });
+    } else if (onNavigate) {
       onNavigate(sectionId);
       setCurrentSection(sectionId);
     }

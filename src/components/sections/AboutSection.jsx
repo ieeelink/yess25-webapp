@@ -24,7 +24,7 @@ function AboutSection() {
           </div>
           <div className="w-full mb-8 md:mb-4">
             <h3 className="text-xl md:text-2xl font-semibold text-white mb-3 md:mb-4">About YESS</h3>
-            <p className="text-white text-base md:text-md leading-relaxed">
+            <p className="text-white text-base md:text-lg leading-relaxed nunito-sans-body">
               IEEE YESS'25, the largest engineering students summit by IEEE, is a collaborative initiative of IEEE India Council and IEEE Kerala Section. Set to take place on August 16th at NIT Calicut, this summit will bring together over 5,000 participants from across India, creating a platform for students to connect with industry professionals and enhance their professional development.
             </p>
           </div>
@@ -41,7 +41,7 @@ function AboutSection() {
                   className="w-full h-auto object-contain relative z-10 drop-shadow-[0_8px_16px_rgba(254,74,86,0.3)] hover:drop-shadow-[0_8px_16px_rgba(254,74,86,0.5)] hover:scale-105 transition-all duration-300 rounded-2xl"
                 />
               </div>
-              <p className="text-white text-base md:text-md leading-relaxed">
+              <p className="text-white text-base md:text-lg leading-relaxed nunito-sans-body">
                 National Institute of Technology Calicut (NITC), established in 1961, is a premier technical institution under the Ministry of Education, Government of India. Renowned for excellence in engineering and research, NITC offers comprehensive undergraduate, postgraduate, and doctoral programs. Consistently ranked among India's top engineering colleges, it provides a nurturing environment for academic excellence and innovation.
               </p>
             </div>
