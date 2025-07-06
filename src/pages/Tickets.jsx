@@ -122,7 +122,7 @@ async function displayRazorpay(amount, id, paymentProcessingRef) {
       console.log('Payment successful:', response);
       
       // Send payment response to backend callback endpoint using fetch
-      fetch('http://localhost:3001/api/payment/success-callback', {
+      fetch('https://yess25-backend.onrender.com/api/payment/success-callback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -193,7 +193,7 @@ function Tickets() {
 
   // Fetch colleges on mount
   useEffect(() => {
-    axios.get('http://localhost:3001/api/colleges')
+    axios.get('https://yess25-backend.onrender.com/api/colleges')
       .then(res => {
         console.log(res.data.colleges);
         setColleges(res.data.colleges || []);
@@ -242,7 +242,7 @@ function Tickets() {
     
     console.log(formDataWithVerification);
     try {
-      const response = await axios.post('http://localhost:3001/api/payment', formDataWithVerification);
+      const response = await axios.post('https://yess25-backend.onrender.com/api/payment', formDataWithVerification);
       const serverresponse = response.data;
       console.log('Registration successful:', serverresponse);
       

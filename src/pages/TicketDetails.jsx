@@ -28,7 +28,7 @@ function TicketDetails() {
           setLoading(false);
           return;
         }
-        const response = await axios.get('http://localhost:3001/api/admin/data', {
+        const response = await axios.get('https://yess25-backend.onrender.com/api/admin/data', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setTickets(response.data);
@@ -65,7 +65,7 @@ function TicketDetails() {
     ));
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`http://localhost:3001/api/verifyieee/${ticketId}`, {
+      const response = await axios.post(`https://yess25-backend.onrender.com/api/verifyieee/${ticketId}`, {
         ieeeVerificationCompleted: true,
         ieeeVerified: value
       }, {

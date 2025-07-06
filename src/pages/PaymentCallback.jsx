@@ -36,7 +36,7 @@ function PaymentCallback() {
 
         console.log('Sending verification data to backend:', verificationData);
 
-        const response = await axios.post('http://localhost:3001/api/payment/success-callback', verificationData);
+        const response = await axios.post('https://yess25-backend.onrender.com/api/payment/success-callback', verificationData);
         
         console.log('Backend verification response:', response.data);
 

@@ -36,7 +36,7 @@ function ProtectedRoute() {
         return;
       }
       try {
-        await axios.get('http://localhost:3001/api/admin/verify', {
+        await axios.get('https://yess25-backend.onrender.com/api/admin/verify', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setIsVerified(true);
