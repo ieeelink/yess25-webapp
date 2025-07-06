@@ -169,6 +169,8 @@ function Tickets() {
     formState: { errors, isSubmitting },
     setValue,
     trigger,
+    clearErrors,
+    getValues,
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: 'onChange', // Enable real-time validation
@@ -203,6 +205,89 @@ function Tickets() {
       });
   }, []);
 
+  // Handle browser autofill events
+  useEffect(() => {
+    const handleAutofill = () => {
+      // Small delay to ensure autofill has completed
+      setTimeout(() => {
+        const formData = getValues();
+        let hasChanges = false;
+        
+        // Check each field for autofilled values
+        const fieldsToCheck = ['fullName', 'email', 'phone', 'institution', 'course'];
+        
+        fieldsToCheck.forEach(fieldName => {
+          const element = document.getElementById(fieldName);
+          if (element && element.value && element.value !== formData[fieldName]) {
+            setValue(fieldName, element.value, { shouldValidate: true });
+            hasChanges = true;
+          }
+        });
+        
+        // Check select fields
+        const selectFields = ['gender', 'foodPreference', 'yearOfStudy'];
+        selectFields.forEach(fieldName => {
+          const element = document.getElementById(fieldName);
+          if (element && element.value && element.value !== formData[fieldName]) {
+            setValue(fieldName, element.value, { shouldValidate: true });
+            hasChanges = true;
+          }
+        });
+        
+        // Check radio buttons for IEEE membership
+        const ieeeRadios = document.querySelectorAll('input[name="isIEEEMember"]');
+        ieeeRadios.forEach(radio => {
+          if (radio.checked && radio.value !== formData.isIEEEMember) {
+            handleIEEEMemberChange(radio.value);
+            hasChanges = true;
+          }
+        });
+        
+        // If any autofilled values were detected, trigger validation
+        if (hasChanges) {
+          trigger(); // Trigger validation for all fields
+        }
+      }, 100);
+    };
+
+    // Listen for autofill events
+    const form = document.querySelector('form');
+    if (form) {
+      // Modern browsers support animationstart for autofill detection
+      form.addEventListener('animationstart', (e) => {
+        if (e.animationName.includes('autofill')) {
+          handleAutofill();
+        }
+      });
+      
+      // Fallback: Listen for input events with a delay to catch autofill
+      const inputs = form.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        input.addEventListener('input', handleAutofill);
+        input.addEventListener('change', handleAutofill);
+      });
+      
+      // Additional fallback: Check for autofill on focus
+      inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+          setTimeout(handleAutofill, 50);
+        });
+      });
+    }
+
+    return () => {
+      if (form) {
+        form.removeEventListener('animationstart', handleAutofill);
+        const inputs = form.querySelectorAll('input, select');
+        inputs.forEach(input => {
+          input.removeEventListener('input', handleAutofill);
+          input.removeEventListener('change', handleAutofill);
+          input.removeEventListener('focus', handleAutofill);
+        });
+      }
+    };
+  }, [setValue, trigger, getValues]);
+
   // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event) {
@@ -224,6 +309,14 @@ function Tickets() {
   const onSubmit = async (data) => {
     setError('');
     setIsLoading(true);
+
+    // Additional validation check before submission
+    const isValid = await trigger();
+    if (!isValid) {
+      setError('Please fill in all required fields correctly.');
+      setIsLoading(false);
+      return;
+    }
 
     // Process institution data - if "Other" is selected, use the custom institution name
     let institutionValue = data.institution;
@@ -272,6 +365,10 @@ function Tickets() {
   const handleIEEEMemberChange = (value) => {
     setValue('isIEEEMember', value);
     setValue('ieeeMembershipNumber', ''); // Clear membership number when status changes
+    // Clear the error for IEEE membership number when status changes
+    if (errors.ieeeMembershipNumber) {
+      clearErrors('ieeeMembershipNumber');
+    }
     if (value === 'yes' || value === 'gsm') {
       trigger('ieeeMembershipNumber'); // Trigger validation for membership number
     }
@@ -528,6 +625,7 @@ function Tickets() {
                       <label className="inline-flex items-center">
                         <input
                           type="radio"
+                          name="isIEEEMember"
                           value="yes"
                           checked={isIEEEMember === 'yes'}
                           onChange={(e) => handleIEEEMemberChange(e.target.value)}
@@ -538,6 +636,7 @@ function Tickets() {
                       <label className="inline-flex items-center">
                         <input
                           type="radio"
+                          name="isIEEEMember"
                           value="no"
                           checked={isIEEEMember === 'no'}
                           onChange={(e) => handleIEEEMemberChange(e.target.value)}
@@ -551,6 +650,7 @@ function Tickets() {
                     <label className="inline-flex items-center">
                       <input
                         type="radio"
+                        name="isIEEEMember"
                         value="gsm"
                         checked={isIEEEMember === 'gsm'}
                         onChange={(e) => handleIEEEMemberChange(e.target.value)}
