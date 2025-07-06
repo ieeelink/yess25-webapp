@@ -80,7 +80,7 @@ const Header = ({ onNavigate }) => {
 
   const handleNavigation = (sectionId) => {
     if (location.pathname !== '/') {
-      navigate('/', { state: { section: sectionId } });
+      navigate('/', { state: { section: sectionId }, replace: true });
     } else if (onNavigate) {
       onNavigate(sectionId);
       setCurrentSection(sectionId);
@@ -95,11 +95,11 @@ const Header = ({ onNavigate }) => {
       {/* Loading Bar */}
       <div className={`h-1 bg-[#fe4a56] transition-all duration-300 ${loading ? 'loading-bar w-full' : 'w-0 opacity-0'}`}></div>
       
-      <div className="py-2 md:py-2">
-        <div className="w-screen px-4 md:px-8">
-          <div className="flex items-center justify-between h-12 md:h-20">
+      <div className="py-2 lg:py-2">
+        <div className="w-screen px-4 lg:px-8">
+          <div className="flex items-center justify-between h-12 lg:h-20">
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex w-full justify-between px-8">
+            <nav className="hidden lg:flex w-full justify-between px-8">
               <button 
                 onClick={() => handleNavigation('home')}
                 className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
@@ -119,7 +119,7 @@ const Header = ({ onNavigate }) => {
             </nav>
 
             {/* Mobile Logo */}
-            <div className="md:hidden flex items-center">
+            <div className="lg:hidden flex items-center">
               <img 
                 src="/yess_icon.png" 
                 alt="YESS Logo" 
@@ -136,7 +136,7 @@ const Header = ({ onNavigate }) => {
 
             {/* Mobile menu button */}
             <button 
-              className="md:hidden p-2 rounded-md text-brand-white hover:text-brand-darkred hover:bg-gray-100 focus:outline-none transition-colors relative z-50"
+              className="lg:hidden p-2 rounded-md text-brand-white hover:text-brand-darkred hover:bg-gray-100 focus:outline-none transition-colors relative z-50"
               onClick={toggleMenu}
             >
               <svg 
@@ -156,7 +156,7 @@ const Header = ({ onNavigate }) => {
 
           {/* Mobile Navigation */}
           <div 
-            className={`md:hidden fixed inset-0 bg-black/90 z-40 transition-all duration-300 ease-in-out ${
+            className={`lg:hidden fixed inset-0 bg-black/90 z-40 transition-all duration-300 ease-in-out ${
               isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
             }`}
           >

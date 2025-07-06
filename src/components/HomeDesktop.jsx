@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Header from './Header';
 import SubFooter from './SubFooter';
 import BgAnimation from './BgAnimation';
@@ -8,11 +8,25 @@ import Highlights from './sections/Highlights';
 
 function HomeDesktop() {
   const scrollContainerRef = useRef(null);
+  const [isScrollingAboutContent, setIsScrollingAboutContent] = useState(false);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
 
     const handleWheel = (e) => {
+      // Check if we're currently scrolling About section content
+      const aboutSection = document.querySelector('[data-about-section]');
+      if (aboutSection) {
+        const aboutRect = aboutSection.getBoundingClientRect();
+        const isAtLeftBorder = aboutRect.left <= 0 && aboutRect.right > 0;
+        const isAtRightBorder = aboutRect.right >= window.innerWidth && aboutRect.left < window.innerWidth;
+        
+        if (isAtLeftBorder || isAtRightBorder) {
+          // Let the About section handle the scroll
+          return;
+        }
+      }
+
       e.preventDefault();
       const container = scrollContainer;
       const scrollAmount = e.deltaY;

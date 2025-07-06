@@ -3,7 +3,7 @@ import Marquee from 'react-fast-marquee';
 
 const InfiniteScroll = ({ images }) => {
   return (
-    <div className="w-full overflow-hidden py-4">
+    <div className="w-full overflow-hidden">
       <Marquee
         gradient={false}
         speed={50}

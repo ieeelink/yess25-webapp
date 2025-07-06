@@ -3,7 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ContactPopup from './ContactPopup';
 
 const SubFooter = ({ onNavigate }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState('home');
   const location = useLocation();
@@ -42,10 +41,6 @@ const SubFooter = ({ onNavigate }) => {
     }
   }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
   const toggleContact = (e) => {
     e.stopPropagation();
     setIsContactOpen(!isContactOpen);
@@ -65,11 +60,11 @@ const SubFooter = ({ onNavigate }) => {
   };
 
   return (
-    <footer className="bg-brand-white text-brand-black pb-3 md:pb-6">
-      <div className="w-screen px-4 md:px-8">
-        <div className="flex items-center justify-between h-12 md:h-20">
+    <footer className="bg-brand-white text-brand-black pb-3 lg:pb-6">
+      <div className="w-screen px-4 lg:px-8">
+        <div className="flex items-center justify-between h-12 lg:h-20">
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex w-full justify-between px-8">
+          <nav className="hidden lg:flex w-full justify-between px-8">
             <button 
               onClick={() => handleNavigation('highlights')}
               className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
@@ -105,7 +100,7 @@ const SubFooter = ({ onNavigate }) => {
           </nav>
 
           {/* Mobile Copyright */}
-          <div className="md:hidden w-full text-center">
+          <div className="lg:hidden w-full text-center">
             <div className="text-sm text-gray-400">
               © {new Date().getFullYear()} IEEE LINK. All rights reserved.
             </div>

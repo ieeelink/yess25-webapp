@@ -10,10 +10,10 @@ function LandingSection() {
         <p className="text-base sm:text-lg md:text-xl text-white/80 max-w-2xl nunito-sans-body">Join us for the most anticipated engineering summit of the year</p>
         <div className="pt-2">
           <Link 
-            // to="/tickets" 
+            to="/tickets" 
             className="inline-block px-12 py-4 text-xl bg-[#fe4a56] text-white rounded-full font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-110"
           >
-            Coming Soon....
+            Get your Tickets
           </Link>
         </div>
       </div>

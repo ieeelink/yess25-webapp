@@ -1,71 +1,78 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
-// Global constant for email
 let globalEmail = null;
 
 function Status() {
+  const navigate = useNavigate();
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // Get email from cookie
-    const getEmailFromCookie = async () => {
-      try {
-        // Read cookie from /cookie/ path
-        const cookies = document.cookie.split(';');
-        const emailCookie = cookies.find(cookie => cookie.trim().startsWith('email='));
-        globalEmail = emailCookie ? decodeURIComponent(emailCookie.split('=')[1].trim()) : null;
-        
-        if (globalEmail) {
-          // Send email to backend
-          const statusResponse = await axios.post('/api/paymentstatus', { email: globalEmail });
-          console.log('Payment status response:', statusResponse.data);
-          setPaymentStatus(statusResponse.data);
-          document.cookie = 'email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        } else {
-          setError('No registration email found. Please contact support.');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        setError('Failed to process registration. Please contact support.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Fetch email from cookie and get payment status
+    const cookies = document.cookie.split(';');
+    const emailCookie = cookies.find(cookie => cookie.trim().startsWith('email='));
+    globalEmail = emailCookie ? decodeURIComponent(emailCookie.split('=')[1].trim()) : null;
+    if (globalEmail) {
+      fetchPaymentStatus(globalEmail);
+    } else {
+      setError('No registration email found. Please contact support.');
+      setLoading(false);
+    }
 
-    getEmailFromCookie();
+    // Remove email cookie on window unload
+    const handleUnload = () => {
+      document.cookie = 'email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    };
+    window.addEventListener('unload', handleUnload);
+    return () => {
+      window.removeEventListener('unload', handleUnload);
+    };
   }, []);
+
+  const fetchPaymentStatus = async (email) => {
+    try {
+      const statusResponse = await axios.post('http://localhost:3001/api/paymentstatus', { email });
+      console.log(statusResponse.data.payments[0]);
+      setPaymentStatus(statusResponse.data.payments[0]);
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        setError('No ticket found.');
+      } else {
+        setError('Failed to fetch payment status. Please contact support.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleRetryPayment = async () => {
     try {
       setLoading(true);
       document.cookie = `email=${globalEmail}; path=/; max-age=${14*24*60*60}`;
-      const response = await axios.post('/api/retrypayment', { email: globalEmail });
-      console.log(response);
+      const response = await axios.post('http://localhost:3001/api/retrypayment', { email: globalEmail });
       if (response.status === 200) {
         window.location.href = response.data.response.redirectUrl;
       }
     } catch (error) {
-      console.error('Error retrying payment:', error);
       setError('Failed to retry payment. Please try again later.');
+      console.log(error);
       setLoading(false);
     }
   };
 
   const getStatusMessage = (status) => {
     switch (status) {
-      case 'COMPLETED':
+      case 'paid':
         return 'Your registration has been confirmed. Tickets will be sent to your email after generation.';
-      case 'FAILED':
+      case 'attempted':
         return 'There was an issue with your payment. Please try again.';
-      case 'PENDING':
+      case 'created':
         return 'Your payment is not completed. If the payment is already debited from your account, please contact support.';
       default:
         return 'Unknown payment status.';
@@ -77,12 +84,10 @@ function Status() {
       <BgAnimation />
       <div className="min-h-screen flex flex-col relative">
         <Header />
-        
         <main className="flex-grow flex items-center justify-center px-4 py-8">
           <div className="w-full max-w-2xl">
             <div className="bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-lg border border-white/20">
               <h1 className="text-4xl font-bold text-white mb-8 text-center">Payment Status</h1>
-              
               {loading ? (
                 <div className="text-center text-white">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
@@ -92,40 +97,56 @@ function Status() {
                 <div className="p-4 rounded-lg bg-red-500/20 border border-red-500">
                   <h2 className="text-2xl font-semibold text-white mb-2">Error</h2>
                   <p className="text-white/80">{error}</p>
+                  <div className="mt-4 flex justify-center">
+                    <button
+                      onClick={() => navigate('/')}
+                      className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
+                    >
+                      Go to Home
+                    </button>
+                  </div>
                 </div>
               ) : paymentStatus ? (
                 <div className="space-y-6">
                   <div className={`p-4 rounded-lg ${
-                    paymentStatus.status === 'COMPLETED' 
+                    paymentStatus.status === 'paid' 
                       ? 'bg-green-500/20 border border-green-500' 
-                      : paymentStatus.status === 'PENDING'
+                      : paymentStatus.status === 'created'
                       ? 'bg-yellow-500/20 border border-yellow-500'
                       : 'bg-red-500/20 border border-red-500'
                   }`}>
                     <h2 className="text-2xl font-semibold text-white mb-2">
-                      {paymentStatus.status === 'COMPLETED' 
+                      {paymentStatus.status === 'paid' 
                         ? 'Payment Successful!' 
-                        : paymentStatus.status === 'PENDING'
+                        : paymentStatus.status === 'created'
                         ? 'Payment Pending'
                         : 'Payment Failed'}
                     </h2>
-                    <p className="text-white/80">
+                    <p className="text-white/80 nunito-sans-body">
                       {getStatusMessage(paymentStatus.status)}
                     </p>
+                    {paymentStatus.reason && (
+                      <p className="text-white/80 mt-2">
+                        <span className="font-medium">Reason:</span> {paymentStatus.reason}
+                      </p>
+                    )}
                   </div>
-                  
-                  {paymentStatus.status === 'COMPLETED' && (
-                    <div className="bg-white/5 p-4 rounded-lg">
-                      <h3 className="text-xl font-semibold text-white mb-4">Registration Details</h3>
-                      <div className="space-y-2 text-white/80">
-                        <p><span className="font-medium">Name:</span> {paymentStatus.fullName}</p>
-                        <p><span className="font-medium">Email:</span> {paymentStatus.email}</p>
-                      </div>
+                  <div className="bg-white/5 p-4 rounded-lg">
+                    <h3 className="text-xl font-semibold text-white mb-4">Registration Details</h3>
+                    <div className="space-y-2 text-white/80">
+                      <p className='nunito-sans-body'><span className="font-medium">Name:</span> {paymentStatus.name}</p>
+                      <p className='nunito-sans-body'><span className="font-medium">Email:</span> {paymentStatus.email}</p>
+                      {paymentStatus.order_id && (
+                        <p className='nunito-sans-body'><span className="font-medium">Order ID:</span> {paymentStatus.order_id}</p>
+                      )}
+                      {paymentStatus.status && (
+                        <p className='nunito-sans-body'><span className="font-medium">Status:</span> {paymentStatus.status.charAt(0).toUpperCase() + paymentStatus.status.slice(1)}</p>
+                      )}
+                      
                     </div>
-                  )}
-
-                  {(paymentStatus.status === 'FAILED' || paymentStatus.status === 'PENDING') && (
-                    <div className="flex justify-center">
+                  </div>
+                  {(paymentStatus.status === 'attempted' || paymentStatus.status === 'created') && (
+                    <div className="flex justify-center gap-4">
                       <button
                         onClick={handleRetryPayment}
                         disabled={loading}
@@ -145,18 +166,41 @@ function Status() {
                           'Retry Payment'
                         )}
                       </button>
+                      <button
+                        onClick={() => navigate('/')}
+                        className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
+                      >
+                        Go to Home
+                      </button>
+                    </div>
+                  )}
+                  {paymentStatus.status === 'paid' && (
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => navigate('/')}
+                        className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
+                      >
+                        Go to Home
+                      </button>
                     </div>
                   )}
                 </div>
               ) : (
                 <div className="text-center text-white">
                   <p>No payment information found.</p>
+                  <div className="mt-4">
+                    <button
+                      onClick={() => navigate('/')}
+                      className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
+                    >
+                      Go to Home
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </main>
-
         <SubFooter />
       </div>
     </>

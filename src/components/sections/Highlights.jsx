@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 function Highlights() {
   const [activeImage, setActiveImage] = useState(null);
+  const [hoveredImage, setHoveredImage] = useState(null);
 
   const handleTouchStart = (index) => {
     setActiveImage(index);
@@ -11,24 +12,24 @@ function Highlights() {
     setActiveImage(null);
   };
 
-  const getImageClasses = (index) => {
-    const baseClasses = "absolute object-cover rounded-lg shadow-lg transition-transform duration-300";
-    const positionClasses = {
-      0: "top-0 left-2/8 -translate-x-1/2 w-40 h-28 z-20 md:-top-3 md:left-30 md:translate-x-0 md:w-60 md:h-40",
-      1: "top-24 left-1/7 -translate-x-1/2 w-44 h-28 z-10 md:top-7 md:-left-42 md:translate-x-0 md:w-64 md:h-44",
-      2: "top-20 left-6/7 -translate-x-1/2 w-44 h-28 z-20 md:top-60 md:left-50 md:translate-x-0 md:w-64 md:h-44",
-      3: "top-40 left-3/5 -translate-x-1/2 w-40 h-28 z-10 md:top-30 md:left-80 md:translate-x-0 md:w-60 md:h-40",
-      4: "top-58 left-1/6 -translate-x-1/2 w-40 h-28 z-10 md:top-45 md:left-10 md:translate-x-0 md:w-60 md:h-40",
-      5: "-top-5 left-4/6 -translate-x-1/2 w-44 h-28 z-0 md:-top-30 md:left-0 md:translate-x-0 md:w-64 md:h-44",
-      6: "top-60 left-5/6 -translate-x-1/2 w-44 h-28 z-0 md:top-60 md:-left-35 md:translate-x-0 md:w-64 md:h-44",
-      7: "top-80 left-3/8 -translate-x-1/2 w-40 h-28 z-10 md:-top-20 md:left-80 md:translate-x-0 md:w-60 md:h-40"
-    };
-    
-    const scaleClass = index % 2 === 0 ? "hover:scale-115" : "hover:scale-120";
-    const activeClass = activeImage === index ? "scale-115 z-50" : "";
-    
-    return `${baseClasses} ${positionClasses[index]} ${scaleClass} ${activeClass}`;
+  const handleMouseEnter = (index) => {
+    setHoveredImage(index);
   };
+
+  const handleMouseLeave = () => {
+    setHoveredImage(null);
+  };
+
+  const positionClasses = [
+    "top-0 left-2/8 -translate-x-1/2 w-40 h-28 z-20 md:-top-3 md:left-30 md:translate-x-0 md:w-60 md:h-40",
+    "top-24 left-1/7 -translate-x-1/2 w-44 h-28 z-10 md:top-7 md:-left-42 md:translate-x-0 md:w-64 md:h-44",
+    "top-20 left-6/7 -translate-x-1/2 w-44 h-28 z-20 md:top-60 md:left-50 md:translate-x-0 md:w-64 md:h-44",
+    "top-40 left-3/5 -translate-x-1/2 w-40 h-28 z-10 md:top-30 md:left-80 md:translate-x-0 md:w-60 md:h-40",
+    "top-58 left-1/6 -translate-x-1/2 w-40 h-28 z-10 md:top-45 md:left-10 md:translate-x-0 md:w-60 md:h-40",
+    "-top-5 left-4/6 -translate-x-1/2 w-44 h-28 z-0 md:-top-30 md:left-0 md:translate-x-0 md:w-64 md:h-44",
+    "top-60 left-5/6 -translate-x-1/2 w-44 h-28 z-0 md:top-60 md:-left-35 md:translate-x-0 md:w-64 md:h-44",
+    "top-80 left-3/8 -translate-x-1/2 w-40 h-28 z-10 md:-top-20 md:left-80 md:translate-x-0 md:w-60 md:h-40"
+  ];
 
   const images = [
     { src: "/images/Highlight7.webp", alt: "Event Highlight 1" },
@@ -48,16 +49,23 @@ function Highlights() {
         <div className="flex flex-col md:flex-row min-h-[calc(100vh-20rem)] md:h-[calc(100vh-16rem)]">
           <div className="w-full md:w-3/5 flex items-center justify-center p-4 md:py-8 pt-12 md:pt-8 overflow-visible order-1 md:order-2">
             <div className="relative w-full max-w-xs sm:max-w-md md:w-[500px] h-[450px] md:h-[350px] mx-auto">
-              {images.map((image, index) => (
+              {images.map((image, index) => {
+                const isActive = activeImage === index || hoveredImage === index;
+                const scaleClass = isActive ? "scale-115" : index % 2 === 0 ? "hover:scale-115" : "hover:scale-120";
+                const zClass = isActive ? "z-50" : positionClasses[index].match(/z-\d+/)?.[0] || "z-0";
+                return (
                 <img
                   key={index}
                   src={image.src}
                   alt={image.alt}
-                  className={getImageClasses(index)}
+                    className={`absolute object-cover rounded-lg shadow-lg transition-transform duration-300 ${positionClasses[index].replace(/z-\d+/, "")} ${scaleClass} ${zClass}`}
                   onTouchStart={() => handleTouchStart(index)}
                   onTouchEnd={handleTouchEnd}
+                    onMouseEnter={() => handleMouseEnter(index)}
+                    onMouseLeave={handleMouseLeave}
                 />
-              ))}
+                );
+              })}
             </div>
           </div>
           <div className="w-full md:w-2/5 p-4 md:p-12 text-white order-2 md:order-1 flex flex-col justify-center">
