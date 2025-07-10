@@ -15,6 +15,7 @@ import AddAdmin from './pages/AddAdmin';
 import TicketDetails from './pages/TicketDetails';
 import axios from 'axios';
 import NotFound from './pages/NotFound';
+import Gallery from './pages/Gallery';
 
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
@@ -66,6 +67,7 @@ function App() {
           <Route path='/payment-cancelled' element={<PaymentCancelled />} />
           <Route path='/aboutus' element={<AboutSection/>} />
           <Route path='/highlights24' element={<Highlights/>}/>
+          <Route path='/gallery' element={<Gallery/>}/>
           <Route path='/tos' element={<ToS/>}/>
           <Route path='/privacy' element={<Privacy/>}/>
           <Route path="/admin" element={<AdminLogin/>}/>

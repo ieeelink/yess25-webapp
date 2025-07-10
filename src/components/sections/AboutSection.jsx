@@ -10,9 +10,8 @@ function AboutSection() {
     '/IEEE.png',
     '/KS White.png',
     '/LINK White.png',
-    '/nitc2.svg',
-    '/sb_nitc.svg',
-  ];
+    '/nitsb.png'
+  ]
 
   useEffect(() => {
     const aboutSection = aboutSectionRef.current;
@@ -157,7 +156,7 @@ function AboutSection() {
             {/* All About Content Container */}
             <div className="w-full lg:min-w-full lg:flex-shrink-0">
               <div className="w-full mb-8 lg:mb-4">
-                <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4">About YESS</h3>
+                <h3 className="text-xl lg:text-2xl font-semibold text-[#FE4A56] mb-3 lg:mb-4">About YESS</h3>
                 <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body">
                   IEEE YESS'25, the largest engineering students summit by IEEE, is a collaborative initiative of IEEE India Council and IEEE Kerala Section. Set to take place on August 16th at NIT Calicut, this summit will bring together over 5,000 participants from across India, creating a platform for students to connect with industry professionals and enhance their professional development.
                 </p>
@@ -198,21 +197,21 @@ function AboutSection() {
             {/* New IEEE Sections Container - Visible on all devices */}
             <div className="w-full mt-8 lg:mt-0 lg:min-w-full lg:flex-shrink-0">
               <div className="w-full mb-6">
-                <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4">About IEEE</h3>
+                <h3 className="text-xl lg:text-2xl font-semibold text-[#FE4A56] mb-3 lg:mb-4">About IEEE</h3>
                 <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body">
                   IEEE (Institute of Electrical and Electronics Engineers) is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity. With over 400,000 members in more than 160 countries, IEEE fosters innovation, education, and collaboration through conferences, publications, and standards.
                 </p>
               </div>
               
               <div className="w-full mb-6">
-                <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4">About IEEE LINK</h3>
+                <h3 className="text-xl lg:text-2xl font-semibold text-[#FE4A56] mb-4">About IEEE LINK</h3>
                 <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body">
                   IEEE LINK (Local Integrated Network of Kerala) is a unique initiative by the IEEE Kerala Section, designed to connect and empower IEEE student branches across the state. Established in 2000, LINK acts as a bridge between students and professionals, facilitating leadership development, technical training, and collaborative projects. Members also gain access to a vibrant community, mentorship, and exciting opportunities.
                 </p>
               </div>
               
               <div className="w-full mb-6">
-                <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4">About IEEE Kerala Section</h3>
+                <h3 className="text-xl lg:text-2xl font-semibold text-[#FE4A56] mb-3 lg:mb-4">About IEEE Kerala Section</h3>
                 <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body">
                   IEEE Kerala Section, established in 1983, is one of the most active and innovative sections of IEEE in India. It serves as the regional hub for IEEE activities in Kerala, supporting over 10,000 members including professionals, academicians, and students. The section is renowned for its dynamic student network, technical conferences, workshops, and humanitarian initiatives.
                 </p>

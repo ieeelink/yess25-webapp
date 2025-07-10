@@ -8,7 +8,7 @@ function LandingSection() {
         {/* YESS Logo - Only visible on desktop */}
         <div className="hidden md:block mb-8">
           <img 
-            src="/yess_icon.png" 
+            src="/yess_icon.svg" 
             alt="IEEE YESS Logo" 
             className="w-32 md:w-40 h-auto"
           />
