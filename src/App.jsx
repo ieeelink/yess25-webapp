@@ -60,6 +60,7 @@ function App() {
   const [showOverlay, setShowOverlay] = useState(false);
 
   return (
+    <>
     <Router>
       <Routes>
           <Route path="/" element={<Home />} />
