@@ -9,10 +9,17 @@ function Highlights() {
         <div className="flex flex-col md:flex-row min-h-[calc(100vh-20rem)] md:h-[calc(100vh-16rem)] items-center justify-center">
           {/* Left: Text Content */}
           <div className="w-full md:w-2/5 p-4 md:p-12 flex flex-col justify-center items-start"> 
-            <div className="absolute top-36 right-20 text-3xl lg:text-5xl font-bold text-white">Highlights</div>
+            {/* Mobile: Highlights heading above main heading */}
+            <div className="md:hidden w-full mb-2">
+              <h1 className="text-3xl font-bold text-white text-left">Highlights</h1>
+            </div>
+            {/* Desktop: Highlights heading as before */}
+            <div className="hidden md:block absolute top-36 right-20">
+              <h1 className="text-5xl font-bold text-white">Highlights</h1>
+            </div>
 
-          
-            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: '#FFFFFF' }}>
+            {/* Main heading styled like About section */}
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 text-left">
               <span style={{ color: '#FE4A56' }}>Largest Student<br/></span>  
               <span style={{ color: '#FE4A56' }}>Congress of Kerala</span>
             </h1>

@@ -164,7 +164,7 @@ function AboutSection() {
               
               <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8 w-full mb-8">
                 <div className="flex flex-col justify-center w-full">
-                  <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4">Our Host</h3>
+                  <h3 className="text-xl lg:text-2xl font-semibold text-[#FE4A56] mb-3 lg:mb-4">Our Host</h3>
                   <div className="lg:hidden w-full relative group mb-6 lg:mb-8">
                     <h2 className="absolute top-0 left-0 flex items-center right-0 justify-center text-3xl lg:text-6xl font-bold text-[#ec4a56] transform translate-y-2 lg:translate-y-4 -ml-7 drop-shadow-[0_2px_2px_rgba(254,74,86,0.6)] transition-all duration-300 group-hover:scale-105">
                       NIT, CALICUT

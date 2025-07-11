@@ -122,15 +122,16 @@ function Gallery() {
       <div className="fixed inset-0 z-0 pointer-events-none">
         <BgAnimation />
       </div>
-      <div className="relative z-10 bg-white/5 min-h-screen flex flex-col overflow-hidden w-screen max-w-screen box-border">
+      <div className={`relative z-10 bg-white/5 min-h-screen flex flex-col w-screen max-w-screen box-border${isMobile ? ' mobile-scroll-fix' : ''}`}>
         <Header />
-        <main className="flex-1 pt-24 pb-8 px-0 w-screen max-w-screen mx-0 overflow-hidden box-border">
+        <main className={`flex-1 pt-24 pb-8 px-0 w-screen max-w-screen mx-0 box-border${isMobile ? ' overflow-y-auto' : ' overflow-y-hidden'}`}>
           <div className="text-center mb-8">
             <h2 className="text-4xl md:text-5xl font-bold mb-4 text-brand-corel">YESS 2024 Highlights</h2>
             <p className="text-brand-white text-lg">Capturing the best moments from our event</p>
           </div>
           {isMobile ? (
-            <div className="grid grid-cols-1 gap-8">
+            // On mobile, ensure vertical scrolling is always possible
+            <div className="grid grid-cols-1 gap-8 px-4" style={{ maxHeight: 'none', overflowY: 'auto' }}>
             {highlightImages.map((img, idx) => (
               <div
                 key={idx}
@@ -173,7 +174,7 @@ function Gallery() {
             ))}
           </div>
           ) : (
-            <div ref={carouselContainerRef} className="w-screen max-w-screen overflow-x-hidden box-border">
+            <div ref={carouselContainerRef} className="w-screen max-w-screen overflow-x-hidden overflow-y-hidden box-border">
               <Slider ref={sliderRef} {...settings} className="py-8 modern-card-slider w-screen max-w-screen box-border">
                 {highlightImages.map((img, idx) => {
                   const isCenter = getRealCenter(idx) === idx;
@@ -222,7 +223,7 @@ function Gallery() {
                           </div>
               </div>
                       ) : (
-                        <div className="w-full max-w-xs min-h-[340px] h-[340px] flex flex-col justify-center items-center bg-white rounded-none border-none shadow-none p-0 m-0 overflow-hidden">
+                        <div className="w-full max-w-sm min-h-[340px] h-[340px] flex flex-col justify-center items-center bg-white rounded-none border-none shadow-none p-0 m-0 overflow-hidden">
                           <img
                             src={img.src}
                             alt={img.alt}
@@ -253,9 +254,10 @@ function Gallery() {
           z-index: 1;
           opacity: 0.6;
           filter: blur(1px) grayscale(0.2);
+          overflow: visible !important;
         }
         .modern-card-slider .slick-center {
-          transform: scale(1.08) translateY(-10px) !important;
+          transform: scale(1.05) translateY(-10px) !important;
           z-index: 3;
           opacity: 1;
           filter: none;
@@ -272,6 +274,15 @@ function Gallery() {
           z-index: 1;
           opacity: 0.4;
           filter: blur(2px) grayscale(0.3);
+        }
+        /* Mobile scroll fix: ensure vertical scrolling is always possible */
+        @media (max-width: 639px) {
+          .mobile-scroll-fix {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            min-height: 100vh;
+            height: auto;
+          }
         }
       `}</style>
     </div>
