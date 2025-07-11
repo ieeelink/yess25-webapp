@@ -19,21 +19,21 @@ function LandingSection() {
         <p className="text-base lg:text-lg lg:text-xl text-white/80 max-w-2xl nunito-sans-body">Join us for the most anticipated engineering summit of the year</p>
         <div className="pt-2">
           <Link 
-            to="/tickets" 
+            // to="/tickets" 
             className="inline-block px-12 py-4 text-xl bg-[#fe4a56] text-white rounded-full font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-110"
           >
-            Get your Tickets
+            Coming Soon...
           </Link>
         </div>
         {/* Secondary link for registration details or retry payment */}
-        <div className="pt-2">
+        {/* <div className="pt-2">
           <Link
             to="/checkStatus"
             className="inline-block text-base text-white/80 underline hover:text-white transition-all duration-200"
           >
             Get Registration Details / Retry Payment
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );

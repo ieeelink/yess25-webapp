@@ -16,6 +16,7 @@ import TicketDetails from './pages/TicketDetails';
 import axios from 'axios';
 import NotFound from './pages/NotFound';
 import Overlay from './components/Overlay';
+import Gallery from './pages/Gallery';
 
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
@@ -73,6 +74,7 @@ function App() {
             <Route path='/tos' element={<ToS/>}/>
             <Route path='/privacy' element={<Privacy/>}/>
             <Route path="/admin" element={<AdminLogin/>}/>
+            <Route path="/gallery" element={<Gallery />} />
             <Route path="/admin/*" element={<ProtectedRoute />}>
               <Route path="add" element={<AddAdmin/>}/>
               <Route path="ticket-details" element={<TicketDetails/>}/>

@@ -61,8 +61,8 @@ const ContactPopup = ({ isOpen, onClose }) => {
       <div className="space-y-4">
         <div>
           <p className="text-gray-600 mb-1">Email us at:</p>
-          <a href="mailto:ieeeyess2024@gmail.com" className="text-[#fe4a56] hover:text-[#8c0505] font-medium">
-            ieeeyess2024@gmail.com
+          <a href="mailto:ieeeyess2025@gmail.com" className="text-[#fe4a56] hover:text-[#8c0505] font-medium">
+            ieeeyess2025@gmail.com
           </a>
         </div>
 
