@@ -7,77 +7,28 @@ import {
   FaWhatsapp 
 } from 'react-icons/fa';
 
-const Header = ({ onNavigate }) => {
+const Header = ({ onNavigate, currentSection }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [currentSection, setCurrentSection] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
     setLoading(true);
-    
-    // Function to handle page load
-    const handleLoad = () => {
-      setLoading(false);
-    };
-
-    // Add load event listener
+    const handleLoad = () => setLoading(false);
     window.addEventListener('load', handleLoad);
-
-    // If the page is already loaded, stop loading
-    if (document.readyState === 'complete') {
-      setLoading(false);
-    }
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('load', handleLoad);
-    };
+    if (document.readyState === 'complete') setLoading(false);
+    return () => window.removeEventListener('load', handleLoad);
   }, [location]);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      setIsScrolled(scrollPosition > 100); // Adjust this value based on your landing section height
+      setIsScrolled(scrollPosition > 100);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const { state } = location;
-    if (state?.section) {
-      setCurrentSection(state.section);
-    }
-  }, [location]);
-
-  useEffect(() => {
-    const handleHorizontalScroll = () => {
-      const container = document.querySelector('.scrollbar-hide');
-      if (container) {
-        const scrollLeft = container.scrollLeft;
-        const windowWidth = window.innerWidth;
-        const halfWindowWidth = windowWidth / 2;
-        
-        // Calculate which section is more than half visible
-        if (scrollLeft >= windowWidth - halfWindowWidth && scrollLeft < windowWidth * 2 - halfWindowWidth) {
-          setCurrentSection('about');
-        } else if (scrollLeft >= windowWidth * 2 - halfWindowWidth) {
-          setCurrentSection('highlights');
-        } else {
-          setCurrentSection('home');
-        }
-      }
-    };
-
-    const container = document.querySelector('.scrollbar-hide');
-    if (container) {
-      container.addEventListener('scroll', handleHorizontalScroll);
-      return () => container.removeEventListener('scroll', handleHorizontalScroll);
-    }
   }, []);
 
   const toggleMenu = () => {
@@ -89,15 +40,35 @@ const Header = ({ onNavigate }) => {
       navigate('/', { state: { section: sectionId }, replace: true });
     } else if (onNavigate) {
       onNavigate(sectionId);
-      setCurrentSection(sectionId);
     }
     setIsMenuOpen(false);
   };
 
+  // Desktop-only wheel handler to forward scroll to main container
+  const handleHeaderWheel = (e) => {
+    if (window.innerWidth < 1024) return; // Only desktop
+    e.preventDefault();
+    // Forward the event to the main scroll container
+    const mainScrollContainer = document.querySelector('.scrollbar-hide');
+    if (mainScrollContainer) {
+      // Create a new WheelEvent to dispatch
+      const simulatedEvent = new WheelEvent('wheel', {
+        deltaY: e.deltaY,
+        deltaX: e.deltaX,
+        bubbles: true,
+        cancelable: true
+      });
+      mainScrollContainer.dispatchEvent(simulatedEvent);
+    }
+  };
+
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-      isScrolled ? 'bg-[#151515]/90' : 'bg-brand-white'
-    }`}>
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        isScrolled ? 'bg-[#151515]/90' : 'bg-brand-white'
+      }`}
+      onWheel={handleHeaderWheel}
+    >
       {/* Loading Bar */}
       <div className={`h-1 bg-[#fe4a56] transition-all duration-300 ${loading ? 'loading-bar w-full' : 'w-0 opacity-0'}`}></div>
       

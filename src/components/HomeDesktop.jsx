@@ -9,6 +9,7 @@ import Highlights from './sections/Highlights';
 function HomeDesktop() {
   const scrollContainerRef = useRef(null);
   const [isScrollingAboutContent, setIsScrollingAboutContent] = useState(false);
+  const [currentSection, setCurrentSection] = useState('home');
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -33,10 +34,34 @@ function HomeDesktop() {
       container.scrollLeft += scrollAmount;
     };
 
+    const handleScroll = () => {
+      if (!scrollContainer) return;
+      const sections = ['home', 'about', 'highlights'];
+      let minDiff = Infinity;
+      let activeSection = 'home';
+      sections.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          // Find the section whose left edge is closest to the viewport's left
+          const diff = Math.abs(rect.left);
+          if (diff < minDiff) {
+            minDiff = diff;
+            activeSection = id;
+          }
+        }
+      });
+      setCurrentSection(activeSection);
+    };
+
     scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
+    scrollContainer.addEventListener('scroll', handleScroll);
+    // Initial check
+    handleScroll();
 
     return () => {
       scrollContainer.removeEventListener('wheel', handleWheel);
+      scrollContainer.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -57,7 +82,7 @@ function HomeDesktop() {
         <BgAnimation/>
       </div>
       <div className="h-full flex flex-col relative z-10 bg-white/5">
-        <Header onNavigate={scrollToSection} />
+        <Header onNavigate={scrollToSection} currentSection={currentSection} />
         <div 
           ref={scrollContainerRef}
           className="flex-1 overflow-x-auto overflow-y-hidden scrollbar-hide"
@@ -74,7 +99,7 @@ function HomeDesktop() {
             </div>
           </div>
         </div>
-        <SubFooter onNavigate={scrollToSection} />
+        <SubFooter onNavigate={scrollToSection} currentSection={currentSection} />
       </div>
     </div>
   );

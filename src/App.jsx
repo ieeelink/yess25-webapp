@@ -15,6 +15,7 @@ import AddAdmin from './pages/AddAdmin';
 import TicketDetails from './pages/TicketDetails';
 import axios from 'axios';
 import NotFound from './pages/NotFound';
+import Overlay from './components/Overlay';
 
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
@@ -36,7 +37,7 @@ function ProtectedRoute() {
         return;
       }
       try {
-        await axios.get('https://yess25-backend.onrender.com/api/admin/verify', {
+        await axios.get('http://localhost:3001/api/admin/verify', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setIsVerified(true);
@@ -55,28 +56,33 @@ function ProtectedRoute() {
 }
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/tickets" element={<Tickets />} />
-          <Route path='/paymentStatus' element={<Status />} />
-          <Route path='/checkStatus' element={<CheckStatus/>} />
-          <Route path='/payment-callback' element={<PaymentCallback />} />
-          <Route path='/payment-cancelled' element={<PaymentCancelled />} />
-          <Route path='/aboutus' element={<AboutSection/>} />
-          <Route path='/highlights24' element={<Highlights/>}/>
-          <Route path='/tos' element={<ToS/>}/>
-          <Route path='/privacy' element={<Privacy/>}/>
-          <Route path="/admin" element={<AdminLogin/>}/>
-          <Route path="/admin/*" element={<ProtectedRoute />}>
-            <Route path="add" element={<AddAdmin/>}/>
-            <Route path="ticket-details" element={<TicketDetails/>}/>
-          </Route>
-          <Route path="*" element={<NotFound />} />
+  const [showOverlay, setShowOverlay] = useState(false);
 
-      </Routes>
-    </Router>
+  return (
+    <>
+      <Router>
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/tickets" element={<Tickets />} />
+            <Route path='/paymentStatus' element={<Status />} />
+            <Route path='/checkStatus' element={<CheckStatus/>} />
+            <Route path='/payment-callback' element={<PaymentCallback />} />
+            <Route path='/payment-cancelled' element={<PaymentCancelled />} />
+            <Route path='/aboutus' element={<AboutSection/>} />
+            <Route path='/highlights24' element={<Highlights/>}/>
+            <Route path='/tos' element={<ToS/>}/>
+            <Route path='/privacy' element={<Privacy/>}/>
+            <Route path="/admin" element={<AdminLogin/>}/>
+            <Route path="/admin/*" element={<ProtectedRoute />}>
+              <Route path="add" element={<AddAdmin/>}/>
+              <Route path="ticket-details" element={<TicketDetails/>}/>
+            </Route>
+            <Route path="*" element={<NotFound />} />
+
+        </Routes>
+      </Router>
+      <Overlay visible={showOverlay} onClose={() => setShowOverlay(false)} />
+    </>
   );
 }
 

@@ -22,7 +22,7 @@ function AdminLogin() {
       return;
     }
 
-    axios.post('https://yess25-backend.onrender.com/api/admin/login', { username, password })
+    axios.post('http://localhost:3001/api/admin/login', { username, password })
       .then(response => {
         setSuccess(response.data.message);
         if (response.data.token) {
@@ -34,8 +34,14 @@ function AdminLogin() {
         setPassword('');
       })
       .catch(error => {
-        if (error.response && error.response.data && error.response.data.message) {
-          setError(error.response.data.message);
+        if (error.response && error.response.data) {
+          if (error.response.data.error) {
+            setError(error.response.data.error);
+          } else if (error.response.data.message) {
+            setError(error.response.data.message);
+          } else {
+            setError('An error occurred during login. Please try again.');
+          }
         } else {
           setError('An error occurred during login. Please try again.');
         }

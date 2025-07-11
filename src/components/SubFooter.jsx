@@ -1,45 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ContactPopup from './ContactPopup';
+import Overlay from './Overlay';
 
-const SubFooter = ({ onNavigate }) => {
+const SubFooter = ({ onNavigate, currentSection }) => {
   const [isContactOpen, setIsContactOpen] = useState(false);
-  const [currentSection, setCurrentSection] = useState('home');
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const { state } = location;
-    if (state?.section) {
-      setCurrentSection(state.section);
-    }
-  }, [location]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const container = document.querySelector('.scrollbar-hide');
-      if (container) {
-        const scrollLeft = container.scrollLeft;
-        const windowWidth = window.innerWidth;
-        const halfWindowWidth = windowWidth / 2;
-        
-        // Calculate which section is more than half visible
-        if (scrollLeft >= windowWidth - halfWindowWidth && scrollLeft < windowWidth * 2 - halfWindowWidth) {
-          setCurrentSection('highlights');
-        } else if (scrollLeft >= windowWidth * 2 - halfWindowWidth) {
-          setCurrentSection('about');
-        } else {
-          setCurrentSection('home');
-        }
-      }
-    };
-
-    const container = document.querySelector('.scrollbar-hide');
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
-      return () => container.removeEventListener('scroll', handleScroll);
-    }
-  }, []);
 
   const toggleContact = (e) => {
     e.stopPropagation();
@@ -55,12 +23,30 @@ const SubFooter = ({ onNavigate }) => {
       navigate('/', { state: { section: sectionId } });
     } else if (onNavigate) {
       onNavigate(sectionId);
-      setCurrentSection(sectionId);
+    }
+  };
+
+  // Desktop-only wheel handler to forward scroll to main container
+  const handleFooterWheel = (e) => {
+    if (window.innerWidth < 1024) return; // Only desktop
+    e.preventDefault();
+    const mainScrollContainer = document.querySelector('.scrollbar-hide');
+    if (mainScrollContainer) {
+      const simulatedEvent = new WheelEvent('wheel', {
+        deltaY: e.deltaY,
+        deltaX: e.deltaX,
+        bubbles: true,
+        cancelable: true
+      });
+      mainScrollContainer.dispatchEvent(simulatedEvent);
     }
   };
 
   return (
-    <footer className="bg-brand-white text-brand-black pb-3 lg:pb-6">
+    <footer
+      className="bg-brand-white text-brand-black pb-3"
+      onWheel={handleFooterWheel}
+    >
       <div className="w-screen px-4 lg:px-8">
         <div className="flex items-center justify-between h-12 lg:h-20">
           {/* Desktop Navigation */}
@@ -68,14 +54,21 @@ const SubFooter = ({ onNavigate }) => {
             <button 
               onClick={() => handleNavigation('highlights')}
               className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
-                currentSection === 'about' ? 'text-[#fe4a56]' : 'text-white hover:text-[#8c0505]'
+                currentSection === 'highlights' ? 'text-[#fe4a56]' : 'text-white hover:text-[#8c0505]'
               }`}
             >
               HIGHLIGHTS'24
             </button>
             <div className="flex flex-col items-center">
               <div className="text-sm text-gray-400">
-                © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+                <button
+                  className="bg-transparent border-none p-0 m-0 text-inherit cursor-pointer"
+                  style={{ background: 'none', border: 'none', padding: 0, margin: 0 }}
+                  onClick={() => setIsOverlayOpen(true)}
+                  type="button"
+                >
+                  © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+                </button>
               </div>
               <div className="flex space-x-4 mt-2">
                 <Link to="/tos" className="text-sm text-gray-400 hover:text-[#fe4a56] transition-colors">
@@ -102,7 +95,14 @@ const SubFooter = ({ onNavigate }) => {
           {/* Mobile Copyright */}
           <div className="lg:hidden w-full text-center">
             <div className="text-sm text-gray-400">
-              © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+              <button
+                className="bg-transparent border-none p-0 m-0 text-inherit cursor-pointer"
+                style={{ background: 'none', border: 'none', padding: 0, margin: 0 }}
+                onClick={() => setIsOverlayOpen(true)}
+                type="button"
+              >
+                © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+              </button>
             </div>
             <div className="flex justify-center space-x-4">
               <Link to="/terms" className="text-sm text-gray-400 hover:text-[#fe4a56] transition-colors">
@@ -115,6 +115,14 @@ const SubFooter = ({ onNavigate }) => {
           </div>
         </div>
       </div>
+      <Overlay visible={isOverlayOpen} />
+      {isOverlayOpen && (
+        <div
+          className="fixed inset-0 z-[10000]"
+          onClick={() => setIsOverlayOpen(false)}
+          style={{ cursor: 'pointer' }}
+        />
+      )}
     </footer>
   );
 };

@@ -43,9 +43,9 @@ function Highlights() {
   ];
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full min-h-screen flex flex-col">
       <div className="flex-1 w-full pt-12 md:pt-20 relative z-10 overflow-y-auto md:overflow-hidden">
-        <h1 className="text-4xl font-bold text-white text-right px-4 md:pr-30 pt-10">Highlights'24</h1>
+        <h1 className="text-3xl lg:text-5xl font-bold text-white text-right px-4 md:pr-30 pt-10">Highlights'24</h1>
         <div className="flex flex-col md:flex-row min-h-[calc(100vh-20rem)] md:h-[calc(100vh-16rem)]">
           <div className="w-full md:w-3/5 flex items-center justify-center p-4 md:py-8 pt-12 md:pt-8 overflow-visible order-1 md:order-2">
             <div className="relative w-full max-w-xs sm:max-w-md md:w-[500px] h-[450px] md:h-[350px] mx-auto">
@@ -58,22 +58,22 @@ function Highlights() {
                   key={index}
                   src={image.src}
                   alt={image.alt}
-                    className={`absolute object-cover rounded-lg shadow-lg transition-transform duration-300 ${positionClasses[index].replace(/z-\d+/, "")} ${scaleClass} ${zClass}`}
+                  className={`absolute object-cover rounded-lg shadow-lg transition-transform duration-300 highlights-img-responsive highlights-img-pos-step${index} ${positionClasses[index].replace(/z-\d+/, "")} ${scaleClass} ${zClass}`}
                   onTouchStart={() => handleTouchStart(index)}
                   onTouchEnd={handleTouchEnd}
-                    onMouseEnter={() => handleMouseEnter(index)}
-                    onMouseLeave={handleMouseLeave}
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseLeave={handleMouseLeave}
                 />
                 );
               })}
             </div>
           </div>
           <div className="w-full md:w-2/5 p-4 md:p-12 text-white order-2 md:order-1 flex flex-col justify-center">
-            <h2 className="text-2xl font-bold mb-4 pb-10">Largest Engineering Student's meet in Kerala</h2>
-            <p className="mb-4 text-lg nunito-sans-body">
+            <h2 className="text-2xl font-bold mb-4 pb-10 aboutsection-text-responsive">Largest Engineering Student's meet in Kerala</h2>
+            <p className="mb-4 text-lg nunito-sans-body aboutsection-text-responsive">
               The 1-day event predominantly provided an opportunity for the student community to meet highly intelligent and motivated peers, enhanced their skills through trainings, workshops, and competitions, and geared them up to face the professional career ahead of them.
             </p>
-            <ul className="list-disc list-inside text-lg space-y-2 nunito-sans-body">
+            <ul className="list-disc list-inside text-lg space-y-2 nunito-sans-body aboutsection-text-responsive">
               <li>Largest student meet of IEEE Kerala Section</li>
               <li>Sessions led by pioneers of the industry</li>
               <li>Competitions to prove your mettle</li>

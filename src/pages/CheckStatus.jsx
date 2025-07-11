@@ -54,12 +54,13 @@ function CheckStatus() {
               )}
 
               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                <Link 
-                  to="/tickets" 
+                <button
+                  type="button"
+                  onClick={() => navigate(-1)}
                   className="text-gray-400 hover:text-white transition-colors text-sm underline order-2 md:order-1"
                 >
-                  Back to Registration
-                </Link>
+                  Back
+                </button>
                 <button
                   type="submit"
                   disabled={isLoading}
