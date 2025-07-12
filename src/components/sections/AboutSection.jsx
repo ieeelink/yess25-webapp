@@ -198,13 +198,40 @@ function AboutSection() {
 
             {/* New IEEE Sections Container - Visible on all devices */}
             <div className="w-full mt-8 lg:mt-0 lg:min-w-full lg:flex-shrink-0 aboutsection-text-responsive">
-              <div className="w-full mb-6 aboutsection-text-responsive">
-                <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE</h3>
-                <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
-                  IEEE (Institute of Electrical and Electronics Engineers) is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity. With over 400,000 members in more than 160 countries, IEEE fosters innovation, education, and collaboration through conferences, publications, and standards.
-                </p>
+              {/* Desktop: IEEE and IEEE Kerala Section side by side */}
+              <div className="hidden lg:grid lg:grid-cols-2 lg:gap-8 lg:mb-6">
+                <div className="w-full aboutsection-text-responsive">
+                  <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE</h3>
+                  <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
+                    IEEE (Institute of Electrical and Electronics Engineers) is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity. With over 400,000 members in more than 160 countries, IEEE fosters innovation, education, and collaboration through conferences, publications, and standards.
+                  </p>
+                </div>
+                
+                <div className="w-full aboutsection-text-responsive">
+                  <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE Kerala Section</h3>
+                  <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
+                    IEEE Kerala Section, established in 1983, is one of the most active and innovative sections of IEEE in India. It serves as the regional hub for IEEE activities in Kerala, supporting over 10,000 members including professionals, academicians, and students. The section is renowned for its dynamic student network, technical conferences, workshops, and humanitarian initiatives.
+                  </p>
+                </div>
               </div>
-              
+
+              {/* Mobile: IEEE and IEEE Kerala Section stacked */}
+              <div className="lg:hidden">
+                <div className="w-full mb-6 aboutsection-text-responsive">
+                  <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE</h3>
+                  <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
+                    IEEE (Institute of Electrical and Electronics Engineers) is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity. With over 400,000 members in more than 160 countries, IEEE fosters innovation, education, and collaboration through conferences, publications, and standards.
+                  </p>
+                </div>
+                
+                <div className="w-full mb-6 aboutsection-text-responsive">
+                  <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE Kerala Section</h3>
+                  <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
+                    IEEE Kerala Section, established in 1983, is one of the most active and innovative sections of IEEE in India. It serves as the regional hub for IEEE activities in Kerala, supporting over 10,000 members including professionals, academicians, and students. The section is renowned for its dynamic student network, technical conferences, workshops, and humanitarian initiatives.
+                  </p>
+                </div>
+              </div>
+
               <div className="w-full mb-6 aboutsection-text-responsive">
                 <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE LINK</h3>
                 <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
@@ -212,12 +239,7 @@ function AboutSection() {
                 </p>
               </div>
               
-              <div className="w-full mb-6 aboutsection-text-responsive">
-                <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE Kerala Section</h3>
-                <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
-                  IEEE Kerala Section, established in 1983, is one of the most active and innovative sections of IEEE in India. It serves as the regional hub for IEEE activities in Kerala, supporting over 10,000 members including professionals, academicians, and students. The section is renowned for its dynamic student network, technical conferences, workshops, and humanitarian initiatives.
-                </p>
-              </div>
+              
             </div>
           </div>
 

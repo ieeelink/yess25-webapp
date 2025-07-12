@@ -20,7 +20,7 @@ const SECRET_MESSAGES = [
   '404: joke not found 😂',
 ];
 
-const Overlay = ({ visible }) => {
+const Overlay = ({ visible, onClose }) => {
   const [inputValue, setInputValue] = useState('');
   const [history, setHistory] = useState([]); // {cmd, output}
   const terminalRef = useRef(null);
@@ -53,7 +53,13 @@ const Overlay = ({ visible }) => {
         output = 'Available commands:\n' +
           'help      - Show this help message\n' +
           'yess      - Reveal a secret message\n' +
-          'whoami    - Show website and owner info';
+          'whoami    - Show website and owner info\n' +
+          'exit      - Close the terminal';
+      } else if (cmd.toLowerCase() === 'exit') {
+        if (onClose) {
+          onClose();
+        }
+        return;
       } else if (cmd.toLowerCase() === 'yess') {
         const randomIdx = Math.floor(Math.random() * SECRET_MESSAGES.length);
         output = SECRET_MESSAGES[randomIdx];
