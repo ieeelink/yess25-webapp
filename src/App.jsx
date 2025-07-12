@@ -17,6 +17,7 @@ import axios from 'axios';
 import NotFound from './pages/NotFound';
 import Gallery from './pages/Gallery';
 import Overlay from './components/Overlay';
+import Gallery from './pages/Gallery';
 
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
@@ -61,25 +62,25 @@ function App() {
 
   return (
     <>
-    <Router>
-      <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/tickets" element={<Tickets />} />
-          <Route path='/paymentStatus' element={<Status />} />
-          <Route path='/checkStatus' element={<CheckStatus/>} />
-          <Route path='/payment-callback' element={<PaymentCallback />} />
-          <Route path='/payment-cancelled' element={<PaymentCancelled />} />
-          <Route path='/aboutus' element={<AboutSection/>} />
-          <Route path='/highlights24' element={<Highlights/>}/>
-          <Route path='/gallery' element={<Gallery/>}/>
-          <Route path='/tos' element={<ToS/>}/>
-          <Route path='/privacy' element={<Privacy/>}/>
-          <Route path="/admin" element={<AdminLogin/>}/>
-          <Route path="/admin/*" element={<ProtectedRoute />}>
-            <Route path="add" element={<AddAdmin/>}/>
-            <Route path="ticket-details" element={<TicketDetails/>}/>
-          </Route>
-          <Route path="*" element={<NotFound />} />
+      <Router>
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/tickets" element={<Tickets />} />
+            <Route path='/paymentStatus' element={<Status />} />
+            <Route path='/checkStatus' element={<CheckStatus/>} />
+            <Route path='/payment-callback' element={<PaymentCallback />} />
+            <Route path='/payment-cancelled' element={<PaymentCancelled />} />
+            <Route path='/aboutus' element={<AboutSection/>} />
+            <Route path='/highlights24' element={<Highlights/>}/>
+            <Route path='/tos' element={<ToS/>}/>
+            <Route path='/privacy' element={<Privacy/>}/>
+            <Route path="/admin" element={<AdminLogin/>}/>
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/admin/*" element={<ProtectedRoute />}>
+              <Route path="add" element={<AddAdmin/>}/>
+              <Route path="ticket-details" element={<TicketDetails/>}/>
+            </Route>
+            <Route path="*" element={<NotFound />} />
 
         </Routes>
       </Router>

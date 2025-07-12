@@ -1,5 +1,5 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Highlights() {
   const [activeImage, setActiveImage] = useState(null);
@@ -82,13 +82,13 @@ function Highlights() {
               <li>Opportunity to meet like-minded people</li>
             </ul>
             <div className="pt-6 pl-4">
-              <Link 
-                to="/gallery" 
-                className="inline-block px-8 py-3 text-xl bg-[#fe4a56] text-white rounded-xl font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-110"
-              >
-                Know More
-              </Link>
-            </div>
+          <Link 
+            to="/gallery" 
+            className="inline-block px-12 py-4 text-xl bg-[#fe4a56] text-white rounded-full font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-110"
+          >
+            Know More
+          </Link>
+        </div>
           </div>
         </div>
       </div>
