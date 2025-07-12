@@ -76,20 +76,20 @@ function Gallery() {
   const handleCloseContactPopup = useCallback(() => setShowContactPopup(false), []);
 
   return (
-    <div className="h-screen bg-brand-black text-white overflow-hidden w-full relative">
+    <div className="min-h-screen bg-brand-black text-white overflow-x-hidden w-full relative">
       <div className="fixed inset-0 z-0 pointer-events-none">
         <BgAnimation />
       </div>
-      <div className="relative z-10 bg-white/5 h-screen flex flex-col overflow-hidden w-full">
+      <div className="relative z-10 bg-white/5 min-h-screen flex flex-col w-full">
         <Header />
-        <main className="flex-1 pt-24 px-4 w-full mx-auto overflow-hidden">
-          <div className="text-center mb-4">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-brand-corel">YESS 2024 Highlights</h2>
-            <p className="text-brand-white text-lg">Capturing the best moments from our event</p>
+        <main className="flex-1 pt-16 md:pt-20 lg:pt-24 px-2 sm:px-4 w-full mx-auto">
+          <div className="text-center mb-2 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 text-brand-corel">YESS 2024 Highlights</h2>
+            <p className="text-brand-white text-sm sm:text-base lg:text-lg">Capturing the best moments from our event</p>
           </div>
           
           {/* Image Carousel */}
-          <div className="max-w-7xl mx-auto px-4 lg:px-4 relative">
+          <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-4 relative">
             <Swiper
               effect={'coverflow'}
               grabCursor={true}
@@ -100,6 +100,28 @@ function Gallery() {
               speed={800}
               breakpoints={{
                 320: {
+                  slidesPerView: 1,
+                  spaceBetween: 10,
+                  coverflowEffect: {
+                    rotate: 0,
+                    stretch: 0,
+                    depth: 30,
+                    modifier: 1,
+                    slideShadows: false,
+                  }
+                },
+                640: {
+                  slidesPerView: 1,
+                  spaceBetween: 15,
+                  coverflowEffect: {
+                    rotate: 0,
+                    stretch: 0,
+                    depth: 40,
+                    modifier: 1,
+                    slideShadows: false,
+                  }
+                },
+                768: {
                   slidesPerView: 1,
                   spaceBetween: 20,
                   coverflowEffect: {
@@ -150,15 +172,15 @@ function Gallery() {
               className="mySwiper"
             >
               {highlightImages.map((image, index) => (
-                <SwiperSlide key={index} className="w-full h-[calc(100vh-16rem)] lg:w-[80%] lg:h-[calc(100vh-20rem)] xl:w-[75%] xl:h-[calc(100vh-20rem)] 2xl:w-[70%] 2xl:h-[calc(100vh-20rem)]">
+                <SwiperSlide key={index} className="w-full h-[calc(100vh-12rem)] sm:h-[calc(100vh-14rem)] md:h-[calc(100vh-16rem)] lg:w-[80%] lg:h-[calc(100vh-20rem)] xl:w-[75%] xl:h-[calc(100vh-20rem)] 2xl:w-[70%] 2xl:h-[calc(100vh-20rem)]">
                   <div className="relative w-full h-full rounded-lg overflow-hidden shadow-2xl">
                     <img
                       src={image.src}
                       alt={image.alt}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 md:p-4 lg:p-5">
-                      <p className="text-white text-xs md:text-sm lg:text-base font-medium">{image.alt}</p>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2 sm:p-3 md:p-4 lg:p-5">
+                      <p className="text-white text-xs sm:text-sm md:text-base lg:text-lg font-medium">{image.alt}</p>
                     </div>
                   </div>
                 </SwiperSlide>
@@ -166,12 +188,12 @@ function Gallery() {
             </Swiper>
             
             {/* Custom Navigation Buttons */}
-            <div className="absolute top-1/2 left-4 right-4 transform -translate-y-1/2 z-20 flex justify-between">
-              <button className="swiper-button-prev custom-swiper-button bg-white/30 hover:bg-red-500 text-red-500 hover:text-white p-2 md:p-3 rounded-full transition-all duration-300 backdrop-blur-sm group">
-                <FiArrowLeft className="w-4 h-4 md:w-5 md:h-5 text-red-500 group-hover:text-white transition-colors duration-300" />
+            <div className="absolute top-1/2 left-2 sm:left-4 right-2 sm:right-4 transform -translate-y-1/2 z-20 flex justify-between">
+              <button className="swiper-button-prev custom-swiper-button bg-white/30 hover:bg-red-500 text-red-500 hover:text-white p-1.5 sm:p-2 md:p-3 rounded-full transition-all duration-300 backdrop-blur-sm group">
+                <FiArrowLeft className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-red-500 group-hover:text-white transition-colors duration-300" />
               </button>
-              <button className="swiper-button-next custom-swiper-button bg-white/30 hover:bg-red-500 text-red-500 hover:text-white p-2 md:p-3 rounded-full transition-all duration-300 backdrop-blur-sm group">
-                <FiArrowRight className="w-4 h-4 md:w-5 md:h-5 text-red-500 group-hover:text-white transition-colors duration-300" />
+              <button className="swiper-button-next custom-swiper-button bg-white/30 hover:bg-red-500 text-red-500 hover:text-white p-1.5 sm:p-2 md:p-3 rounded-full transition-all duration-300 backdrop-blur-sm group">
+                <FiArrowRight className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-red-500 group-hover:text-white transition-colors duration-300" />
               </button>
             </div>
           </div>
@@ -188,14 +210,26 @@ function Gallery() {
       
       <style>{`
         body {
-          overflow: hidden;
+          overflow-x: hidden;
         }
         
         .swiper {
           width: 100%;
-          height: calc(100vh - 16rem);
+          height: calc(100vh - 12rem);
           padding-top: 0;
           padding-bottom: 0;
+        }
+        
+        @media (min-width: 640px) {
+          .swiper {
+            height: calc(100vh - 14rem);
+          }
+        }
+        
+        @media (min-width: 768px) {
+          .swiper {
+            height: calc(100vh - 16rem);
+          }
         }
         
         @media (min-width: 1024px) {
@@ -210,7 +244,19 @@ function Gallery() {
           background-position: center;
           background-size: cover;
           width: 100%;
-          height: calc(100vh - 16rem);
+          height: calc(100vh - 12rem);
+        }
+        
+        @media (min-width: 640px) {
+          .swiper-slide {
+            height: calc(100vh - 14rem);
+          }
+        }
+        
+        @media (min-width: 768px) {
+          .swiper-slide {
+            height: calc(100vh - 16rem);
+          }
         }
         
         @media (min-width: 1024px) {
@@ -242,10 +288,24 @@ function Gallery() {
         
         .custom-swiper-button {
           position: static !important;
-          width: 48px !important;
-          height: 48px !important;
+          width: 36px !important;
+          height: 36px !important;
           margin: 0 !important;
           z-index: 30 !important;
+        }
+        
+        @media (min-width: 640px) {
+          .custom-swiper-button {
+            width: 42px !important;
+            height: 42px !important;
+          }
+        }
+        
+        @media (min-width: 768px) {
+          .custom-swiper-button {
+            width: 48px !important;
+            height: 48px !important;
+          }
         }
         
         @media (max-width: 1023px) {
