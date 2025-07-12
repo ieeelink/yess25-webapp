@@ -189,8 +189,8 @@ const Header = ({ onNavigate, currentSection }) => {
                 <div className="space-y-4 text-center">
                   <div>
                     <p className="text-white/80 mb-1">Email us at:</p>
-                    <a href="mailto:ieeeyess2024@gmail.com" className="text-[#fe4a56] hover:text-[#8c0505] font-medium">
-                      ieeeyess2024@gmail.com
+                    <a href="mailto:ieeeyess2025@gmail.com" className="text-[#fe4a56] hover:text-[#8c0505] font-medium">
+                      ieeeyess2025@gmail.com
                     </a>
                   </div>
 
