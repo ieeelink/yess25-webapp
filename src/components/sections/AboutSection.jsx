@@ -160,7 +160,7 @@ function AboutSection() {
               <div className="w-full mb-8 lg:mb-0 aboutsection-text-responsive">
                 <h3 className="text-xl lg:text-2xl aboutsection-text-responsive font-semibold text-white mb-3 lg:mb-4">About YESS</h3>
                 <p className="text-white text-lg aboutsection-text-responsive nunito-sans-body leading-relaxed">
-                  IEEE YESS'25, the largest engineering students summit by IEEE, is a collaborative initiative of IEEE India Council and IEEE Kerala Section. Set to take place on August 16th at NIT Calicut, this summit will bring together over 5,000 participants from across India, creating a platform for students to connect with industry professionals and enhance their professional development.
+                  IEEE YESS'25, the largest engineering students summit by IEEE, is a collaborative initiative of IEEE India Council and IEEE Kerala Section. Set to take place on September 20th at NIT Calicut, this summit will bring together over 5,000 participants from across India, creating a platform for students to connect with industry professionals and enhance their professional development.
                 </p>
               </div>
               
