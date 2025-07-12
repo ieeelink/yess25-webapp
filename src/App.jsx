@@ -15,7 +15,6 @@ import AddAdmin from './pages/AddAdmin';
 import TicketDetails from './pages/TicketDetails';
 import axios from 'axios';
 import NotFound from './pages/NotFound';
-import Gallery from './pages/Gallery';
 import Overlay from './components/Overlay';
 import Gallery from './pages/Gallery';
 
