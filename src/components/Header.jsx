@@ -173,7 +173,7 @@ const Header = ({ onNavigate, currentSection }) => {
                 >
                   EVENTS
                 </Link> */}
-                <Link 
+                {/* <Link 
                   to="/tickets" 
                   className={`block px-3 py-2 rounded-md font-medium transition-all duration-300 hover:scale-105 ${
                     location.pathname === '/tickets' ? 'text-[#fe4a56] text-xl' : 'text-brand-white hover:text-brand-darkred text-lg'
@@ -181,7 +181,7 @@ const Header = ({ onNavigate, currentSection }) => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   TICKETS
-                </Link>
+                </Link> */}
               </div>
               
               {/* Contact Section */}
