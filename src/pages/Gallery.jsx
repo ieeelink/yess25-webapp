@@ -14,37 +14,54 @@ const NOTE_HIGHLIGHT = '#590404';
 
 const highlightImages = [
   {
+    src: '/images/Highlight21.jpeg',
+    alt: 'Inaugration',
+  },
+  {
+    src: '/images/Highlight20.jpeg',
+    alt: 'The Dignitaries',
+  },
+  {
     src: '/images/Highlight1.webp',
-    alt: "The world's first AI-designed, VR-powered fashion show",
+    alt: "Drone and RC Car Show",
   },
   {
-    src: '/images/Highlight2.webp',
-    alt: "India's inaugural Assistive Technology Makeathon",
+    src: '/images/Highlight9.webp',
+    alt: 'INARA: When Fashion meets Technology',
   },
   {
-    src: '/images/Highlight3.webp',
-    alt: "India's first Datathon in partnership with IEEE Dataport",
-  },
-  {
-    src: '/images/Highlight4.webp',
-    alt: 'Industry Face-to-Face Mentoring Program',
-  },
-  {
-    src: '/images/Highlight5.webp',
-    alt: 'Humanitarian Project Expo',
+    src: '/images/Highlight10.jpeg',
+    alt: "INARA: The world's first AI-designed, VR-powered fashion show",
   },
   {
     src: '/images/Highlight6.webp',
-    alt: 'Experience India\'s first water metro ride',
+    alt: "Automotive Expo by VTS Kerala Chapter",
   },
   {
-    src: '/images/Highlight7.webp',
-    alt: 'Robotics and Drone expo',
+    src: '/images/Highlight12.jpeg',
+    alt: 'Industry Mentoring Program',
   },
   {
-    src: '/images/Highlight8.webp',
-    alt: 'Disaster management workshops',
+    src: '/images/Highlight13.jpeg',
+    alt: 'Industry Mentoring Program',
   },
+  {
+    src: '/images/Highlight18.jpeg',
+    alt: 'Steel and Motion Expo by IEEE RAS Kerala Chapter',
+  },
+  {
+    src: '/images/Highlight19.jpeg',
+    alt: 'Assistive Technology Makethon',
+  },
+  {
+    src: '/images/Highlight2.webp',
+    alt: "LINK Team 2024",
+  },
+  {
+    src: '/images/Highlight5.webp',
+    alt: 'Crazy Vibes...',
+  },
+
 ];
 
 function Gallery() {

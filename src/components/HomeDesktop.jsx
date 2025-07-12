@@ -5,8 +5,9 @@ import BgAnimation from './BgAnimation';
 import LandingSection from './sections/LandingSection';
 import AboutSection from './sections/AboutSection';
 import Highlights from './sections/Highlights';
+import PricingSection from './sections/PricingSection';
 
-function HomeDesktop() {
+function HomeDesktop({ onContactClick, isContactPopupOpen, onCloseContactPopup }) {
   const scrollContainerRef = useRef(null);
   const [isScrollingAboutContent, setIsScrollingAboutContent] = useState(false);
   const [currentSection, setCurrentSection] = useState('home');
@@ -94,12 +95,21 @@ function HomeDesktop() {
             <div id="about" className="flex-none w-full h-full">
               <AboutSection />
             </div>
+            {/* <div className="flex-none w-full h-full">
+              <PricingSection />
+            </div> */}
             <div id="highlights" className="flex-none w-full h-full">
               <Highlights />
             </div>
           </div>
         </div>
-        <SubFooter onNavigate={scrollToSection} currentSection={currentSection} />
+        <SubFooter 
+          onNavigate={scrollToSection} 
+          currentSection={currentSection}
+          onContactClick={typeof onContactClick === 'function' ? onContactClick : undefined}
+          isContactPopupOpen={isContactPopupOpen}
+          onCloseContactPopup={onCloseContactPopup}
+        />
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ const InfiniteScroll = ({ images }) => {
         {images.map((image, index) => (
           <div
             key={index}
-            className="mx-3 sm:mx-6 flex items-center justify-center"
+            className="mx-12 sm:mx-20 flex items-center justify-center"
           >
             <img
               src={image}

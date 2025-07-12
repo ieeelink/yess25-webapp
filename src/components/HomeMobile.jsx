@@ -5,8 +5,9 @@ import BgAnimation from './BgAnimation';
 import LandingSection from './sections/LandingSection';
 import AboutSection from './sections/AboutSection';
 import Highlights from './sections/Highlights';
+import PricingSection from './sections/PricingSection';
 
-function HomeMobile() {
+function HomeMobile({ onContactClick, isContactPopupOpen, onCloseContactPopup }) {
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
@@ -28,11 +29,17 @@ function HomeMobile() {
           <section id="about" className="backdrop-blur-sm bg-black/5">
             <AboutSection />
           </section>
+          {/* <PricingSection /> */}
           <section id="highlights" className="backdrop-blur-sm bg-black/5">
             <Highlights />
           </section>
         </main>
-        <SubFooter onNavigate={scrollToSection} />
+        <SubFooter 
+          onNavigate={scrollToSection}
+          onContactClick={typeof onContactClick === 'function' ? onContactClick : undefined}
+          isContactPopupOpen={isContactPopupOpen}
+          onCloseContactPopup={onCloseContactPopup}
+        />
       </div>
     </div>
   );

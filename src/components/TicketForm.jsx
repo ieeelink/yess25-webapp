@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { motion, AnimatePresence } from 'framer-motion';
 import Lottie from 'lottie-react';
 import planeLottie from './iCVMii0Ol1.json';
+import { MdClose } from 'react-icons/md';
 
 // Validation schema
 const validationSchema = yup.object({
@@ -140,7 +141,7 @@ async function displayRazorpay(amount, id, paymentProcessingRef) {
   paymentObject.open();
 }
 
-const TicketForm = () => {
+const TicketForm = ({ onClose }) => {
   const {
     register,
     handleSubmit,
@@ -168,6 +169,21 @@ const TicketForm = () => {
   const [showSpinner, setShowSpinner] = useState(false);
   const [planeAnimKey, setPlaneAnimKey] = useState(0);
   const [showPlane, setShowPlane] = useState(false);
+  const navigate = useNavigate();
+  const [formCols, setFormCols] = useState('md:grid-cols-2');
+
+  useEffect(() => {
+    function updateFormCols() {
+      if (window.innerWidth >= 768 && window.innerHeight < 825) {
+        setFormCols('md:grid-cols-3');
+      } else {
+        setFormCols('md:grid-cols-2');
+      }
+    }
+    updateFormCols();
+    window.addEventListener('resize', updateFormCols);
+    return () => window.removeEventListener('resize', updateFormCols);
+  }, []);
 
   // Show plane icon only on hover or loading
   const handleMouseEnter = (e) => {
@@ -343,8 +359,21 @@ const TicketForm = () => {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-lg border border-white/20">
-        <h1 className="text-4xl font-bold text-white mb-8 text-left">Registration Form</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-4xl font-bold text-white text-left">Registration Form</h1>
+          <button
+            type="button"
+            aria-label="Close form"
+            onClick={() => {
+              if (onClose) onClose();
+              navigate('/');
+            }}
+            className="text-white hover:text-[#fe4a56] focus:outline-none p-2 rounded-full transition-colors"
+          >
+            <MdClose className="w-7 h-7" />
+          </button>
+        </div>
+        <div className={`grid grid-cols-1 ${formCols} gap-6`}>
           {/* Full Name */}
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-white mb-1">

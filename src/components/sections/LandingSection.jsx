@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 function LandingSection() {
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div id="landing" className="w-full h-full flex items-center justify-center">
       <div className="flex flex-col items-center justify-center text-center px-4 space-y-4">
         {/* YESS Logo - Only visible on desktop */}
         <div className="hidden lg:block mb-8">

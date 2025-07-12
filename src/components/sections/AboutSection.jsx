@@ -10,7 +10,7 @@ function AboutSection() {
     '/IEEE.png',
     '/KS White.png',
     '/LINK White.png',
-    '/nitc2.svg',
+    // '/nitc2.svg',
     '/nitc.png',
   ];
 
@@ -137,7 +137,7 @@ function AboutSection() {
   }, []);
 
   return (
-    <div ref={aboutSectionRef} data-about-section className="w-full min-h-screen flex flex-col items-center justify-center">
+    <div id="about" ref={aboutSectionRef} data-about-section className="w-full min-h-screen flex flex-col items-center justify-center">
       <main className="flex-grow flex flex-col lg:flex-row items-center justify-center min-h-0 w-screen relative z-10 lg:px-8">
         <div className="w-full px-4 lg:px-0 md:px-6 flex flex-col min-h-0 flex-1 aboutsection-text-responsive" style={{height: '100%', minHeight: 0, maxWidth: 'min(1600px, 100vw)'}}>
           {/* Infinite Scroll Section - Moved to top */}
@@ -145,7 +145,7 @@ function AboutSection() {
             <InfiniteScroll images={partnerImages} />
           </div>
 
-          <div className="w-full md:mb-4 ">
+          <div className="w-full md:mb-4 lg:mb-6">
             <h1 className="text-3xl lg:text-5xl font-bold text-white text-right">About Us</h1>
           </div>
 
@@ -156,15 +156,15 @@ function AboutSection() {
             style={{minHeight: 0}}
           >
             {/* All About Content Container */}
-            <div className="w-full lg:min-w-full lg:flex-shrink-0">
-              <div className="w-full mb-8 lg:mb-4">
-                <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4">About YESS</h3>
-                <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body">
+            <div className="w-full lg:min-w-full lg:flex-shrink-0 aboutsection-text-responsive">
+              <div className="w-full mb-8 lg:mb-0 aboutsection-text-responsive">
+                <h3 className="text-xl lg:text-2xl aboutsection-text-responsive font-semibold text-white mb-3 lg:mb-4">About YESS</h3>
+                <p className="text-white text-lg aboutsection-text-responsive nunito-sans-body leading-relaxed">
                   IEEE YESS'25, the largest engineering students summit by IEEE, is a collaborative initiative of IEEE India Council and IEEE Kerala Section. Set to take place on August 16th at NIT Calicut, this summit will bring together over 5,000 participants from across India, creating a platform for students to connect with industry professionals and enhance their professional development.
                 </p>
               </div>
               
-              <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8 w-full mb-8 aboutsection-text-responsive">
+              <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8 w-full aboutsection-text-responsive">
                 <div className="flex flex-col justify-center w-full aboutsection-text-responsive">
                   <h3 className="text-xl lg:text-2xl aboutsection-text-responsive font-semibold text-white mb-3 lg:mb-4">Our Host</h3>
                   <div className="lg:hidden w-full relative group mb-6 lg:mb-8">
@@ -182,8 +182,8 @@ function AboutSection() {
                   </p>
                 </div>
                 <div className="hidden lg:flex flex-col justify-center w-full aboutsection-text-responsive">
-                  <div className="w-full relative group aboutsection-text-responsive">
-                    <h2 className="absolute top-8 left-35 flex items-center justify-center text-4xl sm:text-5xl lg:text-6xl aboutsection-text-responsive nitcalicut-text-responsive font-bold text-[#ec4a56] transform translate-y-2 sm:translate-y-4 drop-shadow-[0_2px_2px_rgba(254,74,86,0.6)] transition-all duration-300 group-hover:scale-105">
+                  <div className="w-6/7 relative group aboutsection-text-responsive">
+                    <h2 className="absolute top-6 left-30 flex items-center justify-center text-4xl sm:text-4xl lg:text-5xl aboutsection-text-responsive nitcalicut-text-responsive font-bold text-[#ec4a56] transform translate-y-2 sm:translate-y-4 drop-shadow-[0_2px_2px_rgba(254,74,86,0.6)] transition-all duration-300 group-hover:scale-105">
                       NIT, CALICUT
                     </h2>
                     <img 

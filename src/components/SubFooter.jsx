@@ -1,22 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ContactPopup from './ContactPopup';
 import Overlay from './Overlay';
 
-const SubFooter = ({ onNavigate, currentSection }) => {
-  const [isContactOpen, setIsContactOpen] = useState(false);
-  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+const SubFooter = ({ onNavigate, currentSection, onContactClick, isContactPopupOpen, onCloseContactPopup }) => {
   const location = useLocation();
   const navigate = useNavigate();
-
-  const toggleContact = (e) => {
-    e.stopPropagation();
-    setIsContactOpen(!isContactOpen);
-  };
-
-  const handleCloseContact = () => {
-    setIsContactOpen(false);
-  };
+  const [isOverlayOpen, setIsOverlayOpen] = React.useState(false);
 
   const handleNavigation = (sectionId) => {
     if (location.pathname !== '/') {
@@ -67,7 +57,7 @@ const SubFooter = ({ onNavigate, currentSection }) => {
                   onClick={() => setIsOverlayOpen(true)}
                   type="button"
                 >
-                  © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+                  {new Date().getFullYear()} IEEE LINK. All rights reserved.
                 </button>
               </div>
               <div className="flex space-x-4 mt-2">
@@ -81,14 +71,14 @@ const SubFooter = ({ onNavigate, currentSection }) => {
             </div>
             <div className="relative">
               <button
-                onClick={toggleContact}
+                onClick={onContactClick}
                 className={`text-lg font-medium transition-all duration-300 hover:scale-110 ${
                   location.pathname === '/contact' ? 'text-[#fe4a56]' : 'text-white hover:text-[#8c0505]'
                 }`}
               >
                 CONTACT US
               </button>
-              <ContactPopup isOpen={isContactOpen} onClose={handleCloseContact} />
+              <ContactPopup isOpen={isContactPopupOpen} onClose={onCloseContactPopup} />
             </div>
           </nav>
 
@@ -101,7 +91,7 @@ const SubFooter = ({ onNavigate, currentSection }) => {
                 onClick={() => setIsOverlayOpen(true)}
                 type="button"
               >
-                © {new Date().getFullYear()} IEEE LINK. All rights reserved.
+                9 {new Date().getFullYear()} IEEE LINK. All rights reserved.
               </button>
             </div>
             <div className="flex justify-center space-x-4">
