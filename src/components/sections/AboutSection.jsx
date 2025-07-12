@@ -235,7 +235,7 @@ function AboutSection() {
               <div className="w-full mb-6 aboutsection-text-responsive">
                 <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE LINK</h3>
                 <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
-                  IEEE LINK (Local Integrated Network of Kerala) is a unique initiative by the IEEE Kerala Section, designed to connect and empower IEEE student branches across the state. Established in 2000, LINK acts as a bridge between students and professionals, facilitating leadership development, technical training, and collaborative projects. Members also gain access to a vibrant community, mentorship, and exciting opportunities.
+                  IEEE LINK (Local Integrated Network of Kerala IEEE Students) is a unique initiative by the IEEE Kerala Section, designed to connect and empower IEEE student branches across the state. Established in 2000, LINK acts as a bridge between students and professionals, facilitating leadership development, technical training, and collaborative projects. Members also gain access to a vibrant community, mentorship, and exciting opportunities.
                 </p>
               </div>
               

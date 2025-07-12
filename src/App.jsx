@@ -83,7 +83,6 @@ function App() {
           <Route path="/checkStatus" element={<CheckStatus />} />
           <Route path="/payment-callback" element={<PaymentCallback />} />
           <Route path="/payment-cancelled" element={<PaymentCancelled />} />
-          <Route path="/aboutus" element={<AboutSection />} />
           <Route path="/highlights24" element={<Highlights />} />
           <Route path="/tos" element={<ToS />} />
           <Route path="/privacy" element={<Privacy />} />
