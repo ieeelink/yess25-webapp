@@ -91,11 +91,11 @@ const SubFooter = ({ onNavigate, currentSection, onContactClick, isContactPopupO
                 onClick={() => setIsOverlayOpen(true)}
                 type="button"
               >
-                9 {new Date().getFullYear()} IEEE LINK. All rights reserved.
+                {new Date().getFullYear()} IEEE LINK. All rights reserved.
               </button>
             </div>
             <div className="flex justify-center space-x-4">
-              <Link to="/terms" className="text-sm text-gray-400 hover:text-[#fe4a56] transition-colors">
+              <Link to="/tos" className="text-sm text-gray-400 hover:text-[#fe4a56] transition-colors">
                 Terms of Service
               </Link>
               <Link to="/privacy" className="text-sm text-gray-400 hover:text-[#fe4a56] transition-colors">
