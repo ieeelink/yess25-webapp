@@ -93,7 +93,6 @@ function App() {
             <Route path="add" element={<AddAdmin />} />
             <Route path="ticket-details" element={<TicketDetails />} />
           </Route>
-          <Route path="*" element={<NotFound />} />
 
           {/* Redirects */}
           <Route
@@ -105,6 +104,7 @@ function App() {
             element={<Redirect to="https://docs.google.com/forms/d/e/1FAIpQLScC_kUmGRZTPC3QGTtauYYYUIMgXWzevEGv9DiKqPDLO2dn0Q/viewform" />}
             />
 
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
       <Overlay visible={showOverlay} onClose={() => setShowOverlay(false)} />
