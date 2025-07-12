@@ -1,17 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
+import ContactPopup from '../components/ContactPopup';
 import axios from 'axios';
 
 let globalEmail = null;
 
 function Status() {
-  const navigate = useNavigate();
+  const { ticketId } = useParams();
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showContactPopup, setShowContactPopup] = useState(false);
+
+  // Handler to open popup (for SubFooter)
+  const handleContactClick = useCallback(() => setShowContactPopup(true), []);
+  const handleCloseContactPopup = useCallback(() => setShowContactPopup(false), []);
 
   useEffect(() => {
     // Fetch email from cookie and get payment status
@@ -201,8 +207,13 @@ function Status() {
             </div>
           </div>
         </main>
-        <SubFooter />
+        <SubFooter 
+          onContactClick={handleContactClick}
+          isContactPopupOpen={showContactPopup}
+          onCloseContactPopup={handleCloseContactPopup}
+        />
       </div>
+      <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} />
     </>
   );
 }

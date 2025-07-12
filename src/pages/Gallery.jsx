@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Header from '../components/Header';
 import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
@@ -9,6 +9,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-coverflow';
+import ContactPopup from '../components/ContactPopup';
 
 const NOTE_BG = '#FFFFFF';
 const NOTE_TEXT = '#FE4A56';
@@ -68,6 +69,12 @@ const highlightImages = [
 ];
 
 function Gallery() {
+  const [showContactPopup, setShowContactPopup] = useState(false);
+
+  // Handler to open popup (for SubFooter)
+  const handleContactClick = useCallback(() => setShowContactPopup(true), []);
+  const handleCloseContactPopup = useCallback(() => setShowContactPopup(false), []);
+
   return (
     <div className="h-screen bg-brand-black text-white overflow-hidden w-full relative">
       <div className="fixed inset-0 z-0 pointer-events-none">
@@ -170,8 +177,14 @@ function Gallery() {
           </div>
           
         </main>
-        <SubFooter />
+        <SubFooter 
+          onContactClick={handleContactClick}
+          isContactPopupOpen={showContactPopup}
+          onCloseContactPopup={handleCloseContactPopup}
+        />
       </div>
+      
+      <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} />
       
       <style>{`
         body {

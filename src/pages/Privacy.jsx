@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
+import ContactPopup from '../components/ContactPopup';
 
 function Privacy() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [showContactPopup, setShowContactPopup] = useState(false);
+
+  // Handler to open popup (for SubFooter)
+  const handleContactClick = useCallback(() => setShowContactPopup(true), []);
+  const handleCloseContactPopup = useCallback(() => setShowContactPopup(false), []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -245,8 +251,14 @@ function Privacy() {
         <div className="flex-1 overflow-y-auto md:mt-20 mt-15 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-red-500/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-red-500/70">
           <PrivacyContent />
         </div>
-        <SubFooter onNavigate={scrollToSection} />
+        <SubFooter 
+          onNavigate={scrollToSection}
+          onContactClick={handleContactClick}
+          isContactPopupOpen={showContactPopup}
+          onCloseContactPopup={handleCloseContactPopup}
+        />
       </div>
+      <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} />
     </div>
   );
 }

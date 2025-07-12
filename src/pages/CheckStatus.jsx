@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Header from '../components/Header';
 import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
+import ContactPopup from '../components/ContactPopup';
 import { Link, useNavigate } from 'react-router-dom';
 
 function CheckStatus() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showContactPopup, setShowContactPopup] = useState(false);
   const navigate = useNavigate();
+
+  // Handler to open popup (for SubFooter)
+  const handleContactClick = useCallback(() => setShowContactPopup(true), []);
+  const handleCloseContactPopup = useCallback(() => setShowContactPopup(false), []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -85,8 +91,13 @@ function CheckStatus() {
           </div>
         </main>
 
-        <SubFooter />
+        <SubFooter 
+          onContactClick={handleContactClick}
+          isContactPopupOpen={showContactPopup}
+          onCloseContactPopup={handleCloseContactPopup}
+        />
       </div>
+      <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} />
     </>
   );
 }

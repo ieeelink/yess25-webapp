@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import Header from '../components/Header';
 import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
 import TicketForm from '../components/TicketForm';
+import ContactPopup from '../components/ContactPopup';
 
 function Tickets() {
+  const [showContactPopup, setShowContactPopup] = useState(false);
+
+  // Handler to open popup (for SubFooter)
+  const handleContactClick = useCallback(() => setShowContactPopup(true), []);
+  const handleCloseContactPopup = useCallback(() => setShowContactPopup(false), []);
+
   return (
     <>
       <div className="fixed inset-0 z-0">
@@ -15,8 +22,13 @@ function Tickets() {
         <main className="flex-grow flex items-center justify-center pt-18 px-4 pb-2 md:pt-16">
           <TicketForm />
         </main>
-        <SubFooter />
+        <SubFooter 
+          onContactClick={handleContactClick}
+          isContactPopupOpen={showContactPopup}
+          onCloseContactPopup={handleCloseContactPopup}
+        />
       </div>
+      <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} />
     </>
   );
 }

@@ -52,12 +52,12 @@ const SubFooter = ({ onNavigate, currentSection, onContactClick, isContactPopupO
             <div className="flex flex-col items-center">
               <div className="text-sm text-gray-400">
                 <button
-                  className="bg-transparent border-none p-0 m-0 text-inherit cursor-pointer"
-                  style={{ background: 'none', border: 'none', padding: 0, margin: 0 }}
+                  className="bg-transparent border-none p-0 m-0 text-inherit no-underline"
+                  style={{ background: 'none', border: 'none', padding: 0, margin: 0, textDecoration: 'none', cursor: 'default !important' }}
                   onClick={() => setIsOverlayOpen(true)}
                   type="button"
                 >
-                  {new Date().getFullYear()} IEEE LINK. All rights reserved.
+                  &copy; {new Date().getFullYear()} IEEE LINK. All rights reserved.
                 </button>
               </div>
               <div className="flex space-x-4 mt-2">
@@ -86,12 +86,12 @@ const SubFooter = ({ onNavigate, currentSection, onContactClick, isContactPopupO
           <div className="lg:hidden w-full text-center">
             <div className="text-sm text-gray-400">
               <button
-                className="bg-transparent border-none p-0 m-0 text-inherit cursor-pointer"
-                style={{ background: 'none', border: 'none', padding: 0, margin: 0 }}
+                className="bg-transparent border-none p-0 m-0 text-inherit no-underline"
+                style={{ background: 'none', border: 'none', padding: 0, margin: 0, textDecoration: 'none', cursor: 'default !important' }}
                 onClick={() => setIsOverlayOpen(true)}
                 type="button"
               >
-                {new Date().getFullYear()} IEEE LINK. All rights reserved.
+                &copy; {new Date().getFullYear()} IEEE LINK. All rights reserved.
               </button>
             </div>
             <div className="flex justify-center space-x-4">
