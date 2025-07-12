@@ -137,37 +137,37 @@ function AboutSection() {
   }, []);
 
   return (
-    <div id="about" ref={aboutSectionRef} data-about-section className="w-full min-h-screen flex flex-col items-center justify-center">
-      <main className="flex-grow flex flex-col lg:flex-row items-center justify-center min-h-0 w-screen relative z-10 lg:px-8">
-        <div className="w-full px-4 lg:px-0 md:px-6 flex flex-col min-h-0 flex-1 aboutsection-text-responsive" style={{height: '100%', minHeight: 0, maxWidth: 'min(1600px, 100vw)'}}>
+    <div id="about" ref={aboutSectionRef} data-about-section className="flex flex-col items-center justify-center w-full min-h-screen">
+      <main className="relative z-10 flex flex-col items-center justify-center flex-grow w-screen min-h-0 lg:flex-row lg:px-8">
+        <div className="flex flex-col flex-1 w-full min-h-0 px-4 lg:px-0 md:px-6 aboutsection-text-responsive" style={{height: '100%', minHeight: 0, maxWidth: 'min(1600px, 100vw)'}}>
           {/* Infinite Scroll Section - Moved to top */}
           <div className="mb-8 lg:hidden">
             <InfiniteScroll images={partnerImages} />
           </div>
 
           <div className="w-full md:mb-4 lg:mb-6">
-            <h1 className="text-3xl lg:text-5xl font-bold text-white text-right main-heading-responsive">About Us</h1>
+            <h1 className="text-3xl font-bold text-right text-white lg:text-5xl main-heading-responsive">About Us</h1>
           </div>
 
           {/* Content Scrollable Container - Desktop horizontal scroll */}
           <div 
             ref={contentContainerRef}
-            className="w-full flex flex-col lg:flex-row lg:overflow-x-auto lg:gap-8 scrollbar-hide min-h-0 aboutsection-text-responsive"
+            className="flex flex-col w-full min-h-0 lg:flex-row lg:overflow-x-auto lg:gap-8 scrollbar-hide aboutsection-text-responsive"
             style={{minHeight: 0}}
           >
             {/* All About Content Container */}
             <div className="w-full lg:min-w-full lg:flex-shrink-0 aboutsection-text-responsive">
               <div className="w-full mb-8 lg:mb-0 aboutsection-text-responsive">
-                <h3 className="text-xl lg:text-2xl aboutsection-text-responsive font-semibold text-white mb-3 lg:mb-4">About YESS</h3>
-                <p className="text-white text-lg aboutsection-text-responsive nunito-sans-body leading-relaxed">
-                  IEEE YESS'25, the largest engineering students summit by IEEE, is a collaborative initiative of and IEEE Kerala Section. Set to take place on September 20th at NIT Calicut, this summit will bring together over 5,000 participants from across India, creating a platform for students to connect with industry professionals and enhance their professional development.
+                <h3 className="mb-3 text-xl font-semibold text-white lg:text-2xl aboutsection-text-responsive lg:mb-4">About YESS</h3>
+                <p className="text-lg leading-relaxed text-white aboutsection-text-responsive nunito-sans-body">
+                  IEEE YESS'25, the largest engineering students summit by IEEE, is a collaborative initiative of IEEE LINK and IEEE Kerala Section. Set to take place on September 20th at NIT Calicut, this summit will bring together over 5,000 participants from across India, creating a platform for students to connect with industry professionals and enhance their professional development.
                 </p>
               </div>
               
-              <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-8 w-full aboutsection-text-responsive">
+              <div className="flex flex-col w-full gap-6 lg:grid lg:grid-cols-2 lg:gap-8 aboutsection-text-responsive">
                 <div className="flex flex-col justify-center w-full aboutsection-text-responsive">
-                  <h3 className="text-xl lg:text-2xl aboutsection-text-responsive font-semibold text-white mb-3 lg:mb-4">Our Host</h3>
-                  <div className="lg:hidden w-full relative group mb-6 lg:mb-8">
+                  <h3 className="mb-3 text-xl font-semibold text-white lg:text-2xl aboutsection-text-responsive lg:mb-4">Our Host</h3>
+                  <div className="relative w-full mb-6 lg:hidden group lg:mb-8">
                     <h2 className="absolute top-0 left-0 flex items-center right-0 justify-center text-3xl lg:text-6xl aboutsection-text-responsive nitcalicut-text-responsive font-bold text-[#ec4a56] transform translate-y-2 lg:translate-y-4 -ml-7 drop-shadow-[0_2px_2px_rgba(254,74,86,0.6)] transition-all duration-300 group-hover:scale-105">
                       NIT, CALICUT
                     </h2>
@@ -177,12 +177,12 @@ function AboutSection() {
                       className="w-full h-auto object-contain relative z-10 drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] hover:drop-shadow-[0_8px_16px_rgba(31,41,55,0.9)] hover:scale-105 transition-all duration-300 rounded-2xl"
                     />
                   </div>
-                  <p className="text-white text-lg aboutsection-text-responsive nunito-sans-body leading-relaxed">
+                  <p className="text-lg leading-relaxed text-white aboutsection-text-responsive nunito-sans-body">
                     National Institute of Technology Calicut (NITC), established in 1961, is a premier technical institution under the Ministry of Education, Government of India. Renowned for excellence in engineering and research, NITC offers comprehensive undergraduate, postgraduate, and doctoral programs. Consistently ranked among India's top engineering colleges, it provides a nurturing environment for academic excellence and innovation.
                   </p>
                 </div>
-                <div className="hidden lg:flex flex-col justify-center w-full aboutsection-text-responsive">
-                  <div className="w-6/7 relative group aboutsection-text-responsive">
+                <div className="flex-col justify-center hidden w-full lg:flex aboutsection-text-responsive">
+                  <div className="relative w-6/7 group aboutsection-text-responsive">
                     <h2 className="absolute top-6 left-30 flex items-center justify-center text-4xl sm:text-4xl lg:text-5xl aboutsection-text-responsive nitcalicut-text-responsive font-bold text-[#ec4a56] transform translate-y-2 sm:translate-y-4 drop-shadow-[0_2px_2px_rgba(254,74,86,0.6)] transition-all duration-300 group-hover:scale-105">
                       NIT, CALICUT
                     </h2>
@@ -201,15 +201,15 @@ function AboutSection() {
               {/* Desktop: IEEE and IEEE Kerala Section side by side */}
               <div className="hidden lg:grid lg:grid-cols-2 lg:gap-8 lg:mb-6">
                 <div className="w-full aboutsection-text-responsive">
-                  <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE</h3>
-                  <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
+                  <h3 className="mb-3 text-xl font-semibold text-white lg:text-2xl lg:mb-4 aboutsection-text-responsive">About IEEE</h3>
+                  <p className="text-base leading-relaxed text-white lg:text-lg nunito-sans-body aboutsection-text-responsive">
                     IEEE (Institute of Electrical and Electronics Engineers) is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity. With over 400,000 members in more than 160 countries, IEEE fosters innovation, education, and collaboration through conferences, publications, and standards.
                   </p>
                 </div>
                 
                 <div className="w-full aboutsection-text-responsive">
-                  <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE Kerala Section</h3>
-                  <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
+                  <h3 className="mb-3 text-xl font-semibold text-white lg:text-2xl lg:mb-4 aboutsection-text-responsive">About IEEE Kerala Section</h3>
+                  <p className="text-base leading-relaxed text-white lg:text-lg nunito-sans-body aboutsection-text-responsive">
                     IEEE Kerala Section, established in 1983, is one of the most active and innovative sections of IEEE in India. It serves as the regional hub for IEEE activities in Kerala, supporting over 10,000 members including professionals, academicians, and students. The section is renowned for its dynamic student network, technical conferences, workshops, and humanitarian initiatives.
                   </p>
                 </div>
@@ -218,23 +218,23 @@ function AboutSection() {
               {/* Mobile: IEEE and IEEE Kerala Section stacked */}
               <div className="lg:hidden">
                 <div className="w-full mb-6 aboutsection-text-responsive">
-                  <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE</h3>
-                  <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
+                  <h3 className="mb-3 text-xl font-semibold text-white lg:text-2xl lg:mb-4 aboutsection-text-responsive">About IEEE</h3>
+                  <p className="text-base leading-relaxed text-white lg:text-lg nunito-sans-body aboutsection-text-responsive">
                     IEEE (Institute of Electrical and Electronics Engineers) is the world's largest technical professional organization dedicated to advancing technology for the benefit of humanity. With over 400,000 members in more than 160 countries, IEEE fosters innovation, education, and collaboration through conferences, publications, and standards.
                   </p>
                 </div>
                 
                 <div className="w-full mb-6 aboutsection-text-responsive">
-                  <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE Kerala Section</h3>
-                  <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
+                  <h3 className="mb-3 text-xl font-semibold text-white lg:text-2xl lg:mb-4 aboutsection-text-responsive">About IEEE Kerala Section</h3>
+                  <p className="text-base leading-relaxed text-white lg:text-lg nunito-sans-body aboutsection-text-responsive">
                     IEEE Kerala Section, established in 1983, is one of the most active and innovative sections of IEEE in India. It serves as the regional hub for IEEE activities in Kerala, supporting over 10,000 members including professionals, academicians, and students. The section is renowned for its dynamic student network, technical conferences, workshops, and humanitarian initiatives.
                   </p>
                 </div>
               </div>
 
               <div className="w-full mb-6 aboutsection-text-responsive">
-                <h3 className="text-xl lg:text-2xl font-semibold text-white mb-3 lg:mb-4 aboutsection-text-responsive">About IEEE LINK</h3>
-                <p className="text-white text-base lg:text-lg leading-relaxed nunito-sans-body aboutsection-text-responsive">
+                <h3 className="mb-3 text-xl font-semibold text-white lg:text-2xl lg:mb-4 aboutsection-text-responsive">About IEEE LINK</h3>
+                <p className="text-base leading-relaxed text-white lg:text-lg nunito-sans-body aboutsection-text-responsive">
                   IEEE LINK (Local Integrated Network of Kerala IEEE Students) is a unique initiative by the IEEE Kerala Section, designed to connect and empower IEEE student branches across the state. Established in 2000, LINK acts as a bridge between students and professionals, facilitating leadership development, technical training, and collaborative projects. Members also gain access to a vibrant community, mentorship, and exciting opportunities.
                 </p>
               </div>
