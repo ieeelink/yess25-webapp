@@ -110,7 +110,7 @@ const NewFooter = ({ onShowOverlay }) => {
                 <h3 className="text-xl font-bold text-[#fe4a56]">Quick Links</h3>
                 <div className="space-y-2">
 
-                  <Link 
+                  {/* <Link 
                     to="/checkStatus" 
                     className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
                   >
@@ -121,6 +121,12 @@ const NewFooter = ({ onShowOverlay }) => {
                     className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
                   >
                     Tickets
+                  </Link> */}
+                  <Link 
+                    to="/" 
+                    className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
+                  >
+                    Home
                   </Link>
                 </div>
               </div>
