@@ -2,6 +2,10 @@ import React from 'react';
 import Marquee from 'react-fast-marquee';
 
 const InfiniteScroll = ({ images }) => {
+  // Duplicate images if there are fewer than 8 to avoid spacing issues
+  const minImages = 8;
+  const displayImages = images.length < minImages ? [...images, ...images] : images;
+
   return (
     <div className="w-full overflow-hidden">
       <Marquee
@@ -10,7 +14,7 @@ const InfiniteScroll = ({ images }) => {
         pauseOnHover={false}
         direction="left"
       >
-        {images.map((image, index) => (
+        {displayImages.map((image, index) => (
           <div
             key={index}
             className="mx-12 sm:mx-20 flex items-center justify-center"

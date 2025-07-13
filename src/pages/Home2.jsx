@@ -281,14 +281,14 @@ const Home2 = () => {
             <div className="w-1/2 flex items-center justify-center">
               <div className="w-full h-72 flex items-center justify-center relative">
                 <div className="relative flex items-center justify-center">
-                  <div className="w-1/3 min-w-[180px] max-w-xs h-72 hover:w-full hover:h-full group flex-shrink-0 z-10 mt-0 hover:z-[9999] transition-all duration-300">
-                    <img src="/poster1.webp" alt="YESS Poster 1" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] hover:scale-105 transition-all duration-300" />
+                  <div className="w-1/3 min-w-[180px] max-w-xs aspect-square group flex-shrink-0 z-10 mt-0 hover:z-[9999] transition-all duration-300 hover:scale-115">
+                    <img src="/poster1.webp" alt="YESS Poster 1" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                   </div>
-                  <div className="w-1/3 min-w-[180px] max-w-xs h-72 group hover:w-full hover:h-full flex-shrink-0 -ml-16 z-20 mt-8 hover:z-[9999] transition-all duration-300">
-                    <img src="/poster3.webp" alt="YESS Poster 2" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] hover:scale-105 transition-all duration-300" />
+                  <div className="w-1/3 min-w-[180px] max-w-xs aspect-square group flex-shrink-0 -ml-16 z-20 mt-8 hover:z-[9999] transition-all duration-300 hover:scale-115">
+                    <img src="/poster3.webp" alt="YESS Poster 2" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                   </div>
-                  <div className="w-1/3 min-w-[180px] max-w-xs h-72 group hover:w-full hover:h-full flex-shrink-0 -ml-16 z-10 mt-16 hover:z-[9999] transition-all duration-300">
-                    <img src="/poster2.webp" alt="YESS Poster 3" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] hover:scale-105 transition-all duration-300" />
+                  <div className="w-1/3 min-w-[180px] max-w-xs aspect-square group flex-shrink-0 -ml-16 z-10 mt-16 hover:z-[9999] transition-all duration-300 hover:scale-115">
+                    <img src="/poster2.webp" alt="YESS Poster 3" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                   </div>
                 </div>
               </div>
@@ -322,17 +322,19 @@ const Home2 = () => {
             </div>
 
             {/* Right Div - NIT Calicut Images (like About YESS) */}
-            <div className="w-1/2 flex items-center justify-center">
-              <div className="w-full h-56 aspect-video flex items-center justify-center relative">
-                <div className="relative flex items-center justify-center w-full h-full">
-                  <div className="w-1/3 min-w-[220px] max-w-md h-56 aspect-video group flex-shrink-0 z-10 mt-0 transition-all duration-300 hover:w-full hover:h-80 hover:scale-110 hover:z-[9999]">
+            <div className="w-1/2 flex flex-col items-center justify-center">
+              <div className="w-full mb-6">
+                <div className="flex w-full justify-center gap-8">
+                  <div className="w-1/2 min-w-[80px] max-w-xs aspect-video group flex-shrink-0 transition-all duration-300 hover:scale-115 hover:z-[9999]">
                     <img src="/nit_college.png" alt="NIT Calicut 1" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                   </div>
-                  <div className="w-1/3 min-w-[220px] max-w-md h-56 aspect-video group flex-shrink-0 -ml-16 z-20 mt-8 transition-all duration-300 hover:w-full hover:h-80 hover:scale-110 hover:z-[9999]">
-                    <img src="/nitc1.webp" alt="NIT Calicut 2" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
+                  <div className="w-1/2 min-w-[80px] max-w-xs aspect-video group flex-shrink-0 transition-all duration-300 hover:scale-115 hover:z-[9999]">
+                    <img src="/nitc2.png" alt="NIT Calicut 2" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                   </div>
-                  <div className="w-1/3 min-w-[220px] max-w-md h-56 aspect-video group flex-shrink-0 -ml-16 z-10 mt-16 transition-all duration-300 hover:w-full hover:h-80 hover:scale-110 hover:z-[9999]">
-                    <img src="/nitc2.webp" alt="NIT Calicut 3" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
+                </div>
+                <div className="flex w-full justify-center mt-4">
+                  <div className="w-2/3 min-w-[80px] max-w-xs aspect-video group flex-shrink-0 transition-all duration-300 hover:scale-115 hover:z-[9999]">
+                    <img src="/nitc1.webp" alt="NIT Calicut 3" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                   </div>
                 </div>
               </div>
@@ -401,12 +403,21 @@ const Home2 = () => {
             <div className="w-full mb-12">
               <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Our Host</h3>
               <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">National Institute of Technology Calicut</h2>
-              <div className="w-full relative group mb-6">
-                <img 
-                  src="/nit_college.png" 
-                  alt="NIT Calicut" 
-                  className="w-full h-auto object-contain relative z-10 drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] hover:drop-shadow-[0_8px_16px_rgba(31,41,55,0.9)] hover:scale-105 transition-all duration-300 rounded-2xl"
-                />
+              {/* 2-row, 2+1 image layout for mobile */}
+              <div className="w-full mb-6">
+                <div className="flex w-full justify-center gap-4">
+                  <div className="w-1/2 min-w-[140px] max-w-md aspect-video group flex-shrink-0 transition-all duration-300 hover:scale-105 hover:z-[9999]">
+                    <img src="/nit_college.png" alt="NIT Calicut 1" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
+                  </div>
+                  <div className="w-1/2 min-w-[140px] max-w-md aspect-video group flex-shrink-0 transition-all duration-300 hover:scale-105 hover:z-[9999]">
+                    <img src="/nitc2.webp" alt="NIT Calicut 2" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
+                  </div>
+                </div>
+                <div className="flex w-full justify-center mt-4">
+                  <div className="w-2/3 min-w-[140px] max-w-md aspect-video group flex-shrink-0 transition-all duration-300 hover:scale-105 hover:z-[9999]">
+                    <img src="/nitc1.webp" alt="NIT Calicut 3" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
+                  </div>
+                </div>
               </div>
               <p className="text-white text-base nunito-sans-body leading-relaxed">
                 National Institute of Technology Calicut (NITC), established in 1961, is a premier technical institution under the Ministry of Education, Government of India. Renowned for excellence in engineering and research, NITC offers comprehensive undergraduate, postgraduate, and doctoral programs. Consistently ranked among India's top engineering colleges, it provides a nurturing environment for academic excellence and innovation.
