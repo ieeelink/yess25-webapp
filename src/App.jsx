@@ -78,11 +78,11 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/tickets" element={<Tickets />} />
+          {/* <Route path="/tickets" element={<Tickets />} />
           <Route path="/paymentStatus" element={<Status />} />
           <Route path="/checkStatus" element={<CheckStatus />} />
           <Route path="/payment-callback" element={<PaymentCallback />} />
-          <Route path="/payment-cancelled" element={<PaymentCancelled />} />
+          <Route path="/payment-cancelled" element={<PaymentCancelled />} /> */}
           <Route path="/highlights24" element={<Highlights />} />
           <Route path="/tos" element={<ToS />} />
           <Route path="/privacy" element={<Privacy />} />
