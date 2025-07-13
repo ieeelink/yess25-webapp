@@ -31,7 +31,12 @@ function BgAnimation() {
     };
   }, []);
 
-  return <div ref={vantaRef} className="absolute inset-0 z-0" />;
+  return (
+    <div className="absolute inset-0 z-0">
+      <div ref={vantaRef} className="absolute inset-0 z-0" />
+      <div className="absolute inset-0 z-10 bg-[#9f9f9f]/5 pointer-events-none" />
+    </div>
+  );
 }
 
 export default BgAnimation; 

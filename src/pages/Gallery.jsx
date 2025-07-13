@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Header from '../components/Header';
-import SubFooter from '../components/SubFooter';
+import Header2 from '../components/Header2';
+import NewFooter from '../components/NewFooter';
 import BgAnimation from '../components/BgAnimation';
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -81,7 +81,7 @@ function Gallery() {
         <BgAnimation />
       </div>
       <div className="relative z-10 bg-white/5 min-h-screen flex flex-col w-full">
-        <Header />
+        <Header2 />
         <main className="flex-1 pt-16 md:pt-20 lg:pt-24 px-2 sm:px-4 w-full mx-auto">
           <div className="text-center mb-2 sm:mb-4">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 text-brand-corel">YESS 2024 Highlights</h2>
@@ -199,11 +199,7 @@ function Gallery() {
           </div>
           
         </main>
-        <SubFooter 
-          onContactClick={handleContactClick}
-          isContactPopupOpen={showContactPopup}
-          onCloseContactPopup={handleCloseContactPopup}
-        />
+        <NewFooter/>
       </div>
       
       <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} />

@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Header from '../components/Header';
-import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
-import ContactPopup from '../components/ContactPopup';
 
 function Privacy() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
@@ -247,18 +244,18 @@ function Privacy() {
         <BgAnimation />
       </div>
       <div className="h-full flex flex-col relative z-10 bg-white/10">
-        <Header onNavigate={scrollToSection} />
+        {/* <Header onNavigate={scrollToSection} /> */}
         <div className="flex-1 overflow-y-auto md:mt-20 mt-15 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-red-500/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-red-500/70">
           <PrivacyContent />
         </div>
-        <SubFooter 
+        {/* <SubFooter 
           onNavigate={scrollToSection}
           onContactClick={handleContactClick}
           isContactPopupOpen={showContactPopup}
           onCloseContactPopup={handleCloseContactPopup}
-        />
+        /> */}
       </div>
-      <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} />
+      {/* <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} /> */}
     </div>
   );
 }

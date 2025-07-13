@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Header from '../components/Header';
-import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
-import ContactPopup from '../components/ContactPopup';
 import axios from 'axios';
 
 let globalEmail = null;
@@ -89,7 +86,7 @@ function Status() {
     <>
       <BgAnimation />
       <div className="min-h-screen flex flex-col relative">
-        <Header />
+        {/* <Header /> */}
         <main className="flex-grow flex items-center justify-center px-4 py-8">
           <div className="w-full max-w-2xl">
             <div className="bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-lg border border-white/20">
@@ -207,13 +204,13 @@ function Status() {
             </div>
           </div>
         </main>
-        <SubFooter 
+        {/* <SubFooter 
           onContactClick={handleContactClick}
           isContactPopupOpen={showContactPopup}
           onCloseContactPopup={handleCloseContactPopup}
-        />
+        /> */}
       </div>
-      <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} />
+      {/* <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} /> */}
     </>
   );
 }

@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Header from '../components/Header';
-import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
-import ContactPopup from '../components/ContactPopup';
 
 function ToS() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);

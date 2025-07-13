@@ -4,16 +4,15 @@ import {
   Route,
   Navigate,
   Outlet,
+  useLocation,
 } from "react-router-dom";
-import Home from "./pages/Home";
+import Home2 from "./pages/Home2";
 import Tickets from "./pages/Tickets";
 import Status from "./pages/Status";
 import CheckStatus from "./pages/CheckStatus";
 import PaymentCallback from "./pages/PaymentCallback";
 import PaymentCancelled from "./pages/PaymentCancelled";
-import AboutSection from "./components/sections/AboutSection";
 import { useEffect, useState } from "react";
-import Highlights from "./components/sections/Highlights";
 import ToS from "./pages/ToS";
 import Privacy from "./pages/Privacy";
 import AdminLogin from "./pages/AdminLogin";
@@ -22,7 +21,7 @@ import TicketDetails from "./pages/TicketDetails";
 import axios from "axios";
 import NotFound from "./pages/NotFound";
 import Overlay from "./components/Overlay";
-import Gallery from "./pages/Gallery";
+import NewFooter from "./components/NewFooter";
 
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
@@ -73,41 +72,44 @@ function ProtectedRoute() {
 function App() {
   const [showOverlay, setShowOverlay] = useState(false);
 
+  // FooterWrapper is a child of Router, so useLocation is safe here
+  function FooterWrapper() {
+    const location = useLocation();
+    const isAdminRoute = location.pathname.startsWith('/admin');
+    if (isAdminRoute) return null;
+    return <NewFooter onShowOverlay={() => setShowOverlay(true)} />;
+  }
+
   return (
-    <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          {/* <Route path="/tickets" element={<Tickets />} />
-          <Route path="/paymentStatus" element={<Status />} />
-          <Route path="/checkStatus" element={<CheckStatus />} />
-          <Route path="/payment-callback" element={<PaymentCallback />} />
-          <Route path="/payment-cancelled" element={<PaymentCancelled />} /> */}
-          <Route path="/highlights24" element={<Highlights />} />
-          <Route path="/tos" element={<ToS />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/admin/*" element={<ProtectedRoute />}>
-            <Route path="add" element={<AddAdmin />} />
-            <Route path="ticket-details" element={<TicketDetails />} />
-          </Route>
-
-          {/* Redirects */}
-          <Route
-            path="/call_for_events"
-            element={<Redirect to="https://forms.gle/5XL2nyVjFCNBgnmt6" />}
-          />
-          <Route
-            path="/mascot"
-            element={<Redirect to="https://docs.google.com/forms/d/e/1FAIpQLScC_kUmGRZTPC3QGTtauYYYUIMgXWzevEGv9DiKqPDLO2dn0Q/viewform" />}
-            />
-
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home2 />} />
+        {/* <Route path="/tickets" element={<Tickets />} /> */}
+        <Route path="/paymentStatus" element={<Status />} />
+        <Route path="/checkStatus" element={<CheckStatus />} />
+        <Route path="/payment-callback" element={<PaymentCallback />} />
+        <Route path="/payment-cancelled" element={<PaymentCancelled />} />
+        <Route path="/tos" element={<ToS />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/*" element={<ProtectedRoute />}>
+          <Route path="add" element={<AddAdmin />} />
+          <Route path="ticket-details" element={<TicketDetails />} />
+        </Route>
+        {/* Redirects */}
+        <Route
+          path="/call_for_events"
+          element={<Redirect to="https://forms.gle/5XL2nyVjFCNBgnmt6" />}
+        />
+        <Route
+          path="/mascot"
+          element={<Redirect to="https://docs.google.com/forms/d/e/1FAIpQLScC_kUmGRZTPC3QGTtauYYYUIMgXWzevEGv9DiKqPDLO2dn0Q/viewform" />}
+        />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <FooterWrapper />
       <Overlay visible={showOverlay} onClose={() => setShowOverlay(false)} />
-    </>
+    </Router>
   );
 }
 

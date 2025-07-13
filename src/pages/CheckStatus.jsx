@@ -1,8 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import Header from '../components/Header';
-import SubFooter from '../components/SubFooter';
 import BgAnimation from '../components/BgAnimation';
-import ContactPopup from '../components/ContactPopup';
 import { Link, useNavigate } from 'react-router-dom';
 
 function CheckStatus() {
@@ -32,7 +29,6 @@ function CheckStatus() {
     <>
       <BgAnimation/>
       <div className="min-h-screen flex flex-col relative">
-        <Header />
         
         <main className="flex-grow flex items-center justify-center px-4 py-8 mt-20 md:mt-0">
           <div className="w-full max-w-2xl">          
@@ -90,14 +86,7 @@ function CheckStatus() {
             </form>
           </div>
         </main>
-
-        <SubFooter 
-          onContactClick={handleContactClick}
-          isContactPopupOpen={showContactPopup}
-          onCloseContactPopup={handleCloseContactPopup}
-        />
       </div>
-      <ContactPopup isOpen={showContactPopup} onClose={handleCloseContactPopup} />
     </>
   );
 }

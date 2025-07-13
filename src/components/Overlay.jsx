@@ -41,6 +41,14 @@ const Overlay = ({ visible, onClose }) => {
 
   if (!visible) return null;
 
+  const handleBackgroundClick = () => {
+    if (onClose) onClose();
+  };
+
+  const handleBoxClick = (e) => {
+    e.stopPropagation();
+  };
+
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
@@ -80,8 +88,8 @@ const Overlay = ({ visible, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85">
-      <div className="bg-zinc-900 rounded-xl shadow-2xl border border-zinc-700 w-full max-w-2xl min-h-[340px] max-h-[80vh] flex flex-col p-0 mx-2 sm:mx-4 md:mx-0 md:p-0" style={{width: '100%', maxWidth: '32rem'}}>
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85" onClick={handleBackgroundClick}>
+      <div className="bg-zinc-900 rounded-xl shadow-2xl border border-zinc-700 w-full max-w-2xl min-h-[340px] max-h-[80vh] flex flex-col p-0 mx-2 sm:mx-4 md:mx-0 md:p-0" style={{width: '100%', maxWidth: '32rem'}} onClick={handleBoxClick}>
         <div
           ref={terminalRef}
           className="flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6 font-mono text-sm sm:text-base text-zinc-100 custom-scrollbar"
