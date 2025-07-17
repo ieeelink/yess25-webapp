@@ -22,7 +22,7 @@ function AdminLogin() {
       return;
     }
 
-    axios.post('http://localhost:3001/api/admin/login', { username, password })
+    axios.post('https://yess25-backend.railway.internal/api/admin/login', { username, password })
       .then(response => {
         setSuccess(response.data.message);
         if (response.data.token) {

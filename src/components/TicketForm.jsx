@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -8,6 +9,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Lottie from 'lottie-react';
 import planeLottie from './iCVMii0Ol1.json';
 import { MdClose } from 'react-icons/md';
+import CheckStatus from '../pages/CheckStatus';
+import Status from '../pages/Status';
 
 // Validation schema
 const validationSchema = yup.object({
@@ -89,7 +92,7 @@ function loadScript(src) {
   });
 }
 
-async function displayRazorpay(amount, id, paymentProcessingRef) {
+async function displayRazorpay(amount, id, paymentProcessingRef, onPaymentComplete) {
   const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
   if (!res) {
     alert('Razorpay failed to load!!');
@@ -97,7 +100,7 @@ async function displayRazorpay(amount, id, paymentProcessingRef) {
     return;
   }
   const options = {
-    key: import.meta.env.VITE_RAZORPAY_TEST_KEY_ID,
+    key: import.meta.env.VITE_RAZORPAY_KEY_ID,
     amount: amount,
     currency: 'INR',
     name: "IEEE LINK",
@@ -109,7 +112,7 @@ async function displayRazorpay(amount, id, paymentProcessingRef) {
     },
     handler: function (response) {
       // Payment successful, keep loading state active until callback completes
-      fetch('http://localhost:3001/api/payment/success-callback', {
+      fetch('https://yess25-backend.railway.internal/api/payment/success-callback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +125,7 @@ async function displayRazorpay(amount, id, paymentProcessingRef) {
       })
         .then((response) => response.json())
         .then((data) => {
-          window.location.href = '/paymentStatus';
+          if (onPaymentComplete) onPaymentComplete();
         })
         .catch((error) => {
           alert('Payment verification failed. Please contact support.');
@@ -171,6 +174,28 @@ const TicketForm = ({ onClose }) => {
   const [showPlane, setShowPlane] = useState(false);
   const navigate = useNavigate();
   const [formCols, setFormCols] = useState('md:grid-cols-2');
+  const [showCheckStatus, setShowCheckStatus] = useState(false);
+  const [showStatus, setShowStatus] = useState(false);
+
+  // Use a stable callback for closing the modal
+  const handleCloseCheckStatus = useCallback(() => {
+    setShowCheckStatus(false);
+  }, []);
+
+  // Move CheckStatusModal INSIDE TicketForm so it can access setShowCheckStatus
+  function CheckStatusModal() {
+    const modalContent = (
+      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-sm min-h-screen overflow-y-auto py-8 pointer-events-auto">
+        <div className="relative w-full max-w-2xl mx-auto pointer-events-auto">
+          <CheckStatus onClose={handleCloseCheckStatus} />
+        </div>
+      </div>
+    );
+    if (typeof document !== 'undefined' && document.body) {
+      return ReactDOM.createPortal(modalContent, document.body);
+    }
+    return modalContent;
+  }
 
   useEffect(() => {
     function updateFormCols() {
@@ -196,7 +221,7 @@ const TicketForm = ({ onClose }) => {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/colleges')
+    axios.get('https://yess25-backend.railway.internal/api/colleges')
       .then(res => {
         setColleges(res.data.colleges || []);
       })
@@ -323,13 +348,13 @@ const TicketForm = ({ onClose }) => {
       ieeeVerified: false
     };
     try {
-      const response = await axios.post('http://localhost:3001/api/payment', formDataWithVerification);
+      const response = await axios.post('https://yess25-backend.railway.internal/api/payment', formDataWithVerification);
       const serverresponse = response.data;
       setIsPaymentProcessing(true);
       paymentProcessingRef.current = true;
       document.cookie = `email=${serverresponse.notes.email}; path=/; max-age=${14*24*60*60}`;
       window.updatePaymentProcessingState = setIsPaymentProcessing;
-      displayRazorpay(serverresponse.amount, serverresponse.id, paymentProcessingRef);
+      displayRazorpay(serverresponse.amount, serverresponse.id, paymentProcessingRef, () => setShowStatus(true));
     } catch (error) {
       if (error.response && error.response.status === 409) {
         setError(error.response.message || 'This email is already registered');
@@ -356,16 +381,22 @@ const TicketForm = ({ onClose }) => {
   const PLANE_PATH = "M2,18 L18,2 L13,13 L22,8 L2,18 Z"; // stylized paper plane pointing top-right
   const SPINNER_PATH = "M12,2 A10,10 0 1,1 11.99,2 Z"; // circle for spinner
 
+  if (showStatus) {
+    return <Status />;
+  }
+
   return (
     <div className="w-full max-w-2xl mx-auto">
+      {/* CheckStatus Modal */}
+      {showCheckStatus && <CheckStatusModal />}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-lg border border-white/20">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold text-white text-left">Registration Form</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-left">Registration Form</h1>
           <button
             type="button"
             aria-label="Close form"
             onClick={() => {
-              if (onClose) onClose();
+              if (onClose) return onClose();
               navigate('/');
             }}
             className="text-white hover:text-[#fe4a56] focus:outline-none p-2 rounded-full transition-colors"
@@ -668,12 +699,13 @@ const TicketForm = ({ onClose }) => {
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <Link
-            to="/checkStatus"
+          <button
+            type="button"
+            onClick={() => setShowCheckStatus(true)}
             className="text-gray-400 hover:text-white transition-colors text-sm underline order-2 md:order-1"
           >
             Check registration or retry failed payment
-          </Link>
+          </button>
           <button
             type="submit"
             disabled={isSubmitting || isLoading || isPaymentProcessing}

@@ -51,7 +51,7 @@ function ProtectedRoute() {
         return;
       }
       try {
-        await axios.get('http://localhost:3001/api/admin/verify', {
+        await axios.get('https://yess25-backend.railway.internal/api/admin/verify', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setIsVerified(true);
@@ -71,6 +71,13 @@ function ProtectedRoute() {
 
 function App() {
   const [showOverlay, setShowOverlay] = useState(false);
+  const [showTicketForm, setShowTicketForm] = useState(false);
+  const [showCheckStatus, setShowCheckStatus] = useState(false);
+
+  const closeAllPopups = () => {
+    setShowTicketForm(false);
+    setShowCheckStatus(false);
+  };
 
   // FooterWrapper is a child of Router, so useLocation is safe here
   function FooterWrapper() {
@@ -83,13 +90,14 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home2 />} />
-        {/* <Route path="/tickets" element={<Tickets />} /> */}
-        {/* <Route path="/paymentStatus" element={<Status />} />
-        <Route path="/checkStatus" element={<CheckStatus />} />
-        <Route path="/payment-callback" element={<PaymentCallback />} />
-        <Route path="/payment-cancelled" element={<PaymentCancelled />} /> */}
-        <Route path="/tos" element={<ToS />} />
+        <Route path="/" element={
+          <Home2
+            showTicketForm={showTicketForm}
+            setShowTicketForm={setShowTicketForm}
+            showCheckStatus={showCheckStatus}
+            setShowCheckStatus={setShowCheckStatus}
+          />
+        } />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/*" element={<ProtectedRoute />}>

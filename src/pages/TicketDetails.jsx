@@ -32,7 +32,7 @@ function TicketDetails() {
           setLoading(false);
           return;
         }
-        const response = await axios.get('http://localhost:3001/api/admin/data', {
+        const response = await axios.get('https://yess25-backend.railway.internal/api/admin/data', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setTickets(response.data);
@@ -68,7 +68,7 @@ function TicketDetails() {
     ));
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`http://localhost:3001/api/verifyieee/${ticketId}`, {
+      const response = await axios.post(`https://yess25-backend.railway.internal/api/verifyieee/${ticketId}`, {
         ieeeVerificationCompleted: true,
         ieeeVerified: value
       }, {
@@ -171,7 +171,7 @@ function TicketDetails() {
                     try {
                       const username = localStorage.getItem('admin');
                       const token = localStorage.getItem('token');
-                      const response = await axios.post('http://localhost:3001/api/admin/changepassword', {
+                      const response = await axios.post('https://yess25-backend.railway.internal/api/admin/changepassword', {
                         username,
                         currentPassword,
                         newPassword
