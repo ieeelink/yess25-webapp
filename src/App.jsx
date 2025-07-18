@@ -22,6 +22,9 @@ import axios from "axios";
 import NotFound from "./pages/NotFound";
 import Overlay from "./components/Overlay";
 import NewFooter from "./components/NewFooter";
+import About from "./pages/About";
+import Pricing from "./pages/Pricing";
+import Contact from "./pages/Contact";
 
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
@@ -99,6 +102,9 @@ function App() {
           />
         } />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/*" element={<ProtectedRoute />}>
           <Route path="add" element={<AddAdmin />} />
@@ -113,6 +119,7 @@ function App() {
           path="/mascot"
           element={<Redirect to="https://docs.google.com/forms/d/e/1FAIpQLScC_kUmGRZTPC3QGTtauYYYUIMgXWzevEGv9DiKqPDLO2dn0Q/viewform" />}
         />
+        <Route path="/ToS" element={<ToS />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <FooterWrapper />
