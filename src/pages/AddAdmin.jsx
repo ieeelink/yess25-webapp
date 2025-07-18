@@ -21,7 +21,7 @@ function AddAdmin() {
       return;
     }
     // TODO: Implement actual admin creation logic
-    axios.post('https://yess25-backend.onrender.com/api/admin/adduser', { username, password })
+    axios.post('https://yess25-backend.railway.internal/api/admin/adduser', { username, password })
       .then(response => {
         setSuccess(response.data.message);
         setUsername('');

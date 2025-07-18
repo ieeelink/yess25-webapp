@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiLock, FiLogOut } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import UpdateTicketForm from '../components/UpdateTicketForm';
 
 function TicketDetails() {
   const [tickets, setTickets] = useState([]);
@@ -17,6 +18,9 @@ function TicketDetails() {
   const [institutionFilter, setInstitutionFilter] = useState('');
   const [ieeeFilter, setIeeeFilter] = useState('');
   const [ieeeVerifiedFilter, setIeeeVerifiedFilter] = useState('');
+  const [changePasswordError, setChangePasswordError] = useState('');
+  const [changePasswordSuccess, setChangePasswordSuccess] = useState('');
+  const [editingTicket, setEditingTicket] = useState(null); // ticket being edited
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +32,7 @@ function TicketDetails() {
           setLoading(false);
           return;
         }
-        const response = await axios.get('https://yess25-backend.onrender.com/api/admin/data', {
+        const response = await axios.get('https://yess25-backend.railway.internal/api/admin/data', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setTickets(response.data);
@@ -43,9 +47,8 @@ function TicketDetails() {
   }, []);
 
   const handleEdit = (ticketId) => {
-    // Placeholder for edit functionality
-    console.log(`Editing ticket: ${ticketId}`);
-    alert(`Editing ticket: ${ticketId}`);
+    const ticket = tickets.find(t => t._id === ticketId);
+    setEditingTicket(ticket);
   };
 
   const handleLogout = () => {
@@ -65,7 +68,7 @@ function TicketDetails() {
     ));
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`https://yess25-backend.onrender.com/api/verifyieee/${ticketId}`, {
+      const response = await axios.post(`https://yess25-backend.railway.internal/api/verifyieee/${ticketId}`, {
         ieeeVerificationCompleted: true,
         ieeeVerified: value
       }, {
@@ -123,6 +126,8 @@ function TicketDetails() {
           {showChangePassword && (
             <div className="absolute top-20 right-10 bg-[#232326] border border-gray-700 rounded-lg shadow-lg p-6 z-30 w-80 flex flex-col gap-3">
               <h2 className="text-lg font-bold text-white mb-2">Change Password</h2>
+              {changePasswordError && <div className="text-red-500 text-sm mb-2">{changePasswordError}</div>}
+              {changePasswordSuccess && <div className="text-green-500 text-sm mb-2">{changePasswordSuccess}</div>}
               <input
                 type="password"
                 placeholder="Current Password"
@@ -146,13 +151,47 @@ function TicketDetails() {
               />
               <div className="flex gap-2 mt-2">
                 <button
-                  onClick={() => setShowChangePassword(false)}
+                  onClick={() => { setShowChangePassword(false); setChangePasswordError(''); setChangePasswordSuccess(''); }}
                   className="px-4 py-2 rounded bg-gray-600 text-white hover:bg-gray-700 text-sm font-semibold"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={() => { /* handle submit here */ }}
+                  onClick={async () => {
+                    setChangePasswordError('');
+                    setChangePasswordSuccess('');
+                    if (newPassword !== verifyNewPassword) {
+                      setChangePasswordError('New passwords do not match.');
+                      return;
+                    }
+                    if (!currentPassword || !newPassword) {
+                      setChangePasswordError('Please fill all fields.');
+                      return;
+                    }
+                    try {
+                      const username = localStorage.getItem('admin');
+                      const token = localStorage.getItem('token');
+                      const response = await axios.post('https://yess25-backend.railway.internal/api/admin/changepassword', {
+                        username,
+                        currentPassword,
+                        newPassword
+                      }, {
+                        headers: { Authorization: `Bearer ${token}` }
+                      });
+                      setChangePasswordSuccess('Password changed successfully!');
+                      setCurrentPassword('');
+                      setNewPassword('');
+                      setVerifyNewPassword('');
+                      setTimeout(() => {
+                        setShowChangePassword(false);
+                        setChangePasswordSuccess('');
+                      }, 1500);
+                    } catch (err) {
+                      setChangePasswordError(
+                        err.response?.data?.message || 'Failed to change password. Please try again.'
+                      );
+                    }
+                  }}
                   className="px-4 py-2 rounded bg-[#fe4a56] text-white hover:bg-[#8c0505] text-sm font-semibold"
                 >
                   Submit
@@ -241,6 +280,17 @@ function TicketDetails() {
         </span>
       </div>
       <div className="w-full" style={{ height: 'calc(100vh - 72px - 64px)' }}>
+        {/* Show UpdateTicketForm modal if editingTicket is set */}
+        {editingTicket && (
+          <UpdateTicketForm
+            ticket={editingTicket}
+            onClose={() => setEditingTicket(null)}
+            onSave={updatedTicket => {
+              setTickets(prev => prev.map(t => t._id === updatedTicket._id ? updatedTicket : t));
+              setEditingTicket(null);
+            }}
+          />
+        )}
         <div
           className="flex flex-col items-center text-white p-4 pb-16 overflow-y-auto w-full h-full \
             [&::-webkit-scrollbar]:w-2 \

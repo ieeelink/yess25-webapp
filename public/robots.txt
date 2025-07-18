@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://yess.ieee-link.org/sitemap.xml
+
+# Disallow admin pages from being indexed
+Disallow: /admin/
+
+# Allow all other pages
+Allow: /tickets
+Allow: /gallery
+Allow: /tos
+Allow: /privacy
+
+# Crawl delay (optional - be respectful to the server)
+Crawl-delay: 1 

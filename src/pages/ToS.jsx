@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import SubFooter from '../components/SubFooter';
+import React, { useState, useEffect, useCallback } from 'react';
 import BgAnimation from '../components/BgAnimation';
+import Header2 from '../components/Header2';
 
 function ToS() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -13,6 +13,22 @@ function ToS() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const landingHeight = window.innerHeight;
+      
+      if (scrollPosition > landingHeight * 0.5) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToSection = (sectionId) => {
@@ -196,16 +212,18 @@ function ToS() {
   );
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
-      <div className="absolute inset-0 z-0">
+    <div className="min-h-screen bg-[#0a0a0a] text-white relative overflow-x-hidden">
+      <div className="fixed inset-0 z-0">
         <BgAnimation />
       </div>
-      <div className="h-full flex flex-col relative z-10 bg-white/10">
-        <Header onNavigate={scrollToSection} />
-        <div className="flex-1 overflow-y-auto md:mt-20 mt-15 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-red-500/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-red-500/70">
+      <div className="w-full relative z-10">
+        <Header2 isScrolled={isScrolled} onNavigate={scrollToSection} />
+        <div className="md:mt-20 mt-15 min-h-screen bg-black/20 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-red-500/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-red-500/70">
           <ToSContent />
         </div>
-        <SubFooter onNavigate={scrollToSection} />
+        {/* <SubFooter 
+          onNavigate={scrollToSection}
+        /> */}
       </div>
     </div>
   );

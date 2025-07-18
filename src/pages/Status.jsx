@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import SubFooter from '../components/SubFooter';
-import BgAnimation from '../components/BgAnimation';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 let globalEmail = null;
 
-function Status() {
-  const navigate = useNavigate();
+function Status({ closeAllPopups }) {
+  const { ticketId } = useParams();
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showContactPopup, setShowContactPopup] = useState(false);
+
+  // Handler to open popup (for SubFooter)
+  const handleContactClick = useCallback(() => setShowContactPopup(true), []);
+  const handleCloseContactPopup = useCallback(() => setShowContactPopup(false), []);
 
   useEffect(() => {
     // Fetch email from cookie and get payment status
@@ -37,7 +39,7 @@ function Status() {
 
   const fetchPaymentStatus = async (email) => {
     try {
-      const statusResponse = await axios.post('https://yess25-backend.onrender.com/api/paymentstatus', { email });
+      const statusResponse = await axios.post('https://yess25-backend.railway.internal/api/paymentstatus', { email });
       console.log(statusResponse.data.payments[0]);
       setPaymentStatus(statusResponse.data.payments[0]);
     } catch (error) {
@@ -55,7 +57,7 @@ function Status() {
     try {
       setLoading(true);
       document.cookie = `email=${globalEmail}; path=/; max-age=${14*24*60*60}`;
-      const response = await axios.post('https://yess25-backend.onrender.com/api/retrypayment', { email: globalEmail });
+      const response = await axios.post('https://yess25-backend.railway.internal/api/retrypayment', { email: globalEmail });
       if (response.status === 200) {
         window.location.href = response.data.response.redirectUrl;
       }
@@ -79,13 +81,10 @@ function Status() {
     }
   };
 
+  const navigate = useNavigate();
+
   return (
-    <>
-      <BgAnimation />
-      <div className="min-h-screen flex flex-col relative">
-        <Header />
-        <main className="flex-grow flex items-center justify-center px-4 py-8">
-          <div className="w-full max-w-2xl">
+    <div className="w-full max-w-2xl mx-auto my-16">
             <div className="bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-lg border border-white/20">
               <h1 className="text-4xl font-bold text-white mb-8 text-center">Payment Status</h1>
               {loading ? (
@@ -99,7 +98,10 @@ function Status() {
                   <p className="text-white/80">{error}</p>
                   <div className="mt-4 flex justify-center">
                     <button
-                      onClick={() => navigate('/')}
+                      onClick={() => {
+                        if (closeAllPopups) closeAllPopups();
+                        navigate('/');
+                      }}
                       className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
                     >
                       Go to Home
@@ -167,7 +169,10 @@ function Status() {
                         )}
                       </button>
                       <button
-                        onClick={() => navigate('/')}
+                        onClick={() => {
+                          if (closeAllPopups) closeAllPopups();
+                          navigate('/');
+                        }}
                         className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
                       >
                         Go to Home
@@ -177,7 +182,10 @@ function Status() {
                   {paymentStatus.status === 'paid' && (
                     <div className="flex justify-center">
                       <button
-                        onClick={() => navigate('/')}
+                        onClick={() => {
+                          if (closeAllPopups) closeAllPopups();
+                          navigate('/');
+                        }}
                         className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
                       >
                         Go to Home
@@ -190,7 +198,10 @@ function Status() {
                   <p>No payment information found.</p>
                   <div className="mt-4">
                     <button
-                      onClick={() => navigate('/')}
+                      onClick={() => {
+                        if (closeAllPopups) closeAllPopups();
+                        navigate('/');
+                      }}
                       className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
                     >
                       Go to Home
@@ -200,10 +211,6 @@ function Status() {
               )}
             </div>
           </div>
-        </main>
-        <SubFooter />
-      </div>
-    </>
   );
 }
 
