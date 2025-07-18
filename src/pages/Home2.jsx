@@ -130,6 +130,26 @@ const Home2 = ({
     }
   }, [location.state]);
 
+  // Handle hash-based navigation (e.g., /#about)
+  useEffect(() => {
+    if (location.hash) {
+      let sectionId = location.hash.replace('#', '');
+      if (sectionId === 'home') sectionId = 'landing';
+      if (sectionId === 'contact') {
+        setTimeout(() => {
+          const footer = document.querySelector('footer');
+          if (footer) {
+            footer.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+        return;
+      }
+      setTimeout(() => {
+        scrollToSection(sectionId);
+      }, 100);
+    }
+  }, [location.hash]);
+
   // Clear navigation flag when component unmounts
   useEffect(() => {
     return () => {
