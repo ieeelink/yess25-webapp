@@ -77,7 +77,7 @@ const Pricing = () => (
             </div>
           </div>
         </div>
-        <p className="text-lg mt-16 text-center text-white/80 drop-shadow">This is the official Pricing page for YESS, created for Razorpay verification purposes.</p>
+      
       </div>
     </div>
   </div>
