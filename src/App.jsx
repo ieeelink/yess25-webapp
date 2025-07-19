@@ -105,7 +105,7 @@ function App() {
         <Route path="/test-ticket" element={<TicketForm />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/about" element={<About />} />
-        <Route path="/pricing" element={<Pricing />} />
+        {/* <Route path="/pricing" element={<Pricing />} /> */}
         <Route path="/contact" element={<Contact />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/*" element={<ProtectedRoute />}>
