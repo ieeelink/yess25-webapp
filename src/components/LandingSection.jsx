@@ -30,7 +30,7 @@ const LandingSection = ({ scrollToSection, isScrolled, onOpenTicketForm, onOpenC
             >
               Coming Soon...
             </button>
-            <div className="mt-3">
+            {/* <div className="mt-3">
               <button
                 type="button"
                 className="text-white/70 underline hover:text-white transition-colors duration-200 text-base"
@@ -38,7 +38,7 @@ const LandingSection = ({ scrollToSection, isScrolled, onOpenTicketForm, onOpenC
               >
                 Check Registration Status
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
