@@ -22,6 +22,7 @@ import axios from "axios";
 import NotFound from "./pages/NotFound";
 import Overlay from "./components/Overlay";
 import NewFooter from "./components/NewFooter";
+import TicketForm from "./components/TicketForm";
 
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
@@ -98,6 +99,7 @@ function App() {
             setShowCheckStatus={setShowCheckStatus}
           />
         } />
+        <Route path="/test-ticket" element={<TicketForm />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/*" element={<ProtectedRoute />}>
