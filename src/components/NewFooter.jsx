@@ -128,6 +128,42 @@ const NewFooter = ({ onShowOverlay }) => {
                   >
                     Home
                   </Link>
+                  <Link 
+                    to="/about" 
+                    className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
+                  >
+                    About
+                  </Link>
+                  <Link 
+                    to="/pricing" 
+                    className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
+                  >
+                    Pricing
+                  </Link>
+                  <Link 
+                    to="/contact" 
+                    className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
+                  >
+                    Contact
+                  </Link>
+                  {/*  <Link 
+                    to="/ToS" 
+                    className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
+                  >
+                    Terms and Conditions
+                  </Link>
+                  <Link 
+                    to="/privacy" 
+                    className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
+                  >
+                    Privacy Policy
+                  </Link>
+                  <Link 
+                    to="/tos#refunds" 
+                    className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
+                  >
+                    Cancellation/Refund Policy
+                  </Link> */}
                 </div>
               </div>
 
@@ -157,7 +193,7 @@ const NewFooter = ({ onShowOverlay }) => {
                 {/* Legal Links */}
                 <div className="flex flex-wrap justify-center lg:justify-end space-x-6">
                   <Link 
-                    to="/tos" 
+                    to="/ToS" 
                     className="text-gray-400 hover:text-[#fe4a56] transition-colors text-sm"
                   >
                     Terms of Service
