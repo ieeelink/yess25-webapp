@@ -55,7 +55,7 @@ function ProtectedRoute() {
         return;
       }
       try {
-        await axios.get('https://yess25-backend.railway.internal/api/admin/verify', {
+        await axios.get('https://yess25-backend.up.railway.app/api/admin/verify', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setIsVerified(true);

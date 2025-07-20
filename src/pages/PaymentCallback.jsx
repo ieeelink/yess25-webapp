@@ -36,7 +36,7 @@ function PaymentCallback() {
 
         console.log('Sending verification data to backend:', verificationData);
 
-        const response = await axios.post('https://yess25-backend.railway.internal/api/payment/success-callback', verificationData);
+        const response = await axios.post('https://yess25-backend.up.railway.app/api/payment/success-callback', verificationData);
         
         console.log('Backend verification response:', response.data);
 
