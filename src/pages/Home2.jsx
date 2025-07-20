@@ -169,7 +169,7 @@ const Home2 = ({
         <LandingSection scrollToSection={scrollToSection} isScrolled={isScrolled} onOpenTicketForm={() => setShowTicketForm(true)} onOpenCheckStatus={() => setShowCheckStatus(true)} />
         <PartnersSection images={partnerImages} />
         {/* Updates Section */}
-        <UpdatesSection />
+        {/* <UpdatesSection /> */}
         <ExploreEventsSection />
         <AboutSection />
         <HighlightsSection highlightImages={highlightImages} />
