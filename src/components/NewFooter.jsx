@@ -49,16 +49,16 @@ const NewFooter = ({ onShowOverlay }) => {
 
   return (
     <>
-      <footer className="w-full bg-black/80 backdrop-blur-sm text-white border-t border-gray-800">
-        <div className="w-full flex justify-center">
-          <div className="w-full px-4 lg:px-8 md:px-6 py-12" style={{maxWidth: 'min(1600px, 100vw)'}}>
+      <footer className="w-full text-white border-t border-gray-800 bg-black/80 backdrop-blur-sm">
+        <div className="flex justify-center w-full">
+          <div className="w-full px-4 py-12 lg:px-8 md:px-6" style={{maxWidth: 'min(1600px, 100vw)'}}>
             {/* Main Footer Content */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            <div className="grid grid-cols-1 gap-8 mb-8 md:grid-cols-2 lg:grid-cols-4">
               {/* Contact Information */}
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-[#fe4a56]">Contact Us</h3>
                 <div className="space-y-2">
-                  <p className="text-gray-300 text-sm">Email us at:</p>
+                  <p className="text-sm text-gray-300">Email us at:</p>
                   <a 
                     href="mailto:ieeeyess2025@gmail.com" 
                     className="text-[#fe4a56] hover:text-[#ea1212] font-medium transition-colors"
@@ -67,7 +67,7 @@ const NewFooter = ({ onShowOverlay }) => {
                   </a>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-gray-300 text-sm">Follow us on social media:</p>
+                  <p className="text-sm text-gray-300">Follow us on social media:</p>
                   <div className="flex space-x-3">
                     {socialLinks.map((item) => (
                       <a
@@ -134,12 +134,12 @@ const NewFooter = ({ onShowOverlay }) => {
                   >
                     About
                   </Link>
-                  <Link 
+                  {/* <Link 
                     to="/pricing" 
                     className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
                   >
                     Pricing
-                  </Link>
+                  </Link> */}
                   <Link 
                     to="/contact" 
                     className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
@@ -170,19 +170,19 @@ const NewFooter = ({ onShowOverlay }) => {
               {/* About YESS */}
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-[#fe4a56]">About YESS</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
+                <p className="text-sm leading-relaxed text-gray-300">
                   IEEE YESS'25 is the largest engineering students summit by IEEE, bringing together over 5,000 participants from across India for professional development and networking opportunities.
                 </p>
               </div>
             </div>
 
             {/* Bottom Section */}
-            <div className="border-t border-gray-800 pt-8">
-              <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0">
+            <div className="pt-8 border-t border-gray-800">
+              <div className="flex flex-col items-center justify-between space-y-4 lg:flex-row lg:space-y-0">
                 {/* Copyright */}
                 <div className="text-center lg:text-left">
                   <button
-                    className="bg-transparent border-none p-0 m-0 text-inherit no-underline text-gray-400 transition-colors"
+                    className="p-0 m-0 text-gray-400 no-underline transition-colors bg-transparent border-none text-inherit"
                     onClick={onShowOverlay}
                     type="button"
                   >
@@ -191,7 +191,7 @@ const NewFooter = ({ onShowOverlay }) => {
                 </div>
 
                 {/* Legal Links */}
-                <div className="flex flex-wrap justify-center lg:justify-end space-x-6">
+                <div className="flex flex-wrap justify-center space-x-6 lg:justify-end">
                   <Link 
                     to="/ToS" 
                     className="text-gray-400 hover:text-[#fe4a56] transition-colors text-sm"
