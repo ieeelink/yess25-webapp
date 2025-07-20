@@ -25,6 +25,7 @@ const LandingSection = ({ scrollToSection, isScrolled, onOpenTicketForm, onOpenC
           <div className="pt-2">
             <button
               type="button"
+              // id="ticket-button"
               className="inline-block px-12 py-4 text-xl bg-[#fe4a56] text-white rounded-full font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-110"
               // onClick={onOpenTicketForm}
             >
@@ -39,6 +40,7 @@ const LandingSection = ({ scrollToSection, isScrolled, onOpenTicketForm, onOpenC
                 Check Registration Status
               </button>
             </div> */}
+            
           </div>
         </div>
       </div>
