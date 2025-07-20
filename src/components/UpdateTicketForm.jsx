@@ -101,7 +101,7 @@ function UpdateTicketForm({ ticket, onClose, onSave }) {
 
   // Fetch colleges (copied from TicketForm)
   useEffect(() => {
-    axios.get('https://yess25-backend.up.railway.app/api/colleges')
+    axios.get('http://localhost:3001/api/colleges')
       .then(res => {
         setColleges(res.data.colleges || []);
       })

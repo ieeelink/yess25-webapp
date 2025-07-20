@@ -26,6 +26,11 @@ import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
 import TicketForm from "./components/TicketForm";
+import AddEvent from "./pages/AddEvent";
+import AddUpdate from "./pages/AddUpdate";
+import EventDetails from "./pages/EventDetails";
+import Updates from "./pages/Updates";
+
 
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
@@ -55,7 +60,7 @@ function ProtectedRoute() {
         return;
       }
       try {
-        await axios.get('https://yess25-backend.up.railway.app/api/admin/verify', {
+        await axios.get('http://localhost:3001/api/admin/verify', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setIsVerified(true);
@@ -111,6 +116,10 @@ function App() {
         <Route path="/admin/*" element={<ProtectedRoute />}>
           <Route path="add" element={<AddAdmin />} />
           <Route path="ticket-details" element={<TicketDetails />} />
+          <Route path="add-event" element={<AddEvent />} />
+          <Route path="add-update" element={<AddUpdate />} />
+          <Route path="event-details" element={<EventDetails />} />
+          <Route path="updates" element={<Updates />} />
         </Route>
         {/* Redirects */}
         <Route

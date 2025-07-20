@@ -32,7 +32,7 @@ function TicketDetails() {
           setLoading(false);
           return;
         }
-        const response = await axios.get('https://yess25-backend.up.railway.app/api/admin/data', {
+        const response = await axios.get('http://localhost:3001/api/admin/data', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setTickets(response.data);
@@ -68,7 +68,7 @@ function TicketDetails() {
     ));
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`https://yess25-backend.up.railway.app/api/verifyieee/${ticketId}`, {
+      const response = await axios.post(`http://localhost:3001/api/verifyieee/${ticketId}`, {
         ieeeVerificationCompleted: true,
         ieeeVerified: value
       }, {
@@ -171,7 +171,7 @@ function TicketDetails() {
                     try {
                       const username = localStorage.getItem('admin');
                       const token = localStorage.getItem('token');
-                      const response = await axios.post('https://yess25-backend.up.railway.app/api/admin/changepassword', {
+                      const response = await axios.post('http://localhost:3001/api/admin/changepassword', {
                         username,
                         currentPassword,
                         newPassword
@@ -204,6 +204,18 @@ function TicketDetails() {
             className="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-green-800 shadow"
           >
             + Add New User
+          </button>
+          <button
+            onClick={() => navigate('/admin/event-details')}
+            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-blue-800 shadow"
+          >
+            Event Details
+          </button>
+          <button
+            onClick={() => navigate('/admin/updates')}
+            className="flex items-center gap-2 bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-purple-800 shadow"
+          >
+            Updates
           </button>
           <button
             onClick={handleChangePassword}

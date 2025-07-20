@@ -1,0 +1,128 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+function EventDetails() {
+  const navigate = useNavigate();
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const response = await axios.get('http://localhost:3001/api/events');
+        console.log(response.data)
+        setEvents(response.data);
+      } catch (err) {
+        setError('Failed to fetch events.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  return (
+    <div className="min-h-screen flex flex-col items-center bg-[#18181b] p-8">
+      <div className="w-full">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-white">Event Details</h1>
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate('/admin/add-event')}
+              className="px-4 py-2 rounded bg-blue-700 text-white hover:bg-blue-800 font-semibold border border-blue-800 shadow"
+            >
+              + Add Event
+            </button>
+            <button
+              onClick={() => navigate(-1)}
+              className="px-4 py-2 rounded bg-gray-600 text-white hover:bg-gray-700 text-sm font-semibold"
+            >
+              Back
+            </button>
+          </div>
+        </div>
+        {loading ? (
+          <div className="text-white text-center text-xl py-12">Loading events...</div>
+        ) : error ? (
+          <div className="text-red-500 text-center text-xl py-12">{error}</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {events.length === 0 ? (
+              <div className="col-span-full text-gray-400 text-center">No events found.</div>
+            ) : (
+              events.map(event => (
+                <div key={event.id || event._id} className="bg-[#232326] rounded-xl shadow p-6 border border-gray-800 flex flex-col items-center">
+                  <img src={event.image || 'https://via.placeholder.com/150'} alt={event.title} className="w-32 h-32 object-cover rounded mb-4" />
+                  <h2 className="text-xl font-bold text-white mb-2">{event.title}</h2>
+                  <p className="text-gray-300 mb-2 text-center">{event.description}</p>
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      className="px-3 py-1 text-xs rounded bg-blue-700 text-white hover:bg-blue-800 font-semibold border border-blue-800 shadow"
+                      onClick={() => console.log('Update', event.id || event._id)}
+                    >
+                      Update
+                    </button>
+                    {confirmDeleteId === (event.id || event._id) ? (
+                      <>
+                        <button
+                          className="px-3 py-1 text-xs rounded bg-red-700 text-white hover:bg-red-800 font-semibold border border-red-800 shadow"
+                          onClick={async () => {
+                            setDeletingId(event.id || event._id);
+                            try {
+                              await axios.delete(`http://localhost:3001/api/events/${event.id || event._id}`);
+                              setConfirmDeleteId(null);
+                              // Refresh events
+                              setLoading(true);
+                              setError('');
+                              try {
+                                const response = await axios.get('http://localhost:3001/api/events');
+                                setEvents(response.data);
+                              } catch (err) {
+                                setError('Failed to fetch events.');
+                              } finally {
+                                setLoading(false);
+                              }
+                            } catch (err) {
+                              setError('Failed to delete event.');
+                              setConfirmDeleteId(null);
+                            } finally {
+                              setDeletingId(null);
+                            }
+                          }}
+                          disabled={deletingId === (event.id || event._id)}
+                        >
+                          {deletingId === (event.id || event._id) ? 'Deleting...' : 'Confirm'}
+                        </button>
+                        <button
+                          className="px-3 py-1 text-xs rounded bg-gray-600 text-white hover:bg-gray-700 font-semibold border border-gray-700 shadow"
+                          onClick={() => setConfirmDeleteId(null)}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className="px-3 py-1 text-xs rounded bg-red-700 text-white hover:bg-red-800 font-semibold border border-red-800 shadow"
+                        onClick={() => setConfirmDeleteId(event.id || event._id)}
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default EventDetails; 

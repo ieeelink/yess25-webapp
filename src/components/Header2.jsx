@@ -15,7 +15,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
 
   const navItems = [
     { name: 'HOME', path: '/', sectionId: 'landing' },
-    // { name: 'UPDATES', path: '/#updates', sectionId: 'updates' },
+    { name: 'UPDATES', path: '/#updates', sectionId: 'updates' },
     { name: 'EVENTS', path: '/events', sectionId: 'events' },
     { name: 'ABOUT', path: '/about', sectionId: 'about' },
     { name: "HIGHLIGHTS'24", path: '/highlights', sectionId: 'highlights' }
