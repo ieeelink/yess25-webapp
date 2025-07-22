@@ -33,7 +33,7 @@ function Status({ closeAllPopups }) {
 
   const fetchPaymentStatus = async (email) => {
     try {
-      const statusResponse = await axios.post('http://localhost:3001/api/paymentstatus', { email });
+      const statusResponse = await axios.post('https://yess25-backend.up.railway.app/api/paymentstatus', { email });
       console.log(statusResponse.data.payments[0]);
       setPaymentStatus(statusResponse.data.payments[0]);
     } catch (error) {
