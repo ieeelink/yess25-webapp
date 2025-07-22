@@ -30,6 +30,7 @@ import AddUpdate from "./pages/AddUpdate";
 import EventDetails from "./pages/EventDetails";
 import Updates from "./pages/Updates";
 import TestLandingSection from "./components/TestLandingSection";
+import React from "react";
 
 
 const ExternalRedirect = ({ to }) => {
@@ -78,10 +79,37 @@ function ProtectedRoute() {
   return isVerified ? <Outlet /> : <Navigate to="/admin" replace />;
 }
 
+function TestTicketPage() {
+  const [showCheckStatus, setShowCheckStatus] = React.useState(false);
+  return (
+    <>
+      <TestLandingSection onOpenCheckStatus={() => setShowCheckStatus(true)} />
+      {showCheckStatus && (
+        <div className="fixed inset-0 z-[9999] flex items-start px-2 md:items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto py-8 md:pt-0">
+          <CheckStatus onClose={() => setShowCheckStatus(false)} />
+        </div>
+      )}
+    </>
+  );
+}
+
 function App() {
   const [showOverlay, setShowOverlay] = useState(false);
   const [showTicketForm, setShowTicketForm] = useState(false);
   const [showCheckStatus, setShowCheckStatus] = useState(false);
+
+  // Disable background scroll when any overlay/modal is open
+  React.useEffect(() => {
+    if (showOverlay || showTicketForm || showCheckStatus) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    // Clean up on unmount
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showOverlay, showTicketForm, showCheckStatus]);
 
   const closeAllPopups = () => {
     setShowTicketForm(false);
@@ -107,7 +135,7 @@ function App() {
             setShowCheckStatus={setShowCheckStatus}
           />
         } />
-        <Route path="/test-ticket" element={<TestLandingSection />} />
+        <Route path="/test-ticket" element={<TestTicketPage />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/about" element={<About />} />
         <Route path="/pricing" element={<Pricing />} />

@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import BgAnimation from '../components/BgAnimation';
 import { Link, useNavigate } from 'react-router-dom';
 import Status from './Status';
 
@@ -10,10 +9,6 @@ function CheckStatus({ onClose }) {
   const [showContactPopup, setShowContactPopup] = useState(false);
   const [showStatus, setShowStatus] = useState(false);
   const navigate = useNavigate();
-
-  // Handler to open popup (for SubFooter)
-  const handleContactClick = useCallback(() => setShowContactPopup(true), []);
-  const handleCloseContactPopup = useCallback(() => setShowContactPopup(false), []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

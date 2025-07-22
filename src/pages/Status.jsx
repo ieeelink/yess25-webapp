@@ -5,15 +5,9 @@ import axios from 'axios';
 let globalEmail = null;
 
 function Status({ closeAllPopups }) {
-  const { ticketId } = useParams();
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showContactPopup, setShowContactPopup] = useState(false);
-
-  // Handler to open popup (for SubFooter)
-  const handleContactClick = useCallback(() => setShowContactPopup(true), []);
-  const handleCloseContactPopup = useCallback(() => setShowContactPopup(false), []);
 
   useEffect(() => {
     // Fetch email from cookie and get payment status
@@ -39,7 +33,7 @@ function Status({ closeAllPopups }) {
 
   const fetchPaymentStatus = async (email) => {
     try {
-      const statusResponse = await axios.post('https://yess25-backend.up.railway.app/api/paymentstatus', { email });
+      const statusResponse = await axios.post('http://localhost:3001/api/paymentstatus', { email });
       console.log(statusResponse.data.payments[0]);
       setPaymentStatus(statusResponse.data.payments[0]);
     } catch (error) {
@@ -47,6 +41,7 @@ function Status({ closeAllPopups }) {
         setError('No ticket found.');
       } else {
         setError('Failed to fetch payment status. Please contact support.');
+        console.log(error.message);
       }
     } finally {
       setLoading(false);
@@ -100,7 +95,6 @@ function Status({ closeAllPopups }) {
                     <button
                       onClick={() => {
                         if (closeAllPopups) closeAllPopups();
-                        navigate('/');
                       }}
                       className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
                     >
@@ -139,7 +133,7 @@ function Status({ closeAllPopups }) {
                       <p className='nunito-sans-body'><span className="font-medium">Name:</span> {paymentStatus.name}</p>
                       <p className='nunito-sans-body'><span className="font-medium">Email:</span> {paymentStatus.email}</p>
                       {paymentStatus.order_id && (
-                        <p className='nunito-sans-body'><span className="font-medium">Order ID:</span> {paymentStatus.order_id}</p>
+                        <p className='nunito-sans-body'><span className="font-medium">YESS Ticket ID:</span> {paymentStatus.order_id}</p>
                       )}
                       {paymentStatus.status && (
                         <p className='nunito-sans-body'><span className="font-medium">Status:</span> {paymentStatus.status.charAt(0).toUpperCase() + paymentStatus.status.slice(1)}</p>
@@ -171,7 +165,6 @@ function Status({ closeAllPopups }) {
                       <button
                         onClick={() => {
                           if (closeAllPopups) closeAllPopups();
-                          navigate('/');
                         }}
                         className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
                       >
@@ -184,7 +177,6 @@ function Status({ closeAllPopups }) {
                       <button
                         onClick={() => {
                           if (closeAllPopups) closeAllPopups();
-                          navigate('/');
                         }}
                         className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
                       >
@@ -200,7 +192,6 @@ function Status({ closeAllPopups }) {
                     <button
                       onClick={() => {
                         if (closeAllPopups) closeAllPopups();
-                        navigate('/');
                       }}
                       className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
                     >
