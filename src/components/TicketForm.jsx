@@ -112,7 +112,7 @@ async function displayRazorpay(amount, id, paymentProcessingRef, onPaymentComple
     },
     handler: function (response) {
       // Payment successful, keep loading state active until callback completes
-      fetch('http://localhost:3001/api/payment/success-callback', {
+      fetch('https://yess25-backend.up.railway.app/api/payment/success-callback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -221,7 +221,7 @@ const TicketForm = ({ onClose }) => {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/colleges')
+    axios.get('https://yess25-backend.up.railway.app/api/colleges')
       .then(res => {
         setColleges(res.data.colleges || []);
       })
@@ -348,7 +348,7 @@ const TicketForm = ({ onClose }) => {
       ieeeVerified: false
     };
     try {
-      const response = await axios.post('http://localhost:3001/api/payment', formDataWithVerification);
+      const response = await axios.post('https://yess25-backend.up.railway.app/api/payment', formDataWithVerification);
       const serverresponse = response.data;
       setIsPaymentProcessing(true);
       paymentProcessingRef.current = true;

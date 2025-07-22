@@ -15,7 +15,7 @@ function EventDetails() {
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get('http://localhost:3001/api/events');
+        const response = await axios.get('https://yess25-backend.up.railway.app/api/events');
         console.log(response.data)
         setEvents(response.data);
       } catch (err) {
@@ -75,13 +75,13 @@ function EventDetails() {
                           onClick={async () => {
                             setDeletingId(event.id || event._id);
                             try {
-                              await axios.delete(`http://localhost:3001/api/events/${event.id || event._id}`);
+                              await axios.delete(`https://yess25-backend.up.railway.app/api/events/${event.id || event._id}`);
                               setConfirmDeleteId(null);
                               // Refresh events
                               setLoading(true);
                               setError('');
                               try {
-                                const response = await axios.get('http://localhost:3001/api/events');
+                                const response = await axios.get('https://yess25-backend.up.railway.app/api/events');
                                 setEvents(response.data);
                               } catch (err) {
                                 setError('Failed to fetch events.');

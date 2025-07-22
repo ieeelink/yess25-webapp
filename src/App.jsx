@@ -25,11 +25,11 @@ import NewFooter from "./components/NewFooter";
 import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
-import TicketForm from "./components/TicketForm";
 import AddEvent from "./pages/AddEvent";
 import AddUpdate from "./pages/AddUpdate";
 import EventDetails from "./pages/EventDetails";
 import Updates from "./pages/Updates";
+import TestLandingSection from "./components/TestLandingSection";
 
 
 const ExternalRedirect = ({ to }) => {
@@ -60,7 +60,7 @@ function ProtectedRoute() {
         return;
       }
       try {
-        await axios.get('http://localhost:3001/api/admin/verify', {
+        await axios.get('https://yess25-backend.up.railway.app/api/admin/verify', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setIsVerified(true);
@@ -107,10 +107,10 @@ function App() {
             setShowCheckStatus={setShowCheckStatus}
           />
         } />
-        <Route path="/test-ticket" element={<TicketForm />} />
+        <Route path="/test-ticket" element={<TestLandingSection />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/about" element={<About />} />
-        {/* <Route path="/pricing" element={<Pricing />} /> */}
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/*" element={<ProtectedRoute />}>

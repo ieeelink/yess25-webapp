@@ -28,7 +28,7 @@ function AddEvent() {
       const imgbbRes = await axios.post(`https://api.imgbb.com/1/upload?key=${apiKey}`, formData);
       const imageUrl = imgbbRes.data.data.url;
       // 2. Send event data to server
-      await axios.post('http://localhost:3001/api/events', {
+      await axios.post('https://yess25-backend.up.railway.app/api/events', {
         title,
         description,
         image: imageUrl

@@ -15,7 +15,7 @@ function Updates() {
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get('http://localhost:3001/api/updates');
+        const response = await axios.get('https://yess25-backend.up.railway.app/api/updates');
         setUpdates(response.data);
       } catch (err) {
         setError('Failed to fetch updates.');
@@ -82,13 +82,13 @@ function Updates() {
                           onClick={async () => {
                             setDeletingId(update.id || update._id);
                             try {
-                              await axios.delete(`http://localhost:3001/api/updates/${update.id || update._id}`);
+                              await axios.delete(`https://yess25-backend.up.railway.app/api/updates/${update.id || update._id}`);
                               setConfirmDeleteId(null);
                               // Refresh updates
                               setLoading(true);
                               setError('');
                               try {
-                                const response = await axios.get('http://localhost:3001/api/updates');
+                                const response = await axios.get('https://yess25-backend.up.railway.app/api/updates');
                                 setUpdates(response.data);
                               } catch (err) {
                                 setError('Failed to fetch updates.');

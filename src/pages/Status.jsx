@@ -39,7 +39,7 @@ function Status({ closeAllPopups }) {
 
   const fetchPaymentStatus = async (email) => {
     try {
-      const statusResponse = await axios.post('http://localhost:3001/api/paymentstatus', { email });
+      const statusResponse = await axios.post('https://yess25-backend.up.railway.app/api/paymentstatus', { email });
       console.log(statusResponse.data.payments[0]);
       setPaymentStatus(statusResponse.data.payments[0]);
     } catch (error) {
@@ -57,7 +57,7 @@ function Status({ closeAllPopups }) {
     try {
       setLoading(true);
       document.cookie = `email=${globalEmail}; path=/; max-age=${14*24*60*60}`;
-      const response = await axios.post('http://localhost:3001/api/retrypayment', { email: globalEmail });
+      const response = await axios.post('https://yess25-backend.up.railway.app/api/retrypayment', { email: globalEmail });
       if (response.status === 200) {
         window.location.href = response.data.response.redirectUrl;
       }
