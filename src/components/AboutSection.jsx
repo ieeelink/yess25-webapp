@@ -7,9 +7,9 @@ const AboutSection = () => (
         {/* About YESS Section - Desktop Layout */}
         <div className="hidden lg:flex lg:gap-8 lg:mb-12">
           {/* Left Div - YESS Images */}
-          <div className="w-1/2 flex items-center justify-center">
-            <div className="w-full h-72 flex items-center justify-center relative">
-              <div className="relative flex items-center justify-center">
+          <div className="w-1/2 flex items-center justify-center" data-aos="zoom-in">
+            <div className="w-full h-72 flex items-center justify-center relative" data-aos="zoom-in">
+              <div className="relative flex items-center justify-center" data-aos="zoom-in">
                 <div className="w-1/3 min-w-[180px] max-w-xs aspect-square group flex-shrink-0 z-10 mt-0 hover:z-[9999] transition-all duration-300 hover:scale-115">
                   <img src="/poster1.webp" alt="YESS Poster 1" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                 </div>
@@ -23,8 +23,8 @@ const AboutSection = () => (
             </div>
           </div>
           {/* Right Div - About YESS Text */}
-          <div className="w-1/2 flex flex-col justify-center">
-            <div className="w-full">
+          <div className="w-1/2 flex flex-col justify-center" data-aos="fade-right">
+            <div className="w-full" data-aos="fade-right">
               <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">About YESS</h3>
               <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Yearly Engineering Students Summit</h2>
               <p className="text-white text-base nunito-sans-body leading-relaxed">
@@ -36,9 +36,9 @@ const AboutSection = () => (
         {/* Desktop Layout - Two equal width divs side by side */}
         <div className="hidden lg:flex lg:gap-8 lg:mb-12 py-16">
           {/* Left Div - Our Host */}
-          <div className="w-1/2 flex flex-col justify-center">
+          <div className="w-1/2 flex flex-col justify-center" data-aos="fade-right">
             {/* Our Host Section */}
-            <div className="w-full">
+            <div className="w-full" data-aos="fade-right">
               <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Our Host</h3>
               <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">National Institute of Technology Calicut</h2>
               <p className="text-white text-base nunito-sans-body leading-relaxed">
@@ -47,9 +47,9 @@ const AboutSection = () => (
             </div>
           </div>
           {/* Right Div - NIT Calicut Images (like About YESS) */}
-          <div className="w-1/2 flex flex-col items-center justify-center">
-            <div className="w-full mb-6">
-              <div className="flex w-full justify-center gap-8">
+          <div className="w-1/2 flex flex-col items-center justify-center" data-aos="zoom-in">
+            <div className="w-full mb-6" data-aos="zoom-in">
+              <div className="flex w-full justify-center gap-8" data-aos="zoom-in">
                 <div className="w-1/2 min-w-[80px] max-w-xs aspect-video group flex-shrink-0 transition-all duration-300 hover:scale-115 hover:z-[9999]">
                   <img src="/nit_college.png" alt="NIT Calicut 1" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                 </div>
@@ -57,7 +57,7 @@ const AboutSection = () => (
                   <img src="/nitc2.png" alt="NIT Calicut 2" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                 </div>
               </div>
-              <div className="flex w-full justify-center mt-4">
+              <div className="flex w-full justify-center mt-4" data-aos="zoom-in">
                 <div className="w-2/3 min-w-[80px] max-w-xs aspect-video group flex-shrink-0 transition-all duration-300 hover:scale-115 hover:z-[9999]">
                   <img src="/nitc1.webp" alt="NIT Calicut 3" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                 </div>
@@ -66,8 +66,8 @@ const AboutSection = () => (
           </div>
         </div>
         {/* About IEEE LINK Section - Desktop Layout (Normal Layout, No Image) */}
-        <div className="hidden lg:block lg:mb-12">
-          <div className="w-full">
+        <div className="hidden lg:block lg:mb-12" data-aos="fade-up">
+          <div className="w-full" data-aos="fade-up">
             <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">About IEEE LINK</h3>
             <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Local Integrated Network of Kerala IEEE Students</h2>
             <p className="text-white text-base nunito-sans-body leading-relaxed">
@@ -77,8 +77,8 @@ const AboutSection = () => (
         </div>
         <div className="hidden lg:flex lg:gap-8 lg:mb-12 py-16">
           {/* Left Div - About IEEE Text */}
-          <div className="w-1/2 flex flex-col justify-center">
-            <div className="w-full">
+          <div className="w-1/2 flex flex-col justify-center" data-aos="fade-right">
+            <div className="w-full" data-aos="fade-right">
               <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">About IEEE</h3>
               <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Institute of Electrical and Electronics Engineers</h2>
               <p className="text-white text-base nunito-sans-body leading-relaxed">
@@ -87,8 +87,8 @@ const AboutSection = () => (
             </div>
           </div>
           {/* Right Div - About IEEE Kerala Section Text */}
-          <div className="w-1/2 flex flex-col justify-center">
-            <div className="w-full">
+          <div className="w-1/2 flex flex-col justify-center" data-aos="fade-left">
+            <div className="w-full" data-aos="fade-left">
               <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">About IEEE Kerala Section</h3>
               <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">IEEE Kerala Section</h2>
               <p className="text-white text-base nunito-sans-body leading-relaxed">
@@ -98,14 +98,14 @@ const AboutSection = () => (
           </div>
         </div>
         {/* Mobile Layout - Responsive version of desktop structure */}
-        <div className="lg:hidden">
+        <div className="lg:hidden" data-aos="fade-up">
           {/* About YESS Section - Mobile */}
-          <div className="w-full mb-12">
+          <div className="w-full mb-12" data-aos="fade-up">
             <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">About YESS</h3>
             <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Yearly Engineering Students Summit</h2>
             {/* YESS Posters - Mobile */}
-            <div className="w-full h-56 mb-6 flex items-center justify-center relative">
-              <div className="relative flex items-center justify-center">
+            <div className="w-full h-56 mb-6 flex items-center justify-center relative" data-aos="zoom-in">
+              <div className="relative flex items-center justify-center" data-aos="zoom-in">
                 <div className="w-1/3 min-w-[120px] max-w-xs h-56 group flex-shrink-0 z-10 mt-0">
                   <img src="/poster1.webp" alt="YESS Poster 1" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] hover:z-30 hover:scale-105 transition-all duration-300" />
                 </div>
@@ -122,12 +122,12 @@ const AboutSection = () => (
             </p>
           </div>
           {/* Our Host Section - Mobile */}
-          <div className="w-full mb-12">
+          <div className="w-full mb-12" data-aos="fade-up">
             <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Our Host</h3>
             <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">National Institute of Technology Calicut</h2>
             {/* 2-row, 2+1 image layout for mobile */}
-            <div className="w-full mb-6">
-              <div className="flex w-full justify-center gap-4">
+            <div className="w-full mb-6" data-aos="zoom-in">
+              <div className="flex w-full justify-center gap-4" data-aos="zoom-in">
                 <div className="w-1/2 min-w-[140px] max-w-md aspect-video group flex-shrink-0 transition-all duration-300 hover:scale-105 hover:z-[9999]">
                   <img src="/nit_college.png" alt="NIT Calicut 1" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                 </div>
@@ -135,7 +135,7 @@ const AboutSection = () => (
                   <img src="/nitc2.webp" alt="NIT Calicut 2" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                 </div>
               </div>
-              <div className="flex w-full justify-center mt-4">
+              <div className="flex w-full justify-center mt-4" data-aos="zoom-in">
                 <div className="w-2/3 min-w-[140px] max-w-md aspect-video group flex-shrink-0 transition-all duration-300 hover:scale-105 hover:z-[9999]">
                   <img src="/nitc1.webp" alt="NIT Calicut 3" className="w-full h-full object-cover rounded-lg drop-shadow-[0_8px_16px_rgba(31,41,55,0.7)] transition-all duration-300" />
                 </div>
@@ -146,7 +146,7 @@ const AboutSection = () => (
             </p>
           </div>
           {/* About IEEE LINK Section - Mobile */}
-          <div className="w-full mb-12">
+          <div className="w-full mb-12" data-aos="fade-up">
             <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">About IEEE LINK</h3>
             <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Local Integrated Network of Kerala IEEE Students</h2>
             <p className="text-white text-base nunito-sans-body leading-relaxed">
@@ -154,7 +154,7 @@ const AboutSection = () => (
             </p>
           </div>
           {/* About IEEE Section - Mobile */}
-          <div className="w-full mb-12">
+          <div className="w-full mb-12" data-aos="fade-up">
             <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">About IEEE</h3>
             <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Institute of Electrical and Electronics Engineers</h2>
             <p className="text-white text-base nunito-sans-body leading-relaxed">
@@ -162,7 +162,7 @@ const AboutSection = () => (
             </p>
           </div>
           {/* About IEEE Kerala Section - Mobile */}
-          <div className="w-full mb-12">
+          <div className="w-full mb-12" data-aos="fade-up">
             <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">About IEEE Kerala Section</h3>
             <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">IEEE Kerala Section</h2>
             <p className="text-white text-base nunito-sans-body leading-relaxed">

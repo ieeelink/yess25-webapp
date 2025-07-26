@@ -12,11 +12,11 @@ const HighlightsSection = ({ highlightImages }) => (
     <div className="w-full px-4 lg:px-8 md:px-6 relative z-10" style={{maxWidth: 'min(1600px, 100vw)'}}>
       <div className="w-full flex flex-col lg:flex-row gap-8 items-center justify-center py-12">
         {/* Left: Heading, images, text, button (mobile: images between headings and text) */}
-        <div className="w-full lg:w-1/2 flex flex-col justify-center items-start px-0">
+        <div className="w-full lg:w-1/2 flex flex-col justify-center items-start px-0" data-aos="fade-right">
           <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Highlights'24</h3>
           <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Largest Engineering Student's meet in Kerala</h2>
           {/* SwiperJS Carousel - Mobile */}
-          <div className="w-full h-64 mb-6 lg:hidden relative">
+          <div className="w-full h-64 mb-6 lg:hidden relative" data-aos="zoom-in">
             <Swiper
               effect={'coverflow'}
               grabCursor={true}
@@ -93,7 +93,7 @@ const HighlightsSection = ({ highlightImages }) => (
           <p className="mb-4 text-base nunito-sans-body leading-relaxed">
             The 1-day event predominantly provided an opportunity for the student community to meet highly intelligent and motivated peers, enhanced their skills through trainings, workshops, and competitions, and geared them up to face the professional career ahead of them.
           </p>
-          <ul className="list-disc list-inside text-base space-y-2 nunito-sans-body">
+          <ul className="list-disc list-inside text-base space-y-2 nunito-sans-body" data-aos="fade-left">
             <li>Largest student meet of IEEE Kerala Section</li>
             <li>Sessions led by pioneers of the industry</li>
             <li>Competitions to prove your mettle</li>
@@ -102,8 +102,8 @@ const HighlightsSection = ({ highlightImages }) => (
           </ul>
         </div>
         {/* Right: SwiperJS Carousel (desktop only) */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 lg:py-8 pt-12 lg:pt-8 overflow-visible hidden lg:flex">
-          <div className="relative w-full h-96 lg:h-[400px]">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-4 lg:py-8 pt-12 lg:pt-8 overflow-visible hidden lg:flex" data-aos="zoom-in">
+          <div className="relative w-full h-96 lg:h-[400px]" data-aos="zoom-in">
             <Swiper
               effect={'coverflow'}
               grabCursor={true}

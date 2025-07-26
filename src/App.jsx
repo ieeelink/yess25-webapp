@@ -31,6 +31,8 @@ import EventDetails from "./pages/EventDetails";
 import Updates from "./pages/Updates";
 import TestLandingSection from "./components/TestLandingSection";
 import React from "react";
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 
 const ExternalRedirect = ({ to }) => {
@@ -110,6 +112,14 @@ function App() {
       document.body.style.overflow = '';
     };
   }, [showOverlay, showTicketForm, showCheckStatus]);
+
+  useEffect(() => {
+    AOS.init({
+      once: true, // Only animate once
+      duration: 500, // Animation duration in ms
+      offset: 80, // Offset (in px) from the original trigger point
+    });
+  }, []);
 
   const closeAllPopups = () => {
     setShowTicketForm(false);
