@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 function Updates() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Updates() {
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get('https://yess25-backend.up.railway.app/api/updates');
+        const response = await axios.get(API_ENDPOINTS.UPDATES);
         setUpdates(response.data);
       } catch (err) {
         setError('Failed to fetch updates.');
@@ -82,13 +83,13 @@ function Updates() {
                           onClick={async () => {
                             setDeletingId(update.id || update._id);
                             try {
-                              await axios.delete(`https://yess25-backend.up.railway.app/api/updates/${update.id || update._id}`);
+                              await axios.delete(API_ENDPOINTS.DELETE_UPDATE(update.id || update._id));
                               setConfirmDeleteId(null);
                               // Refresh updates
                               setLoading(true);
                               setError('');
                               try {
-                                const response = await axios.get('https://yess25-backend.up.railway.app/api/updates');
+                                const response = await axios.get(API_ENDPOINTS.UPDATES);
                                 setUpdates(response.data);
                               } catch (err) {
                                 setError('Failed to fetch updates.');

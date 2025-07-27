@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -101,7 +102,7 @@ function UpdateTicketForm({ ticket, onClose, onSave }) {
 
   // Fetch colleges (copied from TicketForm)
   useEffect(() => {
-    axios.get('https://yess25-backend.up.railway.app/api/colleges')
+    axios.get(API_ENDPOINTS.COLLEGES)
       .then(res => {
         setColleges(res.data.colleges || []);
       })

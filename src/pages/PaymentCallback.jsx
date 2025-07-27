@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import BgAnimation from '../components/BgAnimation';
+import { API_ENDPOINTS } from '../config/api';
 
 function PaymentCallback() {
   const [searchParams] = useSearchParams();
@@ -36,7 +37,7 @@ function PaymentCallback() {
 
         console.log('Sending verification data to backend:', verificationData);
 
-        const response = await axios.post('https://yess25-backend.up.railway.app/api/payment/success-callback', verificationData);
+        const response = await axios.post(API_ENDPOINTS.PAYMENT_SUCCESS_CALLBACK, verificationData);
         
         console.log('Backend verification response:', response.data);
 

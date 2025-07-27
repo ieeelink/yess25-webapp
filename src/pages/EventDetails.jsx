@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 function EventDetails() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function EventDetails() {
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get('https://yess25-backend.up.railway.app/api/events');
+        const response = await axios.get(API_ENDPOINTS.EVENTS);
         console.log(response.data)
         setEvents(response.data);
       } catch (err) {
@@ -75,13 +76,13 @@ function EventDetails() {
                           onClick={async () => {
                             setDeletingId(event.id || event._id);
                             try {
-                              await axios.delete(`https://yess25-backend.up.railway.app/api/events/${event.id || event._id}`);
+                              await axios.delete(API_ENDPOINTS.DELETE_EVENT(event.id || event._id));
                               setConfirmDeleteId(null);
                               // Refresh events
                               setLoading(true);
                               setError('');
                               try {
-                                const response = await axios.get('https://yess25-backend.up.railway.app/api/events');
+                                const response = await axios.get(API_ENDPOINTS.EVENTS);
                                 setEvents(response.data);
                               } catch (err) {
                                 setError('Failed to fetch events.');

@@ -11,6 +11,7 @@ import planeLottie from './iCVMii0Ol1.json';
 import { MdClose } from 'react-icons/md';
 import CheckStatus from '../pages/CheckStatus';
 import Status from '../pages/Status';
+import { API_ENDPOINTS } from '../config/api';
 
 // Validation schema
 const validationSchema = yup.object({
@@ -112,7 +113,7 @@ async function displayRazorpay(amount, id, paymentProcessingRef, onPaymentComple
     },
     handler: function (response) {
       // Payment successful, keep loading state active until callback completes
-      fetch('https://yess25-backend.up.railway.app/api/payment/success-callback', {
+      fetch(API_ENDPOINTS.PAYMENT_SUCCESS_CALLBACK, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -221,7 +222,7 @@ const TicketForm = ({ onClose }) => {
   };
 
   useEffect(() => {
-    axios.get('https://yess25-backend.up.railway.app/api/colleges')
+    axios.get(API_ENDPOINTS.COLLEGES)
       .then(res => {
         setColleges(res.data.colleges || []);
       })
@@ -348,7 +349,7 @@ const TicketForm = ({ onClose }) => {
       ieeeVerified: false
     };
     try {
-      const response = await axios.post('https://yess25-backend.up.railway.app/api/payment', formDataWithVerification);
+      const response = await axios.post(API_ENDPOINTS.PAYMENT, formDataWithVerification);
       const serverresponse = response.data;
       setIsPaymentProcessing(true);
       paymentProcessingRef.current = true;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 let globalEmail = null;
 
@@ -33,7 +34,7 @@ function Status({ closeAllPopups }) {
 
   const fetchPaymentStatus = async (email) => {
     try {
-      const statusResponse = await axios.post('https://yess25-backend.up.railway.app/api/paymentstatus', { email });
+      const statusResponse = await axios.post(API_ENDPOINTS.PAYMENT_STATUS, { email });
       console.log(statusResponse.data.payments[0]);
       setPaymentStatus(statusResponse.data.payments[0]);
     } catch (error) {
@@ -52,7 +53,7 @@ function Status({ closeAllPopups }) {
     try {
       setLoading(true);
       document.cookie = `email=${globalEmail}; path=/; max-age=${14*24*60*60}`;
-      const response = await axios.post('https://yess25-backend.up.railway.app/api/retrypayment', { email: globalEmail });
+      const response = await axios.post(API_ENDPOINTS.RETRY_PAYMENT, { email: globalEmail });
       if (response.status === 200) {
         window.location.href = response.data.response.redirectUrl;
       }

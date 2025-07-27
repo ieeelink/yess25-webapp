@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 function AddAdmin() {
   const [username, setUsername] = useState('');
@@ -21,7 +22,7 @@ function AddAdmin() {
       return;
     }
     // TODO: Implement actual admin creation logic
-    axios.post('https://yess25-backend.up.railway.app/api/admin/adduser', { username, password })
+    axios.post(API_ENDPOINTS.ADMIN_ADD_USER, { username, password })
       .then(response => {
         setSuccess(response.data.message);
         setUsername('');

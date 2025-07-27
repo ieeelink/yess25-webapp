@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import BgAnimation from '../components/BgAnimation';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 
 function AdminLogin() {
   const [username, setUsername] = useState('');
@@ -22,7 +23,7 @@ function AdminLogin() {
       return;
     }
 
-    axios.post('https://yess25-backend.up.railway.app/api/admin/login', { username, password })
+    axios.post(API_ENDPOINTS.ADMIN_LOGIN, { username, password })
       .then(response => {
         setSuccess(response.data.message);
         if (response.data.token) {

@@ -33,6 +33,7 @@ import TestLandingSection from "./components/TestLandingSection";
 import React from "react";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { API_ENDPOINTS } from "./config/api";
 
 
 const ExternalRedirect = ({ to }) => {
@@ -63,7 +64,7 @@ function ProtectedRoute() {
         return;
       }
       try {
-        await axios.get('https://yess25-backend.up.railway.app/api/admin/verify', {
+        await axios.get(API_ENDPOINTS.ADMIN_VERIFY, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setIsVerified(true);

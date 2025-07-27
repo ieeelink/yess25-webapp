@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FiLock, FiLogOut } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import UpdateTicketForm from '../components/UpdateTicketForm';
+import { API_ENDPOINTS } from '../config/api';
 
 function TicketDetails() {
   const [tickets, setTickets] = useState([]);
@@ -32,7 +33,7 @@ function TicketDetails() {
           setLoading(false);
           return;
         }
-        const response = await axios.get('https://yess25-backend.up.railway.app/api/admin/data', {
+        const response = await axios.get(API_ENDPOINTS.ADMIN_DATA, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setTickets(response.data);
@@ -68,7 +69,7 @@ function TicketDetails() {
     ));
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`https://yess25-backend.up.railway.app/api/verifyieee/${ticketId}`, {
+      const response = await axios.post(API_ENDPOINTS.VERIFY_IEEE(ticketId), {
         ieeeVerificationCompleted: true,
         ieeeVerified: value
       }, {
@@ -171,7 +172,7 @@ function TicketDetails() {
                     try {
                       const username = localStorage.getItem('admin');
                       const token = localStorage.getItem('token');
-                      const response = await axios.post('https://yess25-backend.up.railway.app/api/admin/changepassword', {
+                      const response = await axios.post(API_ENDPOINTS.ADMIN_CHANGE_PASSWORD, {
                         username,
                         currentPassword,
                         newPassword

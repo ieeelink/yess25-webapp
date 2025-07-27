@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 function AddEvent() {
   const [title, setTitle] = useState('');
@@ -28,7 +29,7 @@ function AddEvent() {
       const imgbbRes = await axios.post(`https://api.imgbb.com/1/upload?key=${apiKey}`, formData);
       const imageUrl = imgbbRes.data.data.url;
       // 2. Send event data to server
-      await axios.post('https://yess25-backend.up.railway.app/api/events', {
+      await axios.post(API_ENDPOINTS.EVENTS, {
         title,
         description,
         image: imageUrl

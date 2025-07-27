@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 function AddUpdate() {
   const [title, setTitle] = useState('');
@@ -36,7 +37,7 @@ function AddUpdate() {
       const imgbbRes = await axios.post(`https://api.imgbb.com/1/upload?key=${apiKey}`, formData);
       const imageUrl = imgbbRes.data.data.url;
       // 2. Send update data to server
-      await axios.post('https://yess25-backend.up.railway.app/api/updates', {
+      await axios.post(API_ENDPOINTS.UPDATES, {
         title,
         description,
         image: imageUrl,
