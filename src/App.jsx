@@ -29,6 +29,7 @@ import AddEvent from "./pages/AddEvent";
 import AddUpdate from "./pages/AddUpdate";
 import EventDetails from "./pages/EventDetails";
 import Updates from "./pages/Updates";
+import BulkIEEEVerification from "./pages/BulkIEEEVerification";
 import TestLandingSection from "./components/TestLandingSection";
 import React from "react";
 import AOS from 'aos';
@@ -155,6 +156,7 @@ function App() {
         <Route path="/admin/*" element={<ProtectedRoute />}>
           <Route path="add" element={<AddAdmin />} />
           <Route path="ticket-details" element={<TicketDetails />} />
+          <Route path="bulk-ieee-verification" element={<BulkIEEEVerification />} />
           <Route path="add-event" element={<AddEvent />} />
           <Route path="add-update" element={<AddUpdate />} />
           <Route path="event-details" element={<EventDetails />} />

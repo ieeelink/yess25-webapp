@@ -28,3 +28,4 @@ backend/.env
 /dist
 orgcommit.sh
 .env.development.example
+MembersList.csv

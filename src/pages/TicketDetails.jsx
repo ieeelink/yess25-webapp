@@ -9,7 +9,6 @@ function TicketDetails() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [editingIEEE, setEditingIEEE] = useState(null); // ticketId being edited
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -56,31 +55,6 @@ function TicketDetails() {
     localStorage.removeItem('token');
     localStorage.removeItem('admin');
     window.location.reload(); // or redirect to login page
-  };
-
-  const handleVerifyIEEE = (ticketId) => {
-    setEditingIEEE(ticketId);
-  };
-
-  const handleSetIEEEVerified = async (ticketId, value) => {
-    // Optimistically update local state before API call
-    setTickets(prev => prev.map(ticket =>
-      ticket._id === ticketId ? { ...ticket, ieeeVerified: value } : ticket
-    ));
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(API_ENDPOINTS.VERIFY_IEEE(ticketId), {
-        ieeeVerificationCompleted: true,
-        ieeeVerified: value
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      // Optionally update local state again based on response
-    } catch (err) {
-      alert('Failed to update verification status.');
-      console.error(err);
-    }
-    setEditingIEEE(null);
   };
 
   const handleChangePassword = () => {
@@ -217,6 +191,15 @@ function TicketDetails() {
             className="flex items-center gap-2 bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-purple-800 shadow"
           >
             Updates
+          </button>
+          <button
+            onClick={() => navigate('/admin/bulk-ieee-verification')}
+            className="flex items-center gap-2 bg-orange-700 hover:bg-orange-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-orange-800 shadow"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Bulk IEEE Verify
           </button>
           <button
             onClick={handleChangePassword}
@@ -385,41 +368,6 @@ function TicketDetails() {
                 </div>
                 {/* Action buttons below details, aligned right */}
                 <div className="flex justify-end mt-6 gap-3">
-                  {ticket.ieeeMembershipNumber && (
-                    editingIEEE === ticket._id ? (
-                      <div className="flex gap-2 items-center">
-                        <button
-                          onClick={() => handleSetIEEEVerified(ticket._id, true)}
-                          className="px-2 py-1 rounded text-xs font-semibold border bg-green-700 text-white border-green-800 hover:bg-green-800 transition-colors"
-                          title="Set Verified True"
-                        >
-                          True
-                        </button>
-                        <button
-                          onClick={() => handleSetIEEEVerified(ticket._id, false)}
-                          className="px-2 py-1 rounded text-xs font-semibold border bg-red-700 text-white border-red-800 hover:bg-red-800 transition-colors"
-                          title="Set Verified False"
-                        >
-                          False
-                        </button>
-                        <button
-                          onClick={() => setEditingIEEE(null)}
-                          className="px-2 py-1 rounded text-xs font-semibold border bg-gray-600 text-white border-gray-700 hover:bg-gray-700 transition-colors"
-                          title="Cancel"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => handleVerifyIEEE(ticket._id)}
-                        className={`flex items-center gap-1 px-4 py-2 rounded-lg font-semibold border transition-colors shadow nunito-sans-body bg-[#fe4a56] text-white border-[#fe4a56] hover:bg-[#8c0505] hover:border-[#8c0505] focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2`}
-                      >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
-                        Verify IEEE Number
-                      </button>
-                    )
-                  )}
                   <button
                     onClick={() => handleEdit(ticket._id)}
                     className="flex items-center gap-1 bg-[#fe4a56] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#8c0505] transition-colors shadow border border-[#fe4a56] hover:border-[#8c0505] focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2 nunito-sans-body"
