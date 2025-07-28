@@ -17,6 +17,8 @@ function BulkIEEEVerification() {
   const [success, setSuccess] = useState('');
   const [unverifiedTickets, setUnverifiedTickets] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationProgress, setVerificationProgress] = useState(0);
 
   // Custom scrollbar styles
   const scrollbarStyles = `
@@ -402,6 +404,82 @@ function BulkIEEEVerification() {
     }
   };
 
+  // Verify matched results
+  const handleVerifyMatches = async () => {
+    if (!verificationResults || !verificationResults.details) {
+      setError('No verification results to process');
+      return;
+    }
+
+    const matchedTickets = verificationResults.details.filter(d => d.status === 'verified');
+    if (matchedTickets.length === 0) {
+      setError('No matched tickets found to verify');
+      return;
+    }
+
+    setIsVerifying(true);
+    setVerificationProgress(0);
+    setError('');
+    setSuccess('');
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Authentication required. Please login again.');
+        setIsVerifying(false);
+        return;
+      }
+
+      let successCount = 0;
+      let failureCount = 0;
+
+      for (let i = 0; i < matchedTickets.length; i++) {
+        const match = matchedTickets[i];
+        const progress = Math.round(((i + 1) / matchedTickets.length) * 100);
+        setVerificationProgress(progress);
+
+        try {
+          // Find the corresponding ticket ID from the original matching data
+          const matchingResult = verificationResults.matchedTickets?.find(mt => 
+            mt.ieeeMembershipNumber === match.ieee_number
+          );
+          
+          if (!matchingResult) {
+            failureCount++;
+            continue;
+          }
+
+          await axios.patch(
+            API_ENDPOINTS.ADMIN.UPDATE_IEEE_VERIFICATION.replace(':id', matchingResult.ticketId),
+            { 
+              isIEEEMember: true,
+              ieeeMembershipNumber: match.ieee_number
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+
+          successCount++;
+        } catch (error) {
+          console.error('Error verifying ticket:', error);
+          failureCount++;
+        }
+      }
+
+      setSuccess(`Verification complete! ${successCount} tickets verified successfully${failureCount > 0 ? `, ${failureCount} failed` : ''}.`);
+      
+    } catch (error) {
+      console.error('Verification error:', error);
+      setError(`Verification failed: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsVerifying(false);
+      setVerificationProgress(0);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white nunito-sans-body">
       <style dangerouslySetInnerHTML={{ __html: scrollbarStyles }} />
@@ -622,6 +700,43 @@ function BulkIEEEVerification() {
                         ))}
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {/* Verification Button and Progress */}
+                {verificationResults && verificationResults.details && verificationResults.details.filter(d => d.status === 'verified').length > 0 && (
+                  <div className="mt-6 pt-6 border-t border-gray-600">
+                    {/* Verification Progress */}
+                    {isVerifying && (
+                      <div className="mb-4">
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="nunito-sans-body">Verifying IEEE memberships...</span>
+                          <span className="nunito-sans-body">{verificationProgress}%</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${verificationProgress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Verify Button */}
+                    <button
+                      onClick={handleVerifyMatches}
+                      disabled={isVerifying}
+                      className={`w-full py-3 px-4 rounded-lg font-medium transition-colors nunito-sans-body ${
+                        isVerifying
+                          ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                          : 'bg-green-600 hover:bg-green-700 text-white'
+                      }`}
+                    >
+                      {isVerifying 
+                        ? `Verifying... (${verificationProgress}%)` 
+                        : `Verify ${verificationResults.details.filter(d => d.status === 'verified').length} Matched Tickets`
+                      }
+                    </button>
                   </div>
                 )}
               </div>
