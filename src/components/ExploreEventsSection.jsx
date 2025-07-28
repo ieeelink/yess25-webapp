@@ -19,6 +19,7 @@ const ExploreEventsSection = () => (
               Coming Soon...
             </Link>
           </div>
+          
           {/* Right: Images Grid (commented out) */}
           <div className="w-full lg:w-1/2 flex items-center justify-center p-4 lg:py-8" data-aos="zoom-in">
             {/* Images grid is commented out in original */}
