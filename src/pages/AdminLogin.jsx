@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import BgAnimation from '../components/BgAnimation';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { FiArrowLeft } from 'react-icons/fi';
 import { API_ENDPOINTS } from '../config/api';
 
 function AdminLogin() {
@@ -92,6 +93,18 @@ function AdminLogin() {
             >
               Login
             </button>
+            
+            {/* Back to Home Link */}
+            <div className="mt-6 text-center">
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="flex items-center justify-center gap-2 text-white/70 hover:text-white transition-colors text-sm mx-auto"
+              >
+                <FiArrowLeft className="w-4 h-4" />
+                Back to Home
+              </button>
+            </div>
           </form>
         </div>
         {/* <SubFooter /> */}
