@@ -31,6 +31,8 @@ export const API_ENDPOINTS = {
   
   // IEEE Verification
   VERIFY_IEEE: (ticketId) => `${API_BASE_URL}/verifyieee/${ticketId}`,
+  BULK_IEEE_VERIFY: `${API_BASE_URL}/bulk-ieee-verify`,
+  UNVERIFIED_IEEE: `${API_BASE_URL}/admin/unverified-ieee`,
 };
 
 // Export the base URL for custom endpoints
