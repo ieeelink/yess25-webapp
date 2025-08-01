@@ -17,6 +17,9 @@ import ToS from "./pages/ToS";
 import Privacy from "./pages/Privacy";
 import AdminLogin from "./pages/AdminLogin";
 import AddAdmin from "./pages/AddAdmin";
+import AddTicket from "./pages/AddTicket";
+import AddBulkTickets from "./pages/AddBulkTickets";
+import WebhookResolve from "./pages/WebhookResolve";
 import TicketDetails from "./pages/TicketDetails";
 import axios from "axios";
 import NotFound from "./pages/NotFound";
@@ -155,6 +158,9 @@ function App() {
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/*" element={<ProtectedRoute />}>
           <Route path="add" element={<AddAdmin />} />
+          <Route path="add-ticket" element={<AddTicket />} />
+          <Route path="add-bulk-tickets" element={<AddBulkTickets />} />
+          <Route path="webhook-resolve" element={<WebhookResolve />} />
           <Route path="ticket-details" element={<TicketDetails />} />
           <Route path="bulk-ieee-verification" element={<BulkIEEEVerification />} />
           <Route path="add-event" element={<AddEvent />} />

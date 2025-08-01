@@ -10,6 +10,10 @@ export const API_ENDPOINTS = {
   ADMIN_VERIFY: `${API_BASE_URL}/admin/verify`,
   ADMIN_CHANGE_PASSWORD: `${API_BASE_URL}/admin/changepassword`,
   ADMIN_ADD_USER: `${API_BASE_URL}/admin/adduser`,
+  ADMIN_ADD_TICKET: `${API_BASE_URL}/admin/addticket`,
+  ADMIN_ADD_BULK_TICKETS: `${API_BASE_URL}/admin/addbulktickets`,
+  ADMIN_SEND_INVOICE_EMAIL: (ticketId) => `${API_BASE_URL}/admin/send-invoice-email/${ticketId}`,
+  ADMIN_WEBHOOK_RESOLVE: `${API_BASE_URL}/ticket_webhook`,
   
   // Payment
   PAYMENT: `${API_BASE_URL}/payment`,

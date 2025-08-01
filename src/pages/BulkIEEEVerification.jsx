@@ -481,69 +481,66 @@ function BulkIEEEVerification() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white nunito-sans-body">
+    <div className="min-h-screen bg-[#18181b]">
       <style dangerouslySetInnerHTML={{ __html: scrollbarStyles }} />
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+      
+      {/* Header */}
+      <div className="bg-[#1a1a1a] shadow-md border-b border-gray-800">
+        <div className="px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/admin/ticket-details')}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors nunito-sans-body"
+              className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
             >
-              <FiArrowLeft className="w-4 h-4" />
-              Back to Tickets
+              <FiArrowLeft className="text-xl" />
+              <span className="font-medium font-nunito">Back to Ticket Details</span>
             </button>
-            <h1 className="text-3xl font-bold text-white nunito-sans-body">Bulk IEEE Verification</h1>
           </div>
+          <h1 className="text-2xl font-bold text-white font-nunito">Bulk IEEE Verification</h1>
+          <div className="w-48"></div> {/* Spacer for centering */}
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Side: Instructions and Upload */}
-          <div className="space-y-6">
-            {/* Instructions Card */}
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-              <h2 className="text-xl font-semibold mb-4 text-blue-400 nunito-sans-body">How to use Bulk IEEE Verification</h2>
-              <div className="space-y-3 text-gray-300 nunito-sans-body">
-                <p>1. Download the template file to see the required format</p>
-                <p>2. Your file should contain IEEE membership data with columns: <code className="bg-gray-700 px-2 py-1 rounded">ieee_number</code>, <code className="bg-gray-700 px-2 py-1 rounded">first_name</code>, <code className="bg-gray-700 px-2 py-1 rounded">last_name</code>, and optionally <code className="bg-gray-700 px-2 py-1 rounded">institution</code></p>
-                <p>3. Upload your file using the upload section below</p>
-                <p>4. The system will verify IEEE numbers against registered tickets by matching names and IEEE numbers</p>
-                <p className="text-yellow-400 text-sm">
-                  <strong>Note:</strong> The system will match IEEE numbers with ticket holders based on name similarity and IEEE membership numbers.
-                </p>
-              </div>
-              <button
-                onClick={downloadTemplate}
-                className="mt-4 flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors nunito-sans-body"
-              >
-                <FiDownload className="w-4 h-4" />
-                Download Template
-              </button>
+      {/* Main Content */}
+      <div className="p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            
+            {/* Left Column - Upload Section */}
+            <div className="bg-[#232326] rounded-xl shadow-lg p-6 flex flex-col border border-gray-700 h-[calc(100vh-180px)] sticky top-6">
+              <h2 className="text-xl font-semibold text-white mb-6 font-nunito">Upload IEEE Membership Data</h2>
               
-              <div className="mt-4 p-3 bg-blue-900/30 border border-blue-500 rounded-lg">
-                <h3 className="font-medium text-blue-300 mb-2 nunito-sans-body">Using Your IEEE Membership Data:</h3>
-                <p className="text-sm text-blue-200 nunito-sans-body">
-                  You can directly upload your IEEE membership CSV file with columns: 
-                  <code className="bg-gray-700 px-1 py-0.5 rounded mx-1">School Name</code>,
-                  <code className="bg-gray-700 px-1 py-0.5 rounded mx-1">Member/Customer Number</code>,
-                  <code className="bg-gray-700 px-1 py-0.5 rounded mx-1">Last Name</code>,
-                  <code className="bg-gray-700 px-1 py-0.5 rounded mx-1">First Name</code>
-                </p>
+              {/* Instructions */}
+              <div className="mb-6 p-4 bg-[#2a2a2c] rounded-lg border border-gray-600">
+                <h3 className="text-lg font-semibold text-blue-400 mb-3 font-nunito">Instructions:</h3>
+                <ul className="text-sm text-gray-300 space-y-2 font-nunito">
+                  <li>• Upload a CSV file with IEEE membership data</li>
+                  <li>• Required columns: ieee_number, first_name, last_name</li>
+                  <li>• Optional column: institution</li>
+                  <li>• System will verify against registered tickets</li>
+                  <li>• Data will be automatically displayed after upload</li>
+                  <li>• Use the Verify button to start verification process</li>
+                </ul>
               </div>
-            </div>
 
-            {/* Upload Section */}
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-              <h2 className="text-xl font-semibold mb-4 nunito-sans-body">Upload IEEE Verification File</h2>
-              
-              {/* File Upload Area */}
+              {/* Template Download */}
               <div className="mb-6">
+                <button
+                  onClick={downloadTemplate}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-nunito"
+                >
+                  <FiDownload className="text-lg" />
+                  Download Template
+                </button>
+              </div>
+
+              {/* File Upload Area */}
+              <div className="flex-1 min-h-0">
                 <div
-                  className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors h-full flex flex-col justify-center ${
                     selectedFile 
-                      ? 'border-green-500 bg-green-500/10' 
-                      : 'border-gray-600 hover:border-gray-500 bg-gray-700/50'
+                      ? 'border-green-400 bg-green-500/10' 
+                      : 'border-gray-600 hover:border-gray-500'
                   }`}
                 >
                   <input
@@ -551,167 +548,141 @@ function BulkIEEEVerification() {
                     type="file"
                     accept=".csv,.xlsx,.xls"
                     onChange={handleFileSelect}
-                    className="hidden"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     id="file-upload"
                   />
                   
+                  <FiUpload className="mx-auto text-4xl text-gray-400 mb-4" />
+                  
                   {selectedFile ? (
-                    <div className="space-y-2">
-                      <FiCheck className="w-12 h-12 text-green-500 mx-auto" />
-                      <p className="text-green-400 font-medium">{selectedFile.name}</p>
-                      <p className="text-gray-400 text-sm">
+                    <div className="text-center">
+                      <p className="text-green-400 font-semibold mb-2 font-nunito">
+                        File Selected: {selectedFile.name}
+                      </p>
+                      <p className="text-gray-300 font-nunito">
                         {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                       </p>
                       <button
                         onClick={clearFile}
-                        className="text-red-400 hover:text-red-300 text-sm"
+                        className="mt-2 text-red-400 hover:text-red-300 text-sm font-nunito"
                       >
                         Remove file
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-2">
-                      <FiUpload className="w-12 h-12 text-gray-400 mx-auto" />
-                      <p className="text-gray-300">
-                        Drag and drop your file here, or{' '}
-                        <label htmlFor="file-upload" className="text-blue-400 hover:text-blue-300 cursor-pointer">
-                          browse
-                        </label>
+                    <div className="text-center">
+                      <p className="text-gray-300 mb-2 font-nunito">
+                        Drag and drop your IEEE data file here, or click to browse
                       </p>
-                      <p className="text-gray-500 text-sm">Supports CSV, XLSX, XLS (max 10MB)</p>
+                      <p className="text-sm text-gray-500 font-nunito">
+                        Supports CSV, Excel files
+                      </p>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Upload Progress */}
-              {(isUploading || isProcessing) && (
-                <div className="mb-4">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>
-                      {uploadProgress < 40 ? 'Fetching unverified tickets...' :
-                       uploadProgress < 60 ? 'Reading file...' :
-                       uploadProgress < 80 ? 'Parsing IEEE data...' :
-                       uploadProgress < 90 ? 'Matching records...' :
-                       'Updating tickets...'}
-                    </span>
-                    <span>{uploadProgress}%</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${uploadProgress}%` }}
-                    ></div>
-                  </div>
-                  {isProcessing && (
-                    <p className="text-sm text-blue-400 mt-2">
-                      Processing {unverifiedTickets.length} unverified tickets...
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Error Message */}
+              {/* Error/Success Messages */}
               {error && (
-                <div className="mb-4 p-3 bg-red-900/50 border border-red-500 rounded-lg text-red-300">
-                  <FiX className="inline w-4 h-4 mr-2" />
-                  {error}
+                <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-400 text-sm font-nunito">{error}</p>
                 </div>
               )}
-
-              {/* Success Message */}
+              
               {success && (
-                <div className="mb-4 p-3 bg-green-900/50 border border-green-500 rounded-lg text-green-300">
-                  <FiCheck className="inline w-4 h-4 mr-2" />
-                  {success}
+                <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <p className="text-green-400 text-sm font-nunito">{success}</p>
                 </div>
               )}
-
-              {/* Upload Button */}
-              <button
-                onClick={handleUpload}
-                disabled={!selectedFile || isUploading || isProcessing}
-                className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-                  !selectedFile || isUploading || isProcessing
-                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                }`}
-              >
-                {isUploading ? 'Processing...' : isProcessing ? 'Matching & Updating...' : 'Process IEEE Verification'}
-              </button>
             </div>
-          </div>
 
-          {/* Right Side: Results */}
-          <div className="space-y-6">
-            {verificationResults ? (
-              <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                <h2 className="text-xl font-semibold mb-4">Verification Results</h2>
-                
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-green-900/30 border border-green-500 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-green-400">{verificationResults.verified || 0}</div>
-                    <div className="text-green-300">Verified</div>
-                  </div>
-                  <div className="bg-red-900/30 border border-red-500 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-red-400">{verificationResults.failed || 0}</div>
-                    <div className="text-red-300">Failed</div>
-                  </div>
-                  <div className="bg-yellow-900/30 border border-yellow-500 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-yellow-400">{verificationResults.notFound || 0}</div>
-                    <div className="text-yellow-300">Not Found</div>
-                  </div>
-                  <div className="bg-blue-900/30 border border-blue-500 rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-blue-400">{verificationResults.total || 0}</div>
-                    <div className="text-blue-300">Total</div>
-                  </div>
-                </div>
+            {/* Right Column - Data Display and Processing */}
+            <div className="bg-[#232326] rounded-xl shadow-lg p-6 flex flex-col border border-gray-700 min-h-[calc(100vh-180px)]">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-white font-nunito">
+                  {verificationResults ? 'Verification Results' : 'IEEE Data Preview'}
+                </h2>
+                {selectedFile && !verificationResults && (
+                  <button
+                    onClick={handleUpload}
+                    disabled={isUploading || isProcessing}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-nunito"
+                  >
+                    {isUploading || isProcessing ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <FiBarChart2 className="text-lg" />
+                        Process IEEE Verification
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
 
-                {verificationResults.details && verificationResults.details.filter(d => d.status === 'verified').length > 0 && (
-                  <div className="space-y-4">
-                    <h3 className="font-medium text-gray-300">Matched Tickets:</h3>
-                    
-                    <div>
-                      <div className="max-h-96 overflow-y-auto space-y-2 custom-scrollbar custom-scrollbar-green">
-                        {verificationResults.details.filter(d => d.status === 'verified').map((detail, index) => (
-                          <div 
-                            key={index}
-                            className="p-3 rounded bg-green-900/30 text-green-300 border border-green-500/30"
-                          >
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <span className="font-mono text-sm font-bold">{detail.ieee_number}</span>
-                                <span className="mx-2">→</span>
-                                <span className="font-medium">{detail.name}</span>
-                                {detail.ticket_name && detail.ticket_name !== detail.name && (
-                                  <div className="text-xs opacity-75 mt-1">
-                                    Ticket: {detail.ticket_name}
-                                  </div>
-                                )}
-                              </div>
-                              <div className="text-xs opacity-75 font-medium">
-                                MATCHED
-                              </div>
-                            </div>
-                            <div className="text-xs mt-1 opacity-90">
-                              {detail.message}
-                            </div>
-                          </div>
-                        ))}
+              <div className="flex-1 min-h-0">
+                {(isUploading || isProcessing) ? (
+                  <div className="flex flex-col items-center justify-center h-full">
+                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent mb-4"></div>
+                    <div className="w-full max-w-md">
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-gray-300 font-nunito">
+                          {uploadProgress < 40 ? 'Fetching unverified tickets...' :
+                           uploadProgress < 60 ? 'Reading file...' :
+                           uploadProgress < 80 ? 'Parsing IEEE data...' :
+                           uploadProgress < 90 ? 'Matching records...' :
+                           'Updating tickets...'}
+                        </span>
+                        <span className="text-blue-400 font-nunito">{uploadProgress}%</span>
                       </div>
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div 
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${uploadProgress}%` }}
+                        ></div>
+                      </div>
+                      {isProcessing && (
+                        <p className="text-sm text-blue-400 mt-2 text-center font-nunito">
+                          Processing {unverifiedTickets.length} unverified tickets...
+                        </p>
+                      )}
                     </div>
                   </div>
-                )}
+                ) : verificationResults ? (
+                  /* Verification Results */
+                  <div className="h-full flex flex-col">
+                    {/* Results Summary */}
+                    <div className="mb-4 p-4 bg-[#2a2a2c] rounded-lg border border-gray-600">
+                      <h3 className="text-lg font-semibold text-white mb-4 font-nunito text-center">Verification Statistics</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                          <div className="text-2xl font-bold text-green-400 font-nunito">{verificationResults.verified || 0}</div>
+                          <div className="text-xs text-gray-400 font-nunito">Verified</div>
+                        </div>
+                        <div className="p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                          <div className="text-2xl font-bold text-red-400 font-nunito">{verificationResults.failed || 0}</div>
+                          <div className="text-xs text-gray-400 font-nunito">Failed</div>
+                        </div>
+                        <div className="p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+                          <div className="text-2xl font-bold text-yellow-400 font-nunito">{verificationResults.notFound || 0}</div>
+                          <div className="text-xs text-gray-400 font-nunito">Not Found</div>
+                        </div>
+                        <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                          <div className="text-2xl font-bold text-blue-400 font-nunito">{verificationResults.total || 0}</div>
+                          <div className="text-xs text-gray-400 font-nunito">Total</div>
+                        </div>
+                      </div>
+                    </div>
 
-                {/* Verification Button and Progress */}
-                {verificationResults && verificationResults.details && verificationResults.details.filter(d => d.status === 'verified').length > 0 && (
-                  <div className="mt-6 pt-6 border-t border-gray-600">
                     {/* Verification Progress */}
                     {isVerifying && (
-                      <div className="mb-4">
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="nunito-sans-body">Verifying IEEE memberships...</span>
-                          <span className="nunito-sans-body">{verificationProgress}%</span>
+                      <div className="mb-4 p-3 bg-[#2a2a2c] rounded-lg border border-gray-600">
+                        <div className="flex justify-between text-sm mb-2">
+                          <span className="text-gray-300 font-nunito">Verifying IEEE memberships...</span>
+                          <span className="text-green-400 font-nunito">{verificationProgress}%</span>
                         </div>
                         <div className="w-full bg-gray-700 rounded-full h-2">
                           <div 
@@ -722,33 +693,87 @@ function BulkIEEEVerification() {
                       </div>
                     )}
 
+                    {/* Detailed Results */}
+                    <div className="flex-1 overflow-auto custom-scrollbar">
+                      <div className="space-y-3">
+                        {verificationResults.details && verificationResults.details
+                          .filter(detail => detail.status === 'verified')
+                          .map((detail, index) => (
+                          <div
+                            key={index}
+                            className="p-4 rounded-lg border-l-4 bg-green-500/10 border-green-400"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <FiCheck className="text-green-400 text-lg" />
+                                <div>
+                                  <div className="font-semibold text-white font-nunito">
+                                    IEEE #{detail.ieee_number}
+                                  </div>
+                                  <div className="text-sm text-gray-400 font-nunito">
+                                    {detail.name}
+                                  </div>
+                                  {detail.ticket_name && (
+                                    <div className="text-sm text-blue-400 font-nunito">
+                                      Matched: {detail.ticket_name}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="text-sm font-nunito text-green-400">
+                                MATCHED
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                        {verificationResults.details && verificationResults.details.filter(d => d.status === 'verified').length === 0 && (
+                          <div className="text-center py-8">
+                            <FiX className="mx-auto text-4xl text-gray-500 mb-3 opacity-50" />
+                            <p className="text-gray-400 font-nunito">No verified matches found</p>
+                            <p className="text-sm text-gray-500 font-nunito mt-1">Try uploading a different IEEE membership file</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
                     {/* Verify Button */}
-                    <button
-                      onClick={handleVerifyMatches}
-                      disabled={isVerifying}
-                      className={`w-full py-3 px-4 rounded-lg font-medium transition-colors nunito-sans-body ${
-                        isVerifying
-                          ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                          : 'bg-green-600 hover:bg-green-700 text-white'
-                      }`}
-                    >
-                      {isVerifying 
-                        ? `Verifying... (${verificationProgress}%)` 
-                        : `Verify ${verificationResults.details.filter(d => d.status === 'verified').length} Matched Tickets`
-                      }
-                    </button>
+                    {verificationResults.details && verificationResults.details.filter(d => d.status === 'verified').length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-gray-600">
+                        <button
+                          onClick={handleVerifyMatches}
+                          disabled={isVerifying}
+                          className={`w-full py-3 px-4 rounded-lg font-medium transition-colors font-nunito ${
+                            isVerifying
+                              ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                              : 'bg-green-600 hover:bg-green-700 text-white'
+                          }`}
+                        >
+                          {isVerifying 
+                            ? `Verifying... (${verificationProgress}%)` 
+                            : `Verify ${verificationResults.details.filter(d => d.status === 'verified').length} Matched Tickets`
+                          }
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : selectedFile ? (
+                  <div className="flex items-center justify-center h-full text-gray-400">
+                    <div className="text-center">
+                      <FiBarChart2 className="mx-auto text-4xl mb-4 opacity-50" />
+                      <p className="font-nunito">File uploaded successfully</p>
+                      <p className="text-sm font-nunito mt-2">Click "Process IEEE Verification" to start</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-500">
+                    <div className="text-center">
+                      <FiUpload className="mx-auto text-4xl mb-4 opacity-50" />
+                      <p className="font-nunito">Upload an IEEE data file to see verification results</p>
+                    </div>
                   </div>
                 )}
               </div>
-            ) : (
-              <div className="bg-gray-800 rounded-lg p-8 border border-gray-700 border-dashed text-center">
-                <div className="text-gray-400 mb-4">
-                  <FiBarChart2 className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <h3 className="text-lg font-medium mb-2">Results will appear here</h3>
-                  <p className="text-sm">Upload and process your IEEE verification file to see detailed results</p>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>

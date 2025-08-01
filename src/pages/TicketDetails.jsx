@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FiLock, FiLogOut } from 'react-icons/fi';
+import { FiLock, FiLogOut, FiUser, FiChevronDown, FiCalendar, FiBell, FiMail, FiRefreshCw } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import UpdateTicketForm from '../components/UpdateTicketForm';
 import { API_ENDPOINTS } from '../config/api';
@@ -10,6 +10,7 @@ function TicketDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [verifyNewPassword, setVerifyNewPassword] = useState('');
@@ -21,6 +22,8 @@ function TicketDetails() {
   const [changePasswordError, setChangePasswordError] = useState('');
   const [changePasswordSuccess, setChangePasswordSuccess] = useState('');
   const [editingTicket, setEditingTicket] = useState(null); // ticket being edited
+  const [sendingEmail, setSendingEmail] = useState({}); // track email sending status per ticket
+  const [emailStatus, setEmailStatus] = useState({}); // track email success/error messages
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,9 +49,70 @@ function TicketDetails() {
     fetchTickets();
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showUserDropdown && !event.target.closest('.user-dropdown')) {
+        setShowUserDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserDropdown]);
+
   const handleEdit = (ticketId) => {
     const ticket = tickets.find(t => t._id === ticketId);
     setEditingTicket(ticket);
+  };
+
+  const handleSendInvoiceEmail = async (ticketId) => {
+    setSendingEmail(prev => ({ ...prev, [ticketId]: true }));
+    setEmailStatus(prev => ({ ...prev, [ticketId]: null }));
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setEmailStatus(prev => ({ ...prev, [ticketId]: { type: 'error', message: 'Authentication required' } }));
+        return;
+      }
+
+      const response = await axios.post(
+        API_ENDPOINTS.ADMIN_SEND_INVOICE_EMAIL(ticketId),
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      setEmailStatus(prev => ({ 
+        ...prev, 
+        [ticketId]: { type: 'success', message: 'Invoice email sent successfully!' } 
+      }));
+
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setEmailStatus(prev => ({ ...prev, [ticketId]: null }));
+      }, 3000);
+
+    } catch (err) {
+      setEmailStatus(prev => ({ 
+        ...prev, 
+        [ticketId]: { 
+          type: 'error', 
+          message: err.response?.data?.message || 'Failed to send invoice email' 
+        } 
+      }));
+
+      // Clear error message after 5 seconds
+      setTimeout(() => {
+        setEmailStatus(prev => ({ ...prev, [ticketId]: null }));
+      }, 5000);
+    } finally {
+      setSendingEmail(prev => ({ ...prev, [ticketId]: false }));
+    }
   };
 
   const handleLogout = () => {
@@ -97,126 +161,177 @@ function TicketDetails() {
           <img src="/yess_icon.png" alt="YESS Logo" className="h-10 w-10" />
           <span className="text-white text-xl font-bold tracking-wide">YESS'25 Admin Dashboard</span>
         </div>
-        <div className="flex items-center gap-3">
-          {showChangePassword && (
-            <div className="absolute top-20 right-10 bg-[#232326] border border-gray-700 rounded-lg shadow-lg p-6 z-30 w-80 flex flex-col gap-3">
-              <h2 className="text-lg font-bold text-white mb-2">Change Password</h2>
-              {changePasswordError && <div className="text-red-500 text-sm mb-2">{changePasswordError}</div>}
-              {changePasswordSuccess && <div className="text-green-500 text-sm mb-2">{changePasswordSuccess}</div>}
-              <input
-                type="password"
-                placeholder="Current Password"
-                value={currentPassword}
-                onChange={e => setCurrentPassword(e.target.value)}
-                className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
-              />
-              <input
-                type="password"
-                placeholder="New Password"
-                value={newPassword}
-                onChange={e => setNewPassword(e.target.value)}
-                className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
-              />
-              <input
-                type="password"
-                placeholder="Verify New Password"
-                value={verifyNewPassword}
-                onChange={e => setVerifyNewPassword(e.target.value)}
-                className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
-              />
-              <div className="flex gap-2 mt-2">
-                <button
-                  onClick={() => { setShowChangePassword(false); setChangePasswordError(''); setChangePasswordSuccess(''); }}
-                  className="px-4 py-2 rounded bg-gray-600 text-white hover:bg-gray-700 text-sm font-semibold"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={async () => {
-                    setChangePasswordError('');
-                    setChangePasswordSuccess('');
-                    if (newPassword !== verifyNewPassword) {
-                      setChangePasswordError('New passwords do not match.');
-                      return;
-                    }
-                    if (!currentPassword || !newPassword) {
-                      setChangePasswordError('Please fill all fields.');
-                      return;
-                    }
-                    try {
-                      const username = localStorage.getItem('admin');
-                      const token = localStorage.getItem('token');
-                      const response = await axios.post(API_ENDPOINTS.ADMIN_CHANGE_PASSWORD, {
-                        username,
-                        currentPassword,
-                        newPassword
-                      }, {
-                        headers: { Authorization: `Bearer ${token}` }
-                      });
-                      setChangePasswordSuccess('Password changed successfully!');
-                      setCurrentPassword('');
-                      setNewPassword('');
-                      setVerifyNewPassword('');
-                      setTimeout(() => {
-                        setShowChangePassword(false);
-                        setChangePasswordSuccess('');
-                      }, 1500);
-                    } catch (err) {
-                      setChangePasswordError(
-                        err.response?.data?.message || 'Failed to change password. Please try again.'
-                      );
-                    }
-                  }}
-                  className="px-4 py-2 rounded bg-[#fe4a56] text-white hover:bg-[#8c0505] text-sm font-semibold"
-                >
-                  Submit
-                </button>
-              </div>
-            </div>
-          )}
-          <button
-            onClick={() => navigate('/admin/add')}
-            className="flex items-center gap-2 bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-green-800 shadow"
+        
+        {/* Navigation Menu */}
+        <nav className="flex items-center gap-1">
+          <a
+            onClick={() => navigate('/admin/add-ticket')}
+            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-green-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-green-700/50"
           >
-            + Add New User
-          </button>
-          <button
+            + Add Ticket
+          </a>
+          <a
+            onClick={() => navigate('/admin/add-bulk-tickets')}
+            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-green-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-green-700/50"
+          >
+            + Bulk Tickets
+          </a>
+          <a
             onClick={() => navigate('/admin/event-details')}
-            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-blue-800 shadow"
+            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-blue-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-blue-700/50"
           >
+            <FiCalendar className="w-4 h-4" />
             Event Details
-          </button>
-          <button
+          </a>
+          <a
             onClick={() => navigate('/admin/updates')}
-            className="flex items-center gap-2 bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-purple-800 shadow"
+            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-purple-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-purple-700/50"
           >
+            <FiBell className="w-4 h-4" />
             Updates
-          </button>
-          <button
+          </a>
+          <a
             onClick={() => navigate('/admin/bulk-ieee-verification')}
-            className="flex items-center gap-2 bg-orange-700 hover:bg-orange-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-orange-800 shadow"
+            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-orange-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-orange-700/50"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            Bulk IEEE Verify
-          </button>
-          <button
-            onClick={handleChangePassword}
-            className="flex items-center gap-2 bg-[#fe4a56] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#8c0505] transition-colors border border-[#fe4a56] hover:border-[#8c0505] focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2"
+            IEEE Verify
+          </a>
+          <a
+            onClick={() => navigate('/admin/webhook-resolve')}
+            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-yellow-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-yellow-700/50"
           >
-            <FiLock className="w-5 h-5" />
-            Change Password
-          </button>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 bg-red-700/80 hover:bg-red-800 text-white px-4 py-2 rounded-lg font-semibold transition-colors border border-red-900 shadow"
-          >
-            <FiLogOut className="w-5 h-5" />
-            Log out
-          </button>
-        </div>
+            <FiRefreshCw className="w-4 h-4" />
+            Webhook Resolver
+          </a>
+          
+          {/* User Dropdown */}
+          <div className="relative ml-4 pl-4 border-l border-gray-700 user-dropdown">
+            <button
+              onClick={() => setShowUserDropdown(!showUserDropdown)}
+              className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-gray-700/20 px-3 py-2 rounded-lg font-medium transition-colors border border-transparent hover:border-gray-700/50"
+            >
+              <FiUser className="w-4 h-4" />
+              <FiChevronDown className={`w-4 h-4 transition-transform ${showUserDropdown ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {/* Dropdown Menu */}
+            {showUserDropdown && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-[#232326] border border-gray-700 rounded-lg shadow-lg py-1 z-30">
+                <a
+                  onClick={() => {
+                    navigate('/admin/add');
+                    setShowUserDropdown(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-green-700/20 transition-colors cursor-pointer"
+                >
+                  + Add User
+                </a>
+                <a
+                  onClick={() => {
+                    handleChangePassword();
+                    setShowUserDropdown(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-red-700/20 transition-colors cursor-pointer"
+                >
+                  <FiLock className="w-4 h-4" />
+                  Change Password
+                </a>
+                <a
+                  onClick={() => {
+                    handleLogout();
+                    setShowUserDropdown(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-red-700/20 transition-colors cursor-pointer"
+                >
+                  <FiLogOut className="w-4 h-4" />
+                  Logout
+                </a>
+              </div>
+            )}
+          </div>
+        </nav>
       </header>
+
+      {/* Change Password Modal */}
+      {showChangePassword && (
+        <div className="absolute top-20 right-10 bg-[#232326] border border-gray-700 rounded-lg shadow-lg p-6 z-30 w-80 flex flex-col gap-3">
+          <h2 className="text-lg font-bold text-white mb-2">Change Password</h2>
+          {changePasswordError && <div className="text-red-500 text-sm mb-2">{changePasswordError}</div>}
+          {changePasswordSuccess && <div className="text-green-500 text-sm mb-2">{changePasswordSuccess}</div>}
+          <input
+            type="password"
+            placeholder="Current Password"
+            value={currentPassword}
+            onChange={e => setCurrentPassword(e.target.value)}
+            className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
+          />
+          <input
+            type="password"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={e => setNewPassword(e.target.value)}
+            className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
+          />
+          <input
+            type="password"
+            placeholder="Verify New Password"
+            value={verifyNewPassword}
+            onChange={e => setVerifyNewPassword(e.target.value)}
+            className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
+          />
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={() => { setShowChangePassword(false); setChangePasswordError(''); setChangePasswordSuccess(''); }}
+              className="px-4 py-2 rounded bg-gray-600 text-white hover:bg-gray-700 text-sm font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                setChangePasswordError('');
+                setChangePasswordSuccess('');
+                if (newPassword !== verifyNewPassword) {
+                  setChangePasswordError('New passwords do not match.');
+                  return;
+                }
+                if (!currentPassword || !newPassword) {
+                  setChangePasswordError('Please fill all fields.');
+                  return;
+                }
+                try {
+                  const username = localStorage.getItem('admin');
+                  const token = localStorage.getItem('token');
+                  const response = await axios.post(API_ENDPOINTS.ADMIN_CHANGE_PASSWORD, {
+                    username,
+                    currentPassword,
+                    newPassword
+                  }, {
+                    headers: { Authorization: `Bearer ${token}` }
+                  });
+                  setChangePasswordSuccess('Password changed successfully!');
+                  setCurrentPassword('');
+                  setNewPassword('');
+                  setVerifyNewPassword('');
+                  setTimeout(() => {
+                    setShowChangePassword(false);
+                    setChangePasswordSuccess('');
+                  }, 1500);
+                } catch (err) {
+                  setChangePasswordError(
+                    err.response?.data?.message || 'Failed to change password. Please try again.'
+                  );
+                }
+              }}
+              className="px-4 py-2 rounded bg-[#fe4a56] text-white hover:bg-[#8c0505] text-sm font-semibold"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+      )}
       {/* Filters Section */}
       <div className="w-full flex flex-wrap items-center gap-4 px-6 py-4 bg-[#232326] border-b border-gray-800 z-10">
         <input
@@ -275,6 +390,7 @@ function TicketDetails() {
           Showing {filteredTickets.length} result{filteredTickets.length !== 1 ? 's' : ''}
         </span>
       </div>
+      
       <div className="w-full" style={{ height: 'calc(100vh - 72px - 64px)' }}>
         {/* Show UpdateTicketForm modal if editingTicket is set */}
         {editingTicket && (
@@ -368,6 +484,26 @@ function TicketDetails() {
                 </div>
                 {/* Action buttons below details, aligned right */}
                 <div className="flex justify-end mt-6 gap-3">
+                  {/* Email status message */}
+                  {emailStatus[ticket._id] && (
+                    <div className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium ${
+                      emailStatus[ticket._id].type === 'success' 
+                        ? 'bg-green-900/20 text-green-400 border border-green-700' 
+                        : 'bg-red-900/20 text-red-400 border border-red-700'
+                    }`}>
+                      {emailStatus[ticket._id].message}
+                    </div>
+                  )}
+                  
+                  <button
+                    onClick={() => handleSendInvoiceEmail(ticket._id)}
+                    disabled={sendingEmail[ticket._id]}
+                    className="flex items-center gap-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow border border-blue-600 hover:border-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 nunito-sans-body disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <FiMail className="w-4 h-4 mr-1" />
+                    {sendingEmail[ticket._id] ? 'Sending...' : 'Send Invoice'}
+                  </button>
+                  
                   <button
                     onClick={() => handleEdit(ticket._id)}
                     className="flex items-center gap-1 bg-[#fe4a56] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#8c0505] transition-colors shadow border border-[#fe4a56] hover:border-[#8c0505] focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2 nunito-sans-body"
