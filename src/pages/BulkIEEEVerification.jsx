@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiUpload, FiDownload, FiArrowLeft, FiCheck, FiX, FiBarChart2, FiTrash2, FiSettings, FiEye, FiEyeOff, FiLoader } from 'react-icons/fi';
+import { FiUpload, FiDownload, FiArrowLeft, FiCheck, FiX, FiBarChart2, FiTrash2 } from 'react-icons/fi';
 import { API_ENDPOINTS } from '../config/api';
 import axios from 'axios';
-import DebugTicketPanel from '../components/DebugTicketPanel';
 
 function BulkIEEEVerification() {
   const navigate = useNavigate();
@@ -22,10 +21,6 @@ function BulkIEEEVerification() {
   const [verificationProgress, setVerificationProgress] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('matched'); // 'all', 'matched', 'notMatched'
   const [excludedTickets, setExcludedTickets] = useState(new Set()); // Track excluded IEEE numbers
-  const [showDebugPanel, setShowDebugPanel] = useState(false);
-  const [debugInfo, setDebugInfo] = useState(null);
-  const [loadingDebug, setLoadingDebug] = useState(false);
-  const [debugTicketId, setDebugTicketId] = useState('');
   const [verifyingTickets, setVerifyingTickets] = useState(new Set()); // Track tickets being verified
   const [verifiedTickets, setVerifiedTickets] = useState(new Map()); // Track verification results
 
@@ -354,62 +349,6 @@ function BulkIEEEVerification() {
     }
   }, [verificationResults, selectedCategory, excludedTickets, verifiedTickets]);
 
-  // Debug ticket function
-  const debugTicket = async (ticketId) => {
-    if (!ticketId) {
-      setError('Please enter a ticket ID to debug');
-      return;
-    }
-
-    setLoadingDebug(true);
-    setError('');
-    
-    try {
-      // Get auth token from localStorage
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Authentication token not found. Please login again.');
-      }
-
-      // Make API call to get ticket details for debugging
-      const response = await axios.get(API_ENDPOINTS.DEBUG_TICKET(ticketId), {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const ticketData = response.data;
-      console.log('🔍 Debugging Ticket Data:', ticketData);
-      // Set debug info with comprehensive ticket details
-      setDebugInfo({
-        ticketId: ticketId,
-        rawTicket: ticketData, // Use rawTicket to match DebugTicketPanel expectations
-        fullName: ticketData.fullName || `${ticketData.firstName || ''} ${ticketData.lastName || ''}`.trim(),
-        email: ticketData.email,
-        debugTimestamp: new Date().toISOString(),
-        apiResponse: response.data,
-        headers: response.headers,
-        status: response.status
-      });
-
-    } catch (error) {
-      console.error('❌ Error debugging ticket:', error);
-      setError(`Failed to debug ticket: ${error.response?.data?.message || error.message}`);
-      setDebugInfo({
-        ticketId: ticketId,
-        rawTicket: {}, // Empty object to prevent undefined access
-        fullName: 'Error loading ticket',
-        email: 'Error loading ticket',
-        error: error.message,
-        errorDetails: error.response?.data || 'Unknown error',
-        debugTimestamp: new Date().toISOString()
-      });
-    } finally {
-      setLoadingDebug(false);
-    }
-  };
-
   // Verify matched results
   const handleVerifyMatches = async () => {
     if (!verificationResults?.allTickets) return;
@@ -528,18 +467,7 @@ function BulkIEEEVerification() {
             </button>
           </div>
           <h1 className="text-2xl font-bold text-white">Bulk IEEE Verification</h1>
-          <div className="flex items-center gap-3">
-            {/* Debug Panel Toggle */}
-            <button
-              onClick={() => setShowDebugPanel(true)}
-              className="flex items-center gap-2 px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm"
-              title="Toggle Debug Panel"
-            >
-              <FiSettings className="text-lg" />
-              <span>Debug</span>
-            </button>
-            <div className="w-48"></div> {/* Spacer for centering */}
-          </div>
+          <div className="w-48"></div> {/* Spacer for centering */}
         </div>
       </div>
 
@@ -968,18 +896,6 @@ function BulkIEEEVerification() {
           </div>
         </div>
       </div>
-
-      {/* Debug Panel Modal */}
-      <DebugTicketPanel
-        showDebugPanel={showDebugPanel}
-        setShowDebugPanel={setShowDebugPanel}
-        debugInfo={debugInfo}
-        setDebugInfo={setDebugInfo}
-        debugTicketId={debugTicketId}
-        setDebugTicketId={setDebugTicketId}
-        loadingDebug={loadingDebug}
-        debugTicket={debugTicket}
-      />
     </div>
   );
 }
