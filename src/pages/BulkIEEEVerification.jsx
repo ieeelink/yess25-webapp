@@ -367,7 +367,7 @@ function BulkIEEEVerification() {
   };
 
   return (
-    <div className="min-h-screen bg-[#18181b] nunito-sans-body">
+    <div className="min-h-screen bg-[#18181b]">
       <style dangerouslySetInnerHTML={{ __html: scrollbarStyles }} />
       
       {/* Header */}
@@ -382,7 +382,7 @@ function BulkIEEEVerification() {
               <span className="font-medium">Back to Ticket Details</span>
             </button>
           </div>
-          <h1 className="text-2xl font-bold text-white font-nunito">Bulk IEEE Verification</h1>
+          <h1 className="text-2xl font-bold text-white">Bulk IEEE Verification</h1>
           <div className="flex items-center gap-3">
             {/* Debug Panel Toggle */}
             <button
@@ -410,7 +410,7 @@ function BulkIEEEVerification() {
               {/* Instructions */}
               <div className="mb-6 p-4 bg-[#2a2a2c] rounded-lg border border-gray-600">
                 <h3 className="text-lg font-semibold text-blue-400 mb-3 font-nunito">Instructions:</h3>
-                <ul className="text-sm text-gray-300 space-y-2">
+                <ul className="text-sm text-gray-300 space-y-2 nunito-sans-body">
                   <li>• Upload a CSV file with IEEE membership data</li>
                   <li>• Required columns: ieee_number, first_name, last_name</li>
                   <li>• Optional column: institution</li>
@@ -628,10 +628,10 @@ function BulkIEEEVerification() {
                                   <FiX className="text-red-400 text-lg" />
                                 )}
                                 <div>
-                                  <div className="font-semibold text-white">
+                                  <div className="font-semibold text-white nunito-sans-body">
                                     IEEE #{ticket.ieeeMembershipNumber}
                                   </div>
-                                  <div className="text-sm text-gray-400">
+                                  <div className="text-sm text-gray-400 nunito-sans-body">
                                     <div>Email: {ticket.email}</div>
                                     {ticket.college && <div>College: {ticket.college}</div>}
                                     {ticket.status === 'matched' && ticket.csvData && (
@@ -750,15 +750,15 @@ function BulkIEEEVerification() {
                   <div className="flex items-center justify-center h-full text-gray-400">
                     <div className="text-center">
                       <FiBarChart2 className="mx-auto text-4xl mb-4 opacity-50" />
-                      <p>Processing file automatically...</p>
-                      <p className="text-sm mt-2">File will be processed upon upload</p>
+                      <p className="font-nunito">Processing file automatically...</p>
+                      <p className="text-sm font-nunito mt-2">File will be processed upon upload</p>
                     </div>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full text-gray-500">
                     <div className="text-center">
                       <FiUpload className="mx-auto text-4xl mb-4 opacity-50" />
-                      <p>Upload an IEEE data file to see verification results</p>
+                      <p className="font-nunito">Upload an IEEE data file to see verification results</p>
                     </div>
                   </div>
                 )}
