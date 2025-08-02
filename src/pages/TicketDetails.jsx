@@ -501,7 +501,6 @@ function TicketDetails() {
                   <div className="min-w-0 break-words nunito-sans-body">
                     <div className="text-gray-400 text-sm mb-1 nunito-sans-body">Payment Details</div>
                     <div className="mb-2 text-gray-200 text-sm break-words nunito-sans-body">Amount: ₹{(ticket.amount / 100).toFixed(2)}</div>
-                    <div className="mb-2 text-gray-200 text-sm break-words nunito-sans-body">Amount Paid: ₹{(ticket.amount_paid / 100).toFixed(2)}</div>
                     <div className="mb-2 text-gray-200 text-sm break-words nunito-sans-body">Payment Status: {ticket.paymentStatus}</div>
                     <div className="mb-2 text-gray-200 text-sm break-words nunito-sans-body">Payment Verified: {ticket.paymentVerified ? 'Yes' : 'No'}</div>
                     {ticket.paymentId && (
@@ -512,8 +511,7 @@ function TicketDetails() {
                   <div className="min-w-0 break-words nunito-sans-body">
                     <div className="text-gray-400 text-sm mb-1 nunito-sans-body">Ticket Details</div>
                     <div className="mb-2 text-gray-200 text-sm break-words nunito-sans-body">YESS Ticket ID: {ticket.yessTicketId}</div>
-                    <div className="mb-2 text-gray-200 text-sm break-words nunito-sans-body">Order ID: {ticket.orderId}</div>
-                    <div className="mb-2 text-gray-200 text-sm break-words nunito-sans-body">Receipt: {ticket.receipt}</div>
+                    <div className="mb-2 text-gray-200 text-sm break-words nunito-sans-body">Registration ID: {ticket.registrationId}</div>
                     <div className="mb-2 text-gray-200 text-sm break-words nunito-sans-body">Registered: {ticket.timestamp ? new Date(ticket.timestamp).toLocaleString() : ''}</div>
                     {ticket.paymentCompletedAt && (
                       <div className="mb-2 text-gray-200 text-sm break-words nunito-sans-body">Payment Completed: {new Date(ticket.paymentCompletedAt).toLocaleString()}</div>
