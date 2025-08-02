@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiUpload, FiDownload, FiArrowLeft, FiCheck, FiX, FiBarChart2, FiTrash2, FiSettings, FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiUpload, FiDownload, FiArrowLeft, FiCheck, FiX, FiBarChart2, FiTrash2, FiSettings, FiEye, FiEyeOff, FiLoader } from 'react-icons/fi';
 import { API_ENDPOINTS } from '../config/api';
 import axios from 'axios';
 import DebugTicketPanel from '../components/DebugTicketPanel';
@@ -26,6 +26,8 @@ function BulkIEEEVerification() {
   const [debugInfo, setDebugInfo] = useState(null);
   const [loadingDebug, setLoadingDebug] = useState(false);
   const [debugTicketId, setDebugTicketId] = useState('');
+  const [verifyingTickets, setVerifyingTickets] = useState(new Set()); // Track tickets being verified
+  const [verifiedTickets, setVerifiedTickets] = useState(new Map()); // Track verification results
 
   // Custom scrollbar styles
   const scrollbarStyles = `
@@ -294,6 +296,8 @@ function BulkIEEEVerification() {
     setVerificationResults(null);
     setSelectedCategory('matched');
     setExcludedTickets(new Set());
+    setVerifyingTickets(new Set());
+    setVerifiedTickets(new Map());
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -303,6 +307,52 @@ function BulkIEEEVerification() {
   const handleRemoveTicket = (ieeeNumber) => {
     setExcludedTickets(prev => new Set([...prev, ieeeNumber]));
   };
+
+  // Get current filtered ticket IDs as a list
+  const getCurrentTicketIds = () => {
+    if (!verificationResults?.allTickets) return [];
+    
+    return verificationResults.allTickets
+      .filter(ticket => {
+        // First filter by excluded tickets
+        if (excludedTickets.has(ticket.ieeeMembershipNumber)) return false;
+        
+        // Then filter by category
+        if (selectedCategory === 'all') return true;
+        if (selectedCategory === 'matched') return ticket.status === 'matched';
+        if (selectedCategory === 'notMatched') return ticket.status === 'not_matched';
+        return false;
+      })
+      .map(ticket => ticket._id)
+      .filter(id => id); // Remove any undefined IDs
+  };
+
+  // Get all ticket IDs (regardless of filters)
+  const getAllTicketIds = () => {
+    if (!verificationResults?.allTickets) return [];
+    return verificationResults.allTickets
+      .map(ticket => ticket._id)
+      .filter(id => id); // Remove any undefined IDs
+  };
+
+  // Get matched ticket IDs only
+  const getMatchedTicketIds = () => {
+    if (!verificationResults?.allTickets) return [];
+    return verificationResults.allTickets
+      .filter(ticket => ticket.status === 'matched' && !excludedTickets.has(ticket.ieeeMembershipNumber))
+      .map(ticket => ticket._id)
+      .filter(id => id); // Remove any undefined IDs
+  };
+
+  // Auto-log ticket IDs whenever verification results or filters change
+  useEffect(() => {
+    if (verificationResults?.allTickets) {
+      console.log('📋 Ticket ID Lists:');
+      console.log('  • Current filtered IDs:', getCurrentTicketIds());
+      console.log('  • All ticket IDs:', getAllTicketIds());
+      console.log('  • Matched ticket IDs:', getMatchedTicketIds());
+    }
+  }, [verificationResults, selectedCategory, excludedTickets, verifiedTickets]);
 
   // Debug ticket function
   const debugTicket = async (ticketId) => {
@@ -362,8 +412,103 @@ function BulkIEEEVerification() {
 
   // Verify matched results
   const handleVerifyMatches = async () => {
-    // Removed verification functionality
-    setError('Verification functionality removed');
+    if (!verificationResults?.allTickets) return;
+    
+    // Get tickets to verify (matched tickets not excluded)
+    const ticketsToVerify = verificationResults.allTickets.filter(
+      ticket => ticket.status === 'matched' && !excludedTickets.has(ticket.ieeeMembershipNumber)
+    );
+    
+    if (ticketsToVerify.length === 0) {
+      setError('No matched tickets to verify');
+      return;
+    }
+
+    setIsVerifying(true);
+    setError('');
+    setSuccess('');
+    
+    try {
+      // Get auth token from localStorage
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Authentication token not found. Please login again.');
+      }
+
+      // Process tickets one by one
+      for (let i = 0; i < ticketsToVerify.length; i++) {
+        const ticket = ticketsToVerify[i];
+        
+        try {
+          // Mark ticket as being verified
+          setVerifyingTickets(prev => new Set([...prev, ticket._id]));
+          
+          // Make API call to verify the ticket
+          const response = await axios.post(
+            API_ENDPOINTS.VERIFY_IEEE(ticket._id),
+            {
+              ieeeVerified: true,
+              ieeeVerificationCompleted: true
+            },
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+
+          // Mark ticket as verified successfully
+          setVerifiedTickets(prev => new Map([
+            ...prev, 
+            [ticket._id, { status: 'success', message: 'Verified successfully', data: response.data }]
+          ]));
+          
+          console.log(`✅ Verified ticket ${ticket._id}:`, response.data);
+          
+        } catch (ticketError) {
+          console.error(`❌ Failed to verify ticket ${ticket._id}:`, ticketError);
+          
+          // Mark ticket as failed
+          setVerifiedTickets(prev => new Map([
+            ...prev, 
+            [ticket._id, { 
+              status: 'error', 
+              message: ticketError.response?.data?.message || ticketError.message,
+              error: ticketError.response?.data || ticketError.message
+            }]
+          ]));
+        } finally {
+          // Remove from verifying set
+          setVerifyingTickets(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(ticket._id);
+            return newSet;
+          });
+        }
+        
+        // Update progress
+        const progress = Math.round(((i + 1) / ticketsToVerify.length) * 100);
+        setVerificationProgress(progress);
+        
+        // Small delay between requests to avoid overwhelming server
+        if (i < ticketsToVerify.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+      
+      const successCount = Array.from(verifiedTickets.values()).filter(result => result.status === 'success').length;
+      const errorCount = Array.from(verifiedTickets.values()).filter(result => result.status === 'error').length;
+      
+      setSuccess(`Verification completed! ${successCount} tickets verified successfully, ${errorCount} failed.`);
+      
+    } catch (error) {
+      console.error('❌ Error during verification:', error);
+      setError(`Verification failed: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsVerifying(false);
+      setVerificationProgress(0);
+    }
   };
 
   return (
@@ -580,9 +725,9 @@ function BulkIEEEVerification() {
                         <div className="flex justify-between text-sm mb-2">
                           <span className="text-gray-300">
                             Verifying IEEE memberships... 
-                            {verificationProgress > 0 && (
+                            {verificationProgress > 0 && verificationResults?.allTickets && (
                               <span className="text-blue-400 ml-2">
-                                Processing ticket {Math.ceil((verificationProgress / 100) * verificationResults.details.filter(d => d.status === 'verified' && !excludedTickets.has(d.ieee_number)).length)} of {verificationResults.details.filter(d => d.status === 'verified' && !excludedTickets.has(d.ieee_number)).length}
+                                Processing ticket {Math.ceil((verificationProgress / 100) * verificationResults.allTickets.filter(t => t.status === 'matched' && !excludedTickets.has(t.ieeeMembershipNumber)).length)} of {verificationResults.allTickets.filter(t => t.status === 'matched' && !excludedTickets.has(t.ieeeMembershipNumber)).length}
                               </span>
                             )}
                           </span>
@@ -614,19 +759,39 @@ function BulkIEEEVerification() {
                           .map((ticket, index) => (
                           <div
                             key={ticket._id || index}
-                            className={`p-4 rounded-lg border-l-4 transition-all duration-300 ${
+                            className={`p-4 rounded-lg border-l-4 transition-all duration-300 relative ${
                               ticket.status === 'matched' 
                                 ? 'bg-green-500/10 border-green-400' 
                                 : 'bg-red-500/10 border-red-400'
-                            }`}
+                            } ${verifyingTickets.has(ticket._id) ? 'opacity-75' : ''}`}
                           >
+                            {/* Loading overlay for ticket being verified */}
+                            {verifyingTickets.has(ticket._id) && (
+                              <div className="absolute inset-0 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                                <div className="flex items-center gap-2 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                                  Verifying...
+                                </div>
+                              </div>
+                            )}
+                            
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
-                                {ticket.status === 'matched' ? (
-                                  <FiCheck className="text-green-400 text-lg" />
-                                ) : (
-                                  <FiX className="text-red-400 text-lg" />
-                                )}
+                                {(() => {
+                                  const verificationResult = verifiedTickets.get(ticket._id);
+                                  if (verificationResult) {
+                                    return verificationResult.status === 'success' ? (
+                                      <FiCheck className="text-green-400 text-lg" />
+                                    ) : (
+                                      <FiX className="text-red-400 text-lg" />
+                                    );
+                                  }
+                                  return ticket.status === 'matched' ? (
+                                    <FiCheck className="text-green-400 text-lg" />
+                                  ) : (
+                                    <FiX className="text-red-400 text-lg" />
+                                  );
+                                })()}
                                 <div>
                                   <div className="font-semibold text-white nunito-sans-body">
                                     IEEE #{ticket.ieeeMembershipNumber}
@@ -634,7 +799,32 @@ function BulkIEEEVerification() {
                                   <div className="text-sm text-gray-400 nunito-sans-body">
                                     <div>Email: {ticket.email}</div>
                                     {ticket.college && <div>College: {ticket.college}</div>}
-                                    {ticket.status === 'matched' && ticket.csvData && (
+                                    
+                                    {/* Verification Result Display */}
+                                    {(() => {
+                                      const verificationResult = verifiedTickets.get(ticket._id);
+                                      if (verificationResult) {
+                                        return (
+                                          <div className={`mt-2 p-2 rounded border ${
+                                            verificationResult.status === 'success' 
+                                              ? 'bg-green-500/10 border-green-500/20' 
+                                              : 'bg-red-500/10 border-red-500/20'
+                                          }`}>
+                                            <div className={`font-semibold ${
+                                              verificationResult.status === 'success' ? 'text-green-400' : 'text-red-400'
+                                            }`}>
+                                              {verificationResult.status === 'success' ? '✅ Verification Complete' : '❌ Verification Failed'}
+                                            </div>
+                                            <div className="text-xs text-gray-300 mt-1">
+                                              {verificationResult.message}
+                                            </div>
+                                          </div>
+                                        );
+                                      }
+                                      return null;
+                                    })()}
+                                    
+                                    {ticket.status === 'matched' && ticket.csvData && !verifiedTickets.has(ticket._id) && (
                                       <div className="mt-2 p-2 bg-blue-500/10 rounded border border-blue-500/20">
                                         <div className="text-blue-400 font-semibold">CSV Match Found:</div>
                                         {(() => {
@@ -673,22 +863,33 @@ function BulkIEEEVerification() {
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
-                                {/* Delete Button - Only show for matched tickets */}
-                                {ticket.status === 'matched' && (
+                                {/* Delete Button - Only show for matched tickets that haven't been verified */}
+                                {ticket.status === 'matched' && !verifiedTickets.has(ticket._id) && (
                                   <button
                                     onClick={() => handleRemoveTicket(ticket.ieeeMembershipNumber)}
                                     className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
                                     title="Remove from verification list"
+                                    disabled={verifyingTickets.has(ticket._id)}
                                   >
                                     <FiTrash2 className="text-sm" />
                                   </button>
                                 )}
                                 <div className={`text-sm ${
-                                  ticket.status === 'matched' 
-                                    ? 'text-green-400' 
-                                    : 'text-red-400'
+                                  (() => {
+                                    const verificationResult = verifiedTickets.get(ticket._id);
+                                    if (verificationResult) {
+                                      return verificationResult.status === 'success' ? 'text-green-400' : 'text-red-400';
+                                    }
+                                    return ticket.status === 'matched' ? 'text-green-400' : 'text-red-400';
+                                  })()
                                 }`}>
-                                  {ticket.status === 'matched' ? 'MATCHED' : 'NOT MATCHED'}
+                                  {(() => {
+                                    const verificationResult = verifiedTickets.get(ticket._id);
+                                    if (verificationResult) {
+                                      return verificationResult.status === 'success' ? 'VERIFIED' : 'FAILED';
+                                    }
+                                    return ticket.status === 'matched' ? 'MATCHED' : 'NOT MATCHED';
+                                  })()}
                                 </div>
                               </div>
                             </div>
@@ -729,7 +930,7 @@ function BulkIEEEVerification() {
                       return selectedCategory === 'matched' && currentMatchedCount > 0 && (
                         <div className="mt-4 pt-4 border-t border-gray-600">
                           <button
-                            onClick={() => setError('Verification functionality removed')}
+                            onClick={handleVerifyMatches}
                             disabled={isVerifying}
                             className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
                               isVerifying
