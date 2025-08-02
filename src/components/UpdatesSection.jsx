@@ -53,17 +53,20 @@ const UpdatesSection = () => {
           <div className="w-full flex flex-col md:flex-row gap-8 items-center justify-center py-12">
             
             {/* YouTube Video */}
-            <div className="w-full md:w-1/2 aspect-video rounded-xl overflow-hidden shadow-lg mb-6 md:mb-0 flex items-center justify-center order-1 md:order-2" data-aos="zoom-in">
-              <iframe
-                width="100%"
-                height="100%"
-                src="https://www.youtube.com/embed/umxOc70Wlas"
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="w-full h-full"
-              ></iframe>
+            <div className="w-full md:w-1/2 flex items-center justify-center px-0 lg:px-8 order-1 md:order-2" data-aos="zoom-in">
+              <div className="w-full aspect-video rounded-xl overflow-hidden shadow-lg flex items-center justify-center bg-black">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/umxOc70Wlas"
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="w-full h-full"
+                  style={{ minHeight: '220px', maxHeight: '420px' }}
+                ></iframe>
+              </div>
             </div>
 
             {/* Content */}
