@@ -34,9 +34,10 @@ export const API_ENDPOINTS = {
   DELETE_EVENT: (id) => `${API_BASE_URL}/events/${id}`,
   
   // IEEE Verification
-  VERIFY_IEEE: (ticketId) => `${API_BASE_URL}/verifyieee/${ticketId}`,
-  BULK_IEEE_VERIFY: `${API_BASE_URL}/bulk-ieee-verify`,
+  VERIFY_IEEE: (ticketId) => `${API_BASE_URL}/admin/verifyieee/${ticketId}`,
+  BULK_IEEE_VERIFY: `${API_BASE_URL}/admin/bulk-ieee-verify`,
   UNVERIFIED_IEEE: `${API_BASE_URL}/admin/unverified-ieee`,
+  DEBUG_TICKET: (ticketId) => `${API_BASE_URL}/admin/debug-ticket/${ticketId}`,
 };
 
 // Export the base URL for custom endpoints

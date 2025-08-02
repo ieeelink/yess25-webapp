@@ -519,11 +519,10 @@ function AddTicket() {
                     }`}
                   >
                     <option value="">Select Year of Study</option>
-                    <option value="1">First Year</option>
-                    <option value="2">Second Year</option>
-                    <option value="3">Third Year</option>
-                    <option value="4">Fourth Year</option>
-                    <option value="graduate_student">Graduate Student</option>
+                    <option value="First Year">First Year</option>
+                    <option value="Second Year">Second Year</option>
+                    <option value="Third Year">Third Year</option>
+                    <option value="Fourth Year">Fourth Year</option>
                   </select>
                   {validationErrors.yearOfStudy && (
                     <p className="text-red-500 text-sm mt-1">{validationErrors.yearOfStudy}</p>

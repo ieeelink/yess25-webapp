@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiUpload, FiDownload, FiArrowLeft, FiCheck, FiX, FiBarChart2 } from 'react-icons/fi';
+import { FiUpload, FiDownload, FiArrowLeft, FiCheck, FiX, FiBarChart2, FiTrash2, FiSettings, FiEye, FiEyeOff } from 'react-icons/fi';
 import { API_ENDPOINTS } from '../config/api';
 import axios from 'axios';
+import DebugTicketPanel from '../components/DebugTicketPanel';
 
 function BulkIEEEVerification() {
   const navigate = useNavigate();
@@ -19,6 +20,12 @@ function BulkIEEEVerification() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationProgress, setVerificationProgress] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState('matched'); // 'all', 'matched', 'notMatched'
+  const [excludedTickets, setExcludedTickets] = useState(new Set()); // Track excluded IEEE numbers
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
+  const [debugInfo, setDebugInfo] = useState(null);
+  const [loadingDebug, setLoadingDebug] = useState(false);
+  const [debugTicketId, setDebugTicketId] = useState('');
 
   // Custom scrollbar styles
   const scrollbarStyles = `
@@ -86,20 +93,34 @@ function BulkIEEEVerification() {
 
   // Helper function to parse CSV content
   const parseCSV = (csvText) => {
-    const lines = csvText.split('\n').filter(line => line.trim());
-    if (lines.length < 2) return [];
+    const lines = csvText.trim().split('\n');
+    const headers = lines[0].split(',');
     
-    const headers = lines[0].split(',').map(h => h.trim());
+    // Find the relevant column indices
+    const memberNumberIndex = headers.findIndex(h => 
+      h.toLowerCase().includes('member') && h.toLowerCase().includes('number')
+    );
+    const firstNameIndex = headers.findIndex(h => 
+      h.toLowerCase().includes('first') && h.toLowerCase().includes('name')
+    );
+    const lastNameIndex = headers.findIndex(h => 
+      h.toLowerCase().includes('last') && h.toLowerCase().includes('name')
+    );
+    const institutionIndex = headers.findIndex(h => 
+      h.toLowerCase().includes('school') || h.toLowerCase().includes('institution')
+    );
+    
     const records = [];
-    
     for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',').map(v => v.trim());
-      if (values.length >= 2) {
-        const record = {};
-        headers.forEach((header, index) => {
-          record[header] = values[index] || '';
+      const columns = lines[i].split(',').map(col => col.trim().replace(/^"|"$/g, ''));
+      
+      if (columns[memberNumberIndex] && columns[memberNumberIndex] !== '') {
+        records.push({
+          memberNumber: columns[memberNumberIndex],
+          firstName: columns[firstNameIndex] || '',
+          lastName: columns[lastNameIndex] || '',
+          institution: columns[institutionIndex] || ''
         });
-        records.push(record);
       }
     }
     
@@ -108,267 +129,138 @@ function BulkIEEEVerification() {
 
   // Helper function to normalize IEEE member data from different CSV formats
   const normalizeIEEERecord = (record) => {
-    // Handle official IEEE export format
-    if (record['Member/Customer Number']) {
-      return {
-        ieee_number: record['Member/Customer Number']?.toString().trim(),
-        first_name: record['First Name']?.trim() || '',
-        last_name: record['Last Name']?.trim() || '',
-        institution: record['School Name']?.trim() || ''
-      };
-    }
-    
-    // Handle template format
-    return {
-      ieee_number: record['ieee_number']?.toString().trim(),
-      first_name: record['first_name']?.trim() || '',
-      last_name: record['last_name']?.trim() || '',
-      institution: record['institution']?.trim() || ''
-    };
+    // Removed normalization logic
+    return {};
   };
 
   // Helper function to generate name variations for matching
   const generateNameVariations = (firstName, lastName) => {
-    const variations = [];
-    if (firstName && lastName) {
-      variations.push(
-        `${firstName} ${lastName}`.toLowerCase(),
-        `${lastName} ${firstName}`.toLowerCase(),
-        `${firstName.toLowerCase()} ${lastName.toLowerCase()}`,
-        `${lastName.toLowerCase()} ${firstName.toLowerCase()}`,
-        `${firstName} ${lastName}`,
-        `${lastName} ${firstName}`
-      );
-    }
-    return [...new Set(variations)]; // Remove duplicates
+    // Removed name variation logic
+    return [];
   };
 
   // Helper function to calculate name similarity
   const calculateNameSimilarity = (name1, name2) => {
-    const normalize = (str) => str.toLowerCase().replace(/\s+/g, ' ').trim();
-    const n1 = normalize(name1);
-    const n2 = normalize(name2);
-    
-    if (n1 === n2) return 1.0;
-    if (n1.includes(n2) || n2.includes(n1)) return 0.8;
-    
-    // Simple word overlap check
-    const words1 = n1.split(' ');
-    const words2 = n2.split(' ');
-    const overlap = words1.filter(word => words2.includes(word)).length;
-    const total = Math.max(words1.length, words2.length);
-    
-    return overlap / total;
+    // Removed similarity calculation logic
+    return 0;
   };
 
   // Function to match IEEE members with unverified tickets
-  const matchIEEEMembers = (ieeeMembers, tickets) => {
-    const results = {
-      verified: 0,
-      failed: 0,
-      notFound: 0,
-      total: ieeeMembers.length,
-      details: [],
-      matchedTickets: []
-    };
-
-    for (const member of ieeeMembers) {
-      if (!member.ieee_number) {
-        results.failed++;
-        results.details.push({
-          ieee_number: member.ieee_number || 'N/A',
-          name: `${member.first_name} ${member.last_name}`,
-          status: 'failed',
-          message: 'Missing IEEE number in uploaded data'
-        });
-        continue;
-      }
-
-      // Strategy 1: Exact IEEE number match
-      let matchedTicket = tickets.find(ticket => 
-        ticket.ieeeMembershipNumber === member.ieee_number
+  const matchIEEEMembers = (ieeeMembers, unverifiedTickets) => {
+    const matchedTickets = [];
+    const notMatchedTickets = [];
+    
+    unverifiedTickets.forEach(ticket => {
+      const ieeeNumber = ticket.ieeeMembershipNumber;
+      const foundMember = ieeeMembers.find(member => 
+        member.memberNumber === ieeeNumber
       );
-
-      if (matchedTicket) {
-        results.verified++;
-        results.details.push({
-          ieee_number: member.ieee_number,
-          name: `${member.first_name} ${member.last_name}`,
-          ticket_name: matchedTicket.fullName,
-          status: 'verified',
-          message: 'IEEE number matches exactly with ticket'
-        });
-        results.matchedTickets.push({
-          ticketId: matchedTicket._id,
-          ieeeVerified: true
-        });
-        continue;
-      }
-
-      // Strategy 2: Name similarity matching for tickets without IEEE numbers
-      const nameVariations = generateNameVariations(member.first_name, member.last_name);
-      let bestMatch = null;
-      let bestSimilarity = 0;
-
-      for (const ticket of tickets) {
-        if (ticket.ieeeMembershipNumber) continue; // Skip tickets with IEEE numbers
-        
-        const ticketNameLower = ticket.fullName.toLowerCase();
-        for (const nameVar of nameVariations) {
-          const similarity = calculateNameSimilarity(nameVar, ticketNameLower);
-          if (similarity > bestSimilarity && similarity > 0.7) {
-            bestSimilarity = similarity;
-            bestMatch = ticket;
-          }
-        }
-      }
-
-      if (bestMatch) {
-        results.verified++;
-        results.details.push({
-          ieee_number: member.ieee_number,
-          name: `${member.first_name} ${member.last_name}`,
-          ticket_name: bestMatch.fullName,
-          status: 'verified',
-          message: `Matched by name similarity (${Math.round(bestSimilarity * 100)}%)`
-        });
-        results.matchedTickets.push({
-          ticketId: bestMatch._id,
-          ieeeVerified: true,
-          ieeeMembershipNumber: member.ieee_number
+      
+      if (foundMember) {
+        matchedTickets.push({
+          ...ticket,
+          status: 'matched',
+          csvData: foundMember
         });
       } else {
-        results.notFound++;
-        results.details.push({
-          ieee_number: member.ieee_number,
-          name: `${member.first_name} ${member.last_name}`,
-          status: 'not_found',
-          message: 'No matching ticket found for this IEEE member'
+        notMatchedTickets.push({
+          ...ticket,
+          status: 'not_matched'
         });
       }
-    }
-
-    // Add unmatched tickets to results
-    const matchedTicketIds = results.matchedTickets.map(mt => mt.ticketId);
-    const unmatchedTickets = tickets.filter(ticket => !matchedTicketIds.includes(ticket._id));
-    
-    unmatchedTickets.forEach(ticket => {
-      results.failed++;
-      results.details.push({
-        ieee_number: ticket.ieeeMembershipNumber || 'Not provided',
-        name: ticket.fullName,
-        ticket_name: ticket.fullName,
-        status: 'failed',
-        message: 'No matching IEEE member found in uploaded CSV'
-      });
     });
-
-    results.total = results.verified + results.failed + results.notFound;
-
-    return results;
+    
+    return {
+      matched: matchedTickets.length,
+      notMatched: notMatchedTickets.length,
+      total: unverifiedTickets.length,
+      matchedTickets,
+      notMatchedTickets,
+      allTickets: [...matchedTickets, ...notMatchedTickets]
+    };
   };
 
   // File upload handler
-  const handleFileSelect = (event) => {
+  const handleFileSelect = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Validate file type
-      const allowedTypes = ['.csv', '.xlsx', '.xls'];
-      const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-      
-      if (!allowedTypes.includes(fileExtension)) {
-        setError('Please upload a CSV or Excel file (.csv, .xlsx, .xls)');
-        return;
-      }
-      
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit
-        setError('File size should be less than 10MB');
-        return;
-      }
-      
       setSelectedFile(file);
       setError('');
+      
+      // Automatically process the file
+      await processFile(file);
     }
   };
 
-  // File upload and verification process
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Please select a file first');
-      return;
-    }
-
+  // File processing function (extracted from handleUpload)
+  const processFile = async (file) => {
+    // Start processing animation
     setIsUploading(true);
-    setIsProcessing(false);
     setError('');
     setSuccess('');
     setUploadProgress(0);
 
     try {
+      // Step 1: Fetch unverified IEEE tickets (20%)
+      setUploadProgress(20);
+      
+      // Get auth token from localStorage
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('Authentication required. Please login again.');
-        setIsUploading(false);
-        return;
+        throw new Error('Authentication token not found. Please login again.');
       }
-
-      // Step 1: Fetch unverified IEEE tickets
-      setUploadProgress(20);
-      const ticketsResponse = await axios.get(API_ENDPOINTS.UNVERIFIED_IEEE, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      
+      const response = await axios.get(API_ENDPOINTS.UNVERIFIED_IEEE, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
-
-      const unverifiedTickets = ticketsResponse.data.tickets || ticketsResponse.data || [];
+      const unverifiedTickets = response.data;
       setUnverifiedTickets(unverifiedTickets);
+      
+      // Step 2: Read and parse CSV file (40%)
+      await new Promise(resolve => setTimeout(resolve, 500));
       setUploadProgress(40);
-
-      // Step 2: Read and parse the uploaded CSV file
-      const fileContent = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = reject;
-        reader.readAsText(selectedFile);
-      });
-
+      
+      const csvText = await file.text();
+      const ieeeMembers = parseCSV(csvText);
+      
+      // Log parsed CSV data
+      console.log('📋 Parsed CSV Data:', ieeeMembers);
+      console.log(`📊 Total IEEE members found in CSV: ${ieeeMembers.length}`);
+      
+      // Step 3: Match IEEE members with tickets (60%)
+      await new Promise(resolve => setTimeout(resolve, 500));
       setUploadProgress(60);
-
-      // Step 3: Parse CSV and normalize IEEE member data
-      const csvRecords = parseCSV(fileContent);
-      const ieeeMembers = csvRecords.map(normalizeIEEERecord).filter(member => 
-        member.ieee_number && (member.first_name || member.last_name)
-      );
-
-      if (ieeeMembers.length === 0) {
-        setError('No valid IEEE member records found in the uploaded file. Please check the file format.');
-        setIsUploading(false);
-        return;
-      }
-
+      
+      const matchResults = matchIEEEMembers(ieeeMembers, unverifiedTickets);
+      
+      // Step 4: Process results (80%)
+      await new Promise(resolve => setTimeout(resolve, 500));
       setUploadProgress(80);
-      setIsProcessing(true);
-
-      // Step 4: Perform client-side matching
-      const matchingResults = matchIEEEMembers(ieeeMembers, unverifiedTickets);
       
-      setUploadProgress(90);
-
-      // Step 5: Prepare results (no verification updates sent to backend)
-      console.log('Matching Results:', matchingResults);
-
+      // Step 5: Finalize (100%)
+      await new Promise(resolve => setTimeout(resolve, 500));
       setUploadProgress(100);
-      setVerificationResults(matchingResults);
-      setSuccess(`Data matching completed! ${matchingResults.verified || 0} matches found, ${matchingResults.failed || 0} failed, ${matchingResults.notFound || 0} not found.`);
+
+      // Show results
+      setVerificationResults({
+        matched: matchResults.matched,
+        notMatched: matchResults.notMatched,
+        total: matchResults.total,
+        allTickets: matchResults.allTickets,
+        matchedTickets: matchResults.matchedTickets,
+        notMatchedTickets: matchResults.notMatchedTickets
+      });
       
-    } catch (err) {
-      console.error('Data matching error:', err);
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('Failed to fetch and match data. Please try again.');
-      }
+      setSuccess(`File processed successfully! Found ${matchResults.matched} matches out of ${matchResults.total} unverified tickets.`);
+      
+    } catch (error) {
+      console.error('❌ Error processing file:', error);
+      setError(`Failed to process file: ${error.response?.data?.message || error.message}`);
     } finally {
       setIsUploading(false);
-      setIsProcessing(false);
       setUploadProgress(0);
     }
   };
@@ -398,90 +290,84 @@ function BulkIEEEVerification() {
   const clearFile = () => {
     setSelectedFile(null);
     setError('');
+    setSuccess('');
     setVerificationResults(null);
+    setSelectedCategory('matched');
+    setExcludedTickets(new Set());
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   };
 
-  // Verify matched results
-  const handleVerifyMatches = async () => {
-    if (!verificationResults || !verificationResults.details) {
-      setError('No verification results to process');
+  // Remove ticket from verification list
+  const handleRemoveTicket = (ieeeNumber) => {
+    setExcludedTickets(prev => new Set([...prev, ieeeNumber]));
+  };
+
+  // Debug ticket function
+  const debugTicket = async (ticketId) => {
+    if (!ticketId) {
+      setError('Please enter a ticket ID to debug');
       return;
     }
 
-    const matchedTickets = verificationResults.details.filter(d => d.status === 'verified');
-    if (matchedTickets.length === 0) {
-      setError('No matched tickets found to verify');
-      return;
-    }
-
-    setIsVerifying(true);
-    setVerificationProgress(0);
+    setLoadingDebug(true);
     setError('');
-    setSuccess('');
-
+    
     try {
+      // Get auth token from localStorage
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('Authentication required. Please login again.');
-        setIsVerifying(false);
-        return;
+        throw new Error('Authentication token not found. Please login again.');
       }
 
-      let successCount = 0;
-      let failureCount = 0;
-
-      for (let i = 0; i < matchedTickets.length; i++) {
-        const match = matchedTickets[i];
-        const progress = Math.round(((i + 1) / matchedTickets.length) * 100);
-        setVerificationProgress(progress);
-
-        try {
-          // Find the corresponding ticket ID from the original matching data
-          const matchingResult = verificationResults.matchedTickets?.find(mt => 
-            mt.ieeeMembershipNumber === match.ieee_number
-          );
-          
-          if (!matchingResult) {
-            failureCount++;
-            continue;
-          }
-
-          await axios.patch(
-            API_ENDPOINTS.ADMIN.UPDATE_IEEE_VERIFICATION.replace(':id', matchingResult.ticketId),
-            { 
-              isIEEEMember: true,
-              ieeeMembershipNumber: match.ieee_number
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            }
-          );
-
-          successCount++;
-        } catch (error) {
-          console.error('Error verifying ticket:', error);
-          failureCount++;
+      // Make API call to get ticket details for debugging
+      const response = await axios.get(API_ENDPOINTS.DEBUG_TICKET(ticketId), {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      }
+      });
 
-      setSuccess(`Verification complete! ${successCount} tickets verified successfully${failureCount > 0 ? `, ${failureCount} failed` : ''}.`);
-      
+      const ticketData = response.data;
+      console.log('🔍 Debugging Ticket Data:', ticketData);
+      // Set debug info with comprehensive ticket details
+      setDebugInfo({
+        ticketId: ticketId,
+        rawTicket: ticketData, // Use rawTicket to match DebugTicketPanel expectations
+        fullName: ticketData.fullName || `${ticketData.firstName || ''} ${ticketData.lastName || ''}`.trim(),
+        email: ticketData.email,
+        debugTimestamp: new Date().toISOString(),
+        apiResponse: response.data,
+        headers: response.headers,
+        status: response.status
+      });
+
     } catch (error) {
-      console.error('Verification error:', error);
-      setError(`Verification failed: ${error.response?.data?.message || error.message}`);
+      console.error('❌ Error debugging ticket:', error);
+      setError(`Failed to debug ticket: ${error.response?.data?.message || error.message}`);
+      setDebugInfo({
+        ticketId: ticketId,
+        rawTicket: {}, // Empty object to prevent undefined access
+        fullName: 'Error loading ticket',
+        email: 'Error loading ticket',
+        error: error.message,
+        errorDetails: error.response?.data || 'Unknown error',
+        debugTimestamp: new Date().toISOString()
+      });
     } finally {
-      setIsVerifying(false);
-      setVerificationProgress(0);
+      setLoadingDebug(false);
     }
   };
 
+  // Verify matched results
+  const handleVerifyMatches = async () => {
+    // Removed verification functionality
+    setError('Verification functionality removed');
+  };
+
   return (
-    <div className="min-h-screen bg-[#18181b]">
+    <div className="min-h-screen bg-[#18181b] nunito-sans-body">
       <style dangerouslySetInnerHTML={{ __html: scrollbarStyles }} />
       
       {/* Header */}
@@ -493,11 +379,22 @@ function BulkIEEEVerification() {
               className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
             >
               <FiArrowLeft className="text-xl" />
-              <span className="font-medium font-nunito">Back to Ticket Details</span>
+              <span className="font-medium">Back to Ticket Details</span>
             </button>
           </div>
           <h1 className="text-2xl font-bold text-white font-nunito">Bulk IEEE Verification</h1>
-          <div className="w-48"></div> {/* Spacer for centering */}
+          <div className="flex items-center gap-3">
+            {/* Debug Panel Toggle */}
+            <button
+              onClick={() => setShowDebugPanel(true)}
+              className="flex items-center gap-2 px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm"
+              title="Toggle Debug Panel"
+            >
+              <FiSettings className="text-lg" />
+              <span>Debug</span>
+            </button>
+            <div className="w-48"></div> {/* Spacer for centering */}
+          </div>
         </div>
       </div>
 
@@ -513,13 +410,12 @@ function BulkIEEEVerification() {
               {/* Instructions */}
               <div className="mb-6 p-4 bg-[#2a2a2c] rounded-lg border border-gray-600">
                 <h3 className="text-lg font-semibold text-blue-400 mb-3 font-nunito">Instructions:</h3>
-                <ul className="text-sm text-gray-300 space-y-2 font-nunito">
+                <ul className="text-sm text-gray-300 space-y-2">
                   <li>• Upload a CSV file with IEEE membership data</li>
                   <li>• Required columns: ieee_number, first_name, last_name</li>
                   <li>• Optional column: institution</li>
                   <li>• System will verify against registered tickets</li>
-                  <li>• Data will be automatically displayed after upload</li>
-                  <li>• Use the Verify button to start verification process</li>
+                  <li>• Data will be automatically processed after upload</li>
                 </ul>
               </div>
 
@@ -527,7 +423,7 @@ function BulkIEEEVerification() {
               <div className="mb-6">
                 <button
                   onClick={downloadTemplate}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-nunito"
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
                   <FiDownload className="text-lg" />
                   Download Template
@@ -556,25 +452,25 @@ function BulkIEEEVerification() {
                   
                   {selectedFile ? (
                     <div className="text-center">
-                      <p className="text-green-400 font-semibold mb-2 font-nunito">
+                      <p className="text-green-400 font-semibold mb-2">
                         File Selected: {selectedFile.name}
                       </p>
-                      <p className="text-gray-300 font-nunito">
+                      <p className="text-gray-300">
                         {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                       </p>
                       <button
                         onClick={clearFile}
-                        className="mt-2 text-red-400 hover:text-red-300 text-sm font-nunito"
+                        className="mt-2 text-red-400 hover:text-red-300 text-sm"
                       >
                         Remove file
                       </button>
                     </div>
                   ) : (
                     <div className="text-center">
-                      <p className="text-gray-300 mb-2 font-nunito">
+                      <p className="text-gray-300 mb-2">
                         Drag and drop your IEEE data file here, or click to browse
                       </p>
-                      <p className="text-sm text-gray-500 font-nunito">
+                      <p className="text-sm text-gray-500">
                         Supports CSV, Excel files
                       </p>
                     </div>
@@ -585,13 +481,13 @@ function BulkIEEEVerification() {
               {/* Error/Success Messages */}
               {error && (
                 <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                  <p className="text-red-400 text-sm font-nunito">{error}</p>
+                  <p className="text-red-400 text-sm">{error}</p>
                 </div>
               )}
               
               {success && (
                 <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
-                  <p className="text-green-400 text-sm font-nunito">{success}</p>
+                  <p className="text-green-400 text-sm">{success}</p>
                 </div>
               )}
             </div>
@@ -600,27 +496,8 @@ function BulkIEEEVerification() {
             <div className="bg-[#232326] rounded-xl shadow-lg p-6 flex flex-col border border-gray-700 min-h-[calc(100vh-180px)]">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-white font-nunito">
-                  {verificationResults ? 'Verification Results' : 'IEEE Data Preview'}
+                  {verificationResults ? 'Match Results' : 'IEEE Data Preview'}
                 </h2>
-                {selectedFile && !verificationResults && (
-                  <button
-                    onClick={handleUpload}
-                    disabled={isUploading || isProcessing}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-nunito"
-                  >
-                    {isUploading || isProcessing ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <FiBarChart2 className="text-lg" />
-                        Process IEEE Verification
-                      </>
-                    )}
-                  </button>
-                )}
               </div>
 
               <div className="flex-1 min-h-0">
@@ -629,14 +506,14 @@ function BulkIEEEVerification() {
                     <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent mb-4"></div>
                     <div className="w-full max-w-md">
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-gray-300 font-nunito">
+                        <span className="text-gray-300">
                           {uploadProgress < 40 ? 'Fetching unverified tickets...' :
-                           uploadProgress < 60 ? 'Reading file...' :
-                           uploadProgress < 80 ? 'Parsing IEEE data...' :
-                           uploadProgress < 90 ? 'Matching records...' :
-                           'Updating tickets...'}
+                           uploadProgress < 60 ? 'Reading CSV file...' :
+                           uploadProgress < 80 ? 'Matching IEEE numbers...' :
+                           uploadProgress < 100 ? 'Processing results...' :
+                           'Finalizing...'}
                         </span>
-                        <span className="text-blue-400 font-nunito">{uploadProgress}%</span>
+                        <span className="text-blue-400">{uploadProgress}%</span>
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-2">
                         <div 
@@ -645,7 +522,7 @@ function BulkIEEEVerification() {
                         ></div>
                       </div>
                       {isProcessing && (
-                        <p className="text-sm text-blue-400 mt-2 text-center font-nunito">
+                        <p className="text-sm text-blue-400 mt-2 text-center">
                           Processing {unverifiedTickets.length} unverified tickets...
                         </p>
                       )}
@@ -656,23 +533,43 @@ function BulkIEEEVerification() {
                   <div className="h-full flex flex-col">
                     {/* Results Summary */}
                     <div className="mb-4 p-4 bg-[#2a2a2c] rounded-lg border border-gray-600">
-                      <h3 className="text-lg font-semibold text-white mb-4 font-nunito text-center">Verification Statistics</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                        <div className="p-3 bg-green-500/10 rounded-lg border border-green-500/20">
-                          <div className="text-2xl font-bold text-green-400 font-nunito">{verificationResults.verified || 0}</div>
-                          <div className="text-xs text-gray-400 font-nunito">Verified</div>
+                      <h3 className="text-lg font-semibold text-white mb-4 font-nunito text-center">Match Statistics</h3>
+                      <div className="grid grid-cols-3 gap-4 text-center">
+                        <div 
+                          className={`p-3 bg-blue-500/10 rounded-lg border cursor-pointer transition-all hover:bg-blue-500/20 ${
+                            selectedCategory === 'all' ? 'border-blue-400 ring-2 ring-blue-400/50' : 'border-blue-500/20'
+                          }`}
+                          onClick={() => setSelectedCategory('all')}
+                        >
+                          <div className="text-2xl font-bold text-blue-400">
+                            {verificationResults.allTickets ? 
+                              verificationResults.allTickets.filter(t => !excludedTickets.has(t.ieeeMembershipNumber)).length : 0}
+                          </div>
+                          <div className="text-xs text-gray-400">All Tickets</div>
                         </div>
-                        <div className="p-3 bg-red-500/10 rounded-lg border border-red-500/20">
-                          <div className="text-2xl font-bold text-red-400 font-nunito">{verificationResults.failed || 0}</div>
-                          <div className="text-xs text-gray-400 font-nunito">Failed</div>
+                        <div 
+                          className={`p-3 bg-green-500/10 rounded-lg border cursor-pointer transition-all hover:bg-green-500/20 ${
+                            selectedCategory === 'matched' ? 'border-green-400 ring-2 ring-green-400/50' : 'border-green-500/20'
+                          }`}
+                          onClick={() => setSelectedCategory('matched')}
+                        >
+                          <div className="text-2xl font-bold text-green-400">
+                            {verificationResults.allTickets ? 
+                              verificationResults.allTickets.filter(t => t.status === 'matched' && !excludedTickets.has(t.ieeeMembershipNumber)).length : 0}
+                          </div>
+                          <div className="text-xs text-gray-400">Matched</div>
                         </div>
-                        <div className="p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
-                          <div className="text-2xl font-bold text-yellow-400 font-nunito">{verificationResults.notFound || 0}</div>
-                          <div className="text-xs text-gray-400 font-nunito">Not Found</div>
-                        </div>
-                        <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                          <div className="text-2xl font-bold text-blue-400 font-nunito">{verificationResults.total || 0}</div>
-                          <div className="text-xs text-gray-400 font-nunito">Total</div>
+                        <div 
+                          className={`p-3 bg-red-500/10 rounded-lg border cursor-pointer transition-all hover:bg-red-500/20 ${
+                            selectedCategory === 'notMatched' ? 'border-red-400 ring-2 ring-red-400/50' : 'border-red-500/20'
+                          }`}
+                          onClick={() => setSelectedCategory('notMatched')}
+                        >
+                          <div className="text-2xl font-bold text-red-400">
+                            {verificationResults.allTickets ? 
+                              verificationResults.allTickets.filter(t => t.status === 'not_matched' && !excludedTickets.has(t.ieeeMembershipNumber)).length : 0}
+                          </div>
+                          <div className="text-xs text-gray-400">Not Matched</div>
                         </div>
                       </div>
                     </div>
@@ -681,8 +578,15 @@ function BulkIEEEVerification() {
                     {isVerifying && (
                       <div className="mb-4 p-3 bg-[#2a2a2c] rounded-lg border border-gray-600">
                         <div className="flex justify-between text-sm mb-2">
-                          <span className="text-gray-300 font-nunito">Verifying IEEE memberships...</span>
-                          <span className="text-green-400 font-nunito">{verificationProgress}%</span>
+                          <span className="text-gray-300">
+                            Verifying IEEE memberships... 
+                            {verificationProgress > 0 && (
+                              <span className="text-blue-400 ml-2">
+                                Processing ticket {Math.ceil((verificationProgress / 100) * verificationResults.details.filter(d => d.status === 'verified' && !excludedTickets.has(d.ieee_number)).length)} of {verificationResults.details.filter(d => d.status === 'verified' && !excludedTickets.has(d.ieee_number)).length}
+                              </span>
+                            )}
+                          </span>
+                          <span className="text-green-400">{verificationProgress}%</span>
                         </div>
                         <div className="w-full bg-gray-700 rounded-full h-2">
                           <div 
@@ -696,79 +600,165 @@ function BulkIEEEVerification() {
                     {/* Detailed Results */}
                     <div className="flex-1 overflow-auto custom-scrollbar">
                       <div className="space-y-3">
-                        {verificationResults.details && verificationResults.details
-                          .filter(detail => detail.status === 'verified')
-                          .map((detail, index) => (
+                        {verificationResults.allTickets && verificationResults.allTickets
+                          .filter(ticket => {
+                            // First filter by excluded tickets
+                            if (excludedTickets.has(ticket.ieeeMembershipNumber)) return false;
+                            
+                            // Then filter by category
+                            if (selectedCategory === 'all') return true;
+                            if (selectedCategory === 'matched') return ticket.status === 'matched';
+                            if (selectedCategory === 'notMatched') return ticket.status === 'not_matched';
+                            return false;
+                          })
+                          .map((ticket, index) => (
                           <div
-                            key={index}
-                            className="p-4 rounded-lg border-l-4 bg-green-500/10 border-green-400"
+                            key={ticket._id || index}
+                            className={`p-4 rounded-lg border-l-4 transition-all duration-300 ${
+                              ticket.status === 'matched' 
+                                ? 'bg-green-500/10 border-green-400' 
+                                : 'bg-red-500/10 border-red-400'
+                            }`}
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
-                                <FiCheck className="text-green-400 text-lg" />
+                                {ticket.status === 'matched' ? (
+                                  <FiCheck className="text-green-400 text-lg" />
+                                ) : (
+                                  <FiX className="text-red-400 text-lg" />
+                                )}
                                 <div>
-                                  <div className="font-semibold text-white font-nunito">
-                                    IEEE #{detail.ieee_number}
+                                  <div className="font-semibold text-white">
+                                    IEEE #{ticket.ieeeMembershipNumber}
                                   </div>
-                                  <div className="text-sm text-gray-400 font-nunito">
-                                    {detail.name}
+                                  <div className="text-sm text-gray-400">
+                                    <div>Email: {ticket.email}</div>
+                                    {ticket.college && <div>College: {ticket.college}</div>}
+                                    {ticket.status === 'matched' && ticket.csvData && (
+                                      <div className="mt-2 p-2 bg-blue-500/10 rounded border border-blue-500/20">
+                                        <div className="text-blue-400 font-semibold">CSV Match Found:</div>
+                                        {(() => {
+                                          // Compare names to see if they match
+                                          const ticketName = ticket.fullName?.toLowerCase().trim() || '';
+                                          const csvName = `${ticket.csvData.firstName} ${ticket.csvData.lastName}`.toLowerCase().trim();
+                                          
+                                          // Check if names are similar (exact match or one contains the other)
+                                          const namesMatch = ticketName === csvName || 
+                                                           ticketName.includes(csvName) || 
+                                                           csvName.includes(ticketName);
+                                          
+                                          if (namesMatch) {
+                                            // Names match, show only CSV name
+                                            return (
+                                              <>
+                                                <div>Name: {ticket.csvData.firstName} {ticket.csvData.lastName}</div>
+                                                {ticket.csvData.institution && <div>Institution: {ticket.csvData.institution}</div>}
+                                              </>
+                                            );
+                                          } else {
+                                            // Names don't match, show both
+                                            return (
+                                              <>
+                                                <div>CSV Name: {ticket.csvData.firstName} {ticket.csvData.lastName}</div>
+                                                <div>Ticket Name: {ticket.fullName}</div>
+                                                {ticket.csvData.institution && <div>Institution: {ticket.csvData.institution}</div>}
+                                                <div className="text-yellow-400 text-xs mt-1">⚠️ Name mismatch detected</div>
+                                              </>
+                                            );
+                                          }
+                                        })()}
+                                      </div>
+                                    )}
                                   </div>
-                                  {detail.ticket_name && (
-                                    <div className="text-sm text-blue-400 font-nunito">
-                                      Matched: {detail.ticket_name}
-                                    </div>
-                                  )}
                                 </div>
                               </div>
-                              <div className="text-sm font-nunito text-green-400">
-                                MATCHED
+                              <div className="flex items-center gap-2">
+                                {/* Delete Button - Only show for matched tickets */}
+                                {ticket.status === 'matched' && (
+                                  <button
+                                    onClick={() => handleRemoveTicket(ticket.ieeeMembershipNumber)}
+                                    className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                                    title="Remove from verification list"
+                                  >
+                                    <FiTrash2 className="text-sm" />
+                                  </button>
+                                )}
+                                <div className={`text-sm ${
+                                  ticket.status === 'matched' 
+                                    ? 'text-green-400' 
+                                    : 'text-red-400'
+                                }`}>
+                                  {ticket.status === 'matched' ? 'MATCHED' : 'NOT MATCHED'}
+                                </div>
                               </div>
                             </div>
                           </div>
                         ))}
-                        {verificationResults.details && verificationResults.details.filter(d => d.status === 'verified').length === 0 && (
+                        {verificationResults.allTickets && verificationResults.allTickets
+                          .filter(ticket => {
+                            // First filter by excluded tickets
+                            if (excludedTickets.has(ticket.ieeeMembershipNumber)) return false;
+                            
+                            // Then filter by category
+                            if (selectedCategory === 'all') return true;
+                            if (selectedCategory === 'matched') return ticket.status === 'matched';
+                            if (selectedCategory === 'notMatched') return ticket.status === 'not_matched';
+                            return false;
+                          }).length === 0 && (
                           <div className="text-center py-8">
                             <FiX className="mx-auto text-4xl text-gray-500 mb-3 opacity-50" />
-                            <p className="text-gray-400 font-nunito">No verified matches found</p>
-                            <p className="text-sm text-gray-500 font-nunito mt-1">Try uploading a different IEEE membership file</p>
+                            <p className="text-gray-400">
+                              No {selectedCategory === 'matched' ? 'matched tickets' : 
+                                  selectedCategory === 'notMatched' ? 'unmatched tickets' : 'tickets'} found
+                            </p>
+                            <p className="text-sm text-gray-500 mt-1">
+                              {selectedCategory === 'matched' ? 'No IEEE numbers from the CSV matched with unverified tickets' :
+                               selectedCategory === 'notMatched' ? 'All tickets have matching IEEE numbers in the CSV' :
+                               'No tickets available to display'}
+                            </p>
                           </div>
                         )}
                       </div>
                     </div>
 
-                    {/* Verify Button */}
-                    {verificationResults.details && verificationResults.details.filter(d => d.status === 'verified').length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-gray-600">
-                        <button
-                          onClick={handleVerifyMatches}
-                          disabled={isVerifying}
-                          className={`w-full py-3 px-4 rounded-lg font-medium transition-colors font-nunito ${
-                            isVerifying
-                              ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                              : 'bg-green-600 hover:bg-green-700 text-white'
-                          }`}
-                        >
-                          {isVerifying 
-                            ? `Verifying... (${verificationProgress}%)` 
-                            : `Verify ${verificationResults.details.filter(d => d.status === 'verified').length} Matched Tickets`
-                          }
-                        </button>
-                      </div>
-                    )}
+                    {/* Verify Button - Only show for matched tickets */}
+                    {(() => {
+                      const currentMatchedCount = verificationResults.allTickets ? 
+                        verificationResults.allTickets.filter(t => t.status === 'matched' && !excludedTickets.has(t.ieeeMembershipNumber)).length : 0;
+                      
+                      return selectedCategory === 'matched' && currentMatchedCount > 0 && (
+                        <div className="mt-4 pt-4 border-t border-gray-600">
+                          <button
+                            onClick={() => setError('Verification functionality removed')}
+                            disabled={isVerifying}
+                            className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+                              isVerifying
+                                ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                                : 'bg-green-600 hover:bg-green-700 text-white'
+                            }`}
+                          >
+                            {isVerifying 
+                              ? `Verifying... (${verificationProgress}%)` 
+                              : `Verify ${currentMatchedCount} Matched Tickets`
+                            }
+                          </button>
+                        </div>
+                      );
+                    })()}
                   </div>
                 ) : selectedFile ? (
                   <div className="flex items-center justify-center h-full text-gray-400">
                     <div className="text-center">
                       <FiBarChart2 className="mx-auto text-4xl mb-4 opacity-50" />
-                      <p className="font-nunito">File uploaded successfully</p>
-                      <p className="text-sm font-nunito mt-2">Click "Process IEEE Verification" to start</p>
+                      <p>Processing file automatically...</p>
+                      <p className="text-sm mt-2">File will be processed upon upload</p>
                     </div>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full text-gray-500">
                     <div className="text-center">
                       <FiUpload className="mx-auto text-4xl mb-4 opacity-50" />
-                      <p className="font-nunito">Upload an IEEE data file to see verification results</p>
+                      <p>Upload an IEEE data file to see verification results</p>
                     </div>
                   </div>
                 )}
@@ -777,6 +767,18 @@ function BulkIEEEVerification() {
           </div>
         </div>
       </div>
+
+      {/* Debug Panel Modal */}
+      <DebugTicketPanel
+        showDebugPanel={showDebugPanel}
+        setShowDebugPanel={setShowDebugPanel}
+        debugInfo={debugInfo}
+        setDebugInfo={setDebugInfo}
+        debugTicketId={debugTicketId}
+        setDebugTicketId={setDebugTicketId}
+        loadingDebug={loadingDebug}
+        debugTicket={debugTicket}
+      />
     </div>
   );
 }
