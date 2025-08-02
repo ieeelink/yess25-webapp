@@ -80,36 +80,77 @@ function TicketDetails() {
       }
 
       const response = await axios.post(
-        API_ENDPOINTS.ADMIN_SEND_INVOICE_EMAIL(ticketId),
+        API_ENDPOINTS.ADMIN_GENERATE_INVOICE(ticketId),
         {},
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
 
-      setEmailStatus(prev => ({ 
-        ...prev, 
-        [ticketId]: { type: 'success', message: 'Invoice email sent successfully!' } 
-      }));
+      // Check if the response indicates success
+      if (response.status === 200 || response.status === 201) {
+        setEmailStatus(prev => ({ 
+          ...prev, 
+          [ticketId]: { 
+            type: 'success', 
+            message: response.data?.message || 'Invoice generated and email sent successfully!' 
+          } 
+        }));
+      } else {
+        // Handle unexpected success status codes
+        setEmailStatus(prev => ({ 
+          ...prev, 
+          [ticketId]: { 
+            type: 'error', 
+            message: response.data?.message || 'Unexpected response from server' 
+          } 
+        }));
+      }
 
-      // Clear success message after 3 seconds
+      // Clear success message after 4 seconds
       setTimeout(() => {
         setEmailStatus(prev => ({ ...prev, [ticketId]: null }));
-      }, 3000);
+      }, 4000);
 
     } catch (err) {
+      console.error('Invoice generation error:', err);
+      
+      // Handle different types of errors
+      let errorMessage = 'Failed to generate and send invoice';
+      
+      if (err.response) {
+        // Server responded with error status
+        if (err.response.status === 401) {
+          errorMessage = 'Authentication failed. Please login again.';
+        } else if (err.response.status === 403) {
+          errorMessage = 'Not authorized to generate invoices';
+        } else if (err.response.status === 404) {
+          errorMessage = 'Ticket not found';
+        } else if (err.response.status === 500) {
+          errorMessage = 'Server error. Please try again later.';
+        } else {
+          errorMessage = err.response.data?.message || `Server error (${err.response.status})`;
+        }
+      } else if (err.request) {
+        // Network error
+        errorMessage = 'Network error. Please check your connection.';
+      } else {
+        // Other error
+        errorMessage = err.message || 'An unexpected error occurred';
+      }
+
       setEmailStatus(prev => ({ 
         ...prev, 
         [ticketId]: { 
           type: 'error', 
-          message: err.response?.data?.message || 'Failed to send invoice email' 
+          message: errorMessage
         } 
       }));
 
-      // Clear error message after 5 seconds
+      // Clear error message after 6 seconds
       setTimeout(() => {
         setEmailStatus(prev => ({ ...prev, [ticketId]: null }));
-      }, 5000);
+      }, 6000);
     } finally {
       setSendingEmail(prev => ({ ...prev, [ticketId]: false }));
     }
