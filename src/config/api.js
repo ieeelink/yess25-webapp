@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
   ADMIN_ADD_USER: `${API_BASE_URL}/admin/adduser`,
   ADMIN_ADD_TICKET: `${API_BASE_URL}/admin/addticket`,
   ADMIN_ADD_BULK_TICKETS: `${API_BASE_URL}/admin/addbulktickets`,
+  ADMIN_UPDATE_TICKET: (id) => `${API_BASE_URL}/admin/update-ticket/${id}`,
   ADMIN_GENERATE_INVOICE: (ticketId) => `${API_BASE_URL}/admin/generate-invoice/${ticketId}`,
   ADMIN_WEBHOOK_RESOLVE: `${API_BASE_URL}/ticket_webhook`,
   

@@ -18,11 +18,16 @@ IEEE YESS'25 is the largest engineering students summit by IEEE, a collaborative
 
 ### Admin Dashboard Features
 - **Admin Authentication** - Secure login system with JWT tokens
-- **Ticket Management** - Add individual tickets or bulk upload via CSV
+- **Ticket Management** - Comprehensive ticket management system
+  - Add individual tickets with full validation
+  - Bulk upload via CSV with progress tracking
+  - **Edit existing tickets** - Complete ticket editing with form validation
+  - Real-time ticket filtering and search
 - **IEEE Verification** - Bulk IEEE membership verification system
-- **Event Management** - Create, update, and delete events
+- **Event Management** - Create, update, and delete events with image upload
 - **Updates Management** - Manage announcements and news
 - **Payment Resolution** - Handle webhook failures and payment issues
+- **Invoice Generation** - Send ticket invoices via email
 - **Data Analytics** - Comprehensive ticket and registration analytics
 
 ### Technical Features
@@ -79,6 +84,7 @@ frontend/
 │   ├── components/        # Reusable UI components
 │   │   ├── BgAnimation.jsx      # Background animations
 │   │   ├── TicketForm.jsx       # Registration form
+│   │   ├── UpdateTicketForm.jsx # Ticket editing form
 │   │   ├── Header2.jsx          # Navigation header
 │   │   ├── LandingSection.jsx   # Hero section
 │   │   ├── AboutSection.jsx     # About YESS section
@@ -192,6 +198,8 @@ API endpoints are centrally managed in `src/config/api.js`:
 - Automatic environment detection
 - Configurable base URLs
 - Comprehensive endpoint definitions
+- Support for all CRUD operations
+- Authentication-aware requests
 
 ### Vite Configuration
 - React plugin enabled
@@ -242,16 +250,28 @@ API endpoints are centrally managed in `src/config/api.js`:
 - Session management
 
 ### Ticket Management
-- Individual ticket creation
-- Bulk CSV upload
-- IEEE membership verification
-- Payment status management
+- **Individual ticket creation** - Add single tickets with comprehensive form validation
+- **Bulk CSV upload** - Upload multiple registrations with progress tracking
+- **Ticket editing** - Full-featured editing system with:
+  - React Hook Form with Yup validation
+  - Dynamic dropdown menus for institutions and courses
+  - "Other" option support with custom input fields
+  - Real-time form validation and error handling
+  - API integration with MongoDB ObjectId support
+- **IEEE membership verification** - Bulk verification processing
+- **Payment status management** - Track and update payment states
+- **Advanced filtering** - Search by name, email, status, institution, IEEE membership
 
 ### Event Management
 - Create and manage events
-- Image upload with ImgBB
+- Image upload with ImgBB integration
 - Event categorization
 - Real-time updates
+
+### Communication Features
+- **Invoice email system** - Send ticket invoices directly to participants
+- Automated email notifications
+- Payment confirmation emails
 
 ## 📊 Data Management
 
@@ -262,9 +282,16 @@ API endpoints are centrally managed in `src/config/api.js`:
 - Template downloads available
 
 ### File Formats Supported
-- **Tickets CSV**: fullName, email, phone, gender, institution, course, yearOfStudy
+- **Tickets CSV**: fullName, email, phone, gender, institution, course, yearOfStudy, foodPreference, isIEEEMember, ieeeMembershipNumber
 - **IEEE CSV**: ieee_number, first_name, last_name, institution
 - **Images**: JPEG, PNG, WebP for events and gallery
+
+### Data Processing Features
+- Real-time validation during CSV upload
+- Progress tracking for bulk operations
+- Error reporting with detailed feedback
+- Template downloads for proper formatting
+- MongoDB integration with ObjectId support
 
 ## 🌐 Deployment
 
@@ -292,6 +319,72 @@ Set these in your deployment platform:
 - `VITE_RAZORPAY_KEY_ID`: Live Razorpay key
 - `VITE_IMGBB_API_KEY`: ImgBB API key
 
+## 🔌 API Integration
+
+### Backend Endpoints Used
+The frontend integrates with the following key API endpoints:
+
+#### Authentication & Admin
+- `POST /api/admin/login` - Admin login with JWT
+- `POST /api/admin/changepassword` - Change admin password
+- `GET /api/admin/data` - Fetch all tickets and analytics
+
+#### Ticket Management
+- `POST /api/admin/addticket` - Create individual ticket
+- `POST /api/admin/addbulktickets` - Bulk ticket upload via CSV
+- **`PUT /api/admin/update-ticket/:id`** - Update existing ticket (MongoDB ObjectId)
+- `POST /api/admin/generate-invoice/:id` - Send invoice email
+
+#### Data & Configuration
+- `GET /api/colleges` - Fetch institution/college list
+- `GET /api/updates` - Fetch announcements
+- `GET /api/events` - Fetch events list
+
+#### IEEE Verification
+- `POST /api/admin/verifyieee/:id` - Verify individual IEEE membership
+- `POST /api/admin/bulk-ieee-verify` - Bulk IEEE verification
+
+### API Features
+- **MongoDB Integration**: Full support for MongoDB ObjectIds
+- **JWT Authentication**: Secure token-based authentication
+- **Error Handling**: Comprehensive error responses with user-friendly messages
+- **Data Validation**: Server-side validation with detailed error reporting
+- **Audit Trail**: Change tracking for ticket modifications
+
+## 📋 Recent Updates & Features
+
+### Latest Changes (August 2025)
+- ✅ **Advanced Ticket Editing System**
+  - Complete ticket editing modal with React Hook Form
+  - Dynamic institution and course dropdowns with "Other" options
+  - Real-time form validation with Yup schema
+  - API integration with MongoDB ObjectId support
+  - Proper data mapping between display and server formats
+
+- ✅ **Enhanced Admin Dashboard**
+  - Improved ticket filtering and search functionality
+  - Invoice email system with status tracking
+  - Better date formatting for timestamp display
+  - Responsive design optimizations
+
+- ✅ **API Integration Improvements**
+  - Centralized API endpoint management
+  - Enhanced error handling and user feedback
+  - Authentication-aware requests with JWT tokens
+  - Support for CRUD operations on ticket data
+
+- ✅ **Form Enhancements**
+  - Institution dropdown with searchable college list
+  - Course dropdown with predefined options
+  - Conditional field rendering for "Other" selections
+  - Improved validation messages and user experience
+
+### Technical Improvements
+- **Performance**: Optimized form rendering and API calls
+- **Accessibility**: Better form labels and error messaging
+- **Code Quality**: Modular components with proper error boundaries
+- **Documentation**: Updated with latest API endpoints and features
+
 ## 🧪 Development Workflow
 
 ### Code Style
@@ -317,9 +410,20 @@ Set these in your deployment platform:
 
 ### Development Guidelines
 - Follow existing code style and patterns
-- Test thoroughly on different devices
+- Test thoroughly on different devices and screen sizes
 - Update documentation for new features
 - Ensure responsive design compatibility
+- Implement proper error handling and user feedback
+- Use TypeScript-style JSDoc comments where applicable
+- Follow React best practices with hooks and functional components
+
+### Code Quality Standards
+- **Component Architecture**: Modular, reusable components
+- **State Management**: React hooks with proper dependency arrays
+- **Form Handling**: React Hook Form with Yup validation
+- **API Integration**: Centralized API configuration with error handling
+- **Styling**: Tailwind CSS with consistent design tokens
+- **Performance**: Optimized builds with lazy loading where applicable
 
 ## 📄 License
 

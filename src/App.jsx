@@ -7,11 +7,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import Home2 from "./pages/Home2";
-import Tickets from "./pages/Tickets";
-import Status from "./pages/Status";
 import CheckStatus from "./pages/CheckStatus";
-import PaymentCallback from "./pages/PaymentCallback";
-import PaymentCancelled from "./pages/PaymentCancelled";
 import { useEffect, useState } from "react";
 import ToS from "./pages/ToS";
 import Privacy from "./pages/Privacy";
