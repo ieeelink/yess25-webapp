@@ -173,6 +173,14 @@ function App() {
           path="/mascot"
           element={<Redirect to="https://docs.google.com/forms/d/e/1FAIpQLScC_kUmGRZTPC3QGTtauYYYUIMgXWzevEGv9DiKqPDLO2dn0Q/viewform" />}
         />
+        <Route
+          path="/call_for_startups"
+          element={<Redirect to="https://forms.gle/oP4fnXMk1VRsh1Ef8" />}
+        />
+        <Route
+          path="/call_for_food_vendors"
+          element={<Redirect to="https://forms.gle/XLKsmkCikausV5mL9" />}
+        />
         <Route path="/ToS" element={<ToS />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
