@@ -146,6 +146,12 @@ const NewFooter = ({ onShowOverlay }) => {
                   >
                     Contact
                   </Link>
+                  <Link 
+                    to="https://docs.google.com/document/d/135kyrUojhxwm9QXA9xS7G9WSnenRHTQTvP3cerSMr-M/edit?usp=sharing" 
+                    className="block text-gray-300 hover:text-[#fe4a56] transition-colors"
+                  >
+                    Bulk Registration
+                  </Link>
                   {/*  <Link 
                     to="/ToS" 
                     className="block text-gray-300 hover:text-[#fe4a56] transition-colors"

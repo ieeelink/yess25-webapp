@@ -28,6 +28,7 @@ import AddEvent from "./pages/AddEvent";
 import AddUpdate from "./pages/AddUpdate";
 import EventDetails from "./pages/EventDetails";
 import Updates from "./pages/Updates";
+import PublicUpdates from "./pages/PublicUpdates";
 import BulkIEEEVerification from "./pages/BulkIEEEVerification";
 import TestLandingSection from "./components/TestLandingSection";
 import React from "react";
@@ -139,18 +140,52 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={
-          <Home2
-            showTicketForm={showTicketForm}
-            setShowTicketForm={setShowTicketForm}
-            showCheckStatus={showCheckStatus}
-            setShowCheckStatus={setShowCheckStatus}
-          />
+          <>
+            <Home2
+              showTicketForm={showTicketForm}
+              setShowTicketForm={setShowTicketForm}
+              showCheckStatus={showCheckStatus}
+              setShowCheckStatus={setShowCheckStatus}
+            />
+            <FooterWrapper />
+          </>
         } />
-        <Route path="/test-ticket" element={<TestTicketPage />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/test-ticket" element={
+          <>
+            <TestTicketPage />
+            <FooterWrapper />
+          </>
+        } />
+        <Route path="/privacy" element={
+          <>
+            <Privacy />
+            <FooterWrapper />
+          </>
+        } />
+        <Route path="/pricing" element={
+          <>
+            <Pricing />
+            <FooterWrapper />
+          </>
+        } />
+        <Route path="/contact" element={
+          <>
+            <Contact />
+            <FooterWrapper />
+          </>
+        } />
+        <Route path="/about" element={
+          <>
+            <About />
+            <FooterWrapper />
+          </>
+        } />
+        <Route path="/updates" element={
+          <>
+            <PublicUpdates />
+            <FooterWrapper />
+          </>
+        } />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/*" element={<ProtectedRoute />}>
           <Route path="add" element={<AddAdmin />} />
@@ -181,13 +216,27 @@ function App() {
           path="/call_for_food_vendors"
           element={<Redirect to="https://forms.gle/XLKsmkCikausV5mL9" />}
         />
-        <Route path="/ToS" element={<ToS />} />
-        <Route path="*" element={<NotFound />} />
+        <Route
+          path="/bulk_registration"
+          element={<Redirect to="https://docs.google.com/document/d/135kyrUojhxwm9QXA9xS7G9WSnenRHTQTvP3cerSMr-M/edit?tab=t.0" />}
+        />
+        <Route path="/ToS" element={
+          <>
+            <ToS />
+            <FooterWrapper />
+          </>
+        } />
+        <Route path="*" element={
+          <>
+            <NotFound />
+            <FooterWrapper />
+          </>
+        } />
       </Routes>
-      <FooterWrapper />
       <Overlay visible={showOverlay} onClose={() => setShowOverlay(false)} />
     </Router>
   );
 }
 
 export default App;
+
