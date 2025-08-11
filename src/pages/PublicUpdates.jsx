@@ -103,7 +103,7 @@ function PublicUpdates() {
 
             <div className="w-full md:w-1/2 aspect-[4/3] rounded-xl overflow-hidden shadow-lg mb-6 md:mb-0 flex items-center justify-center order-1 md:order-2 max-w-md mx-auto" data-aos="zoom-in">
               <img 
-                src="/poster1.webp" 
+                src="/bulkregistration.webp" 
                 alt="Bulk Registration Poster" 
                 className="w-full h-full object-cover"
               />
