@@ -221,7 +221,7 @@ function App() {
           element={<Redirect to="https://docs.google.com/document/d/135kyrUojhxwm9QXA9xS7G9WSnenRHTQTvP3cerSMr-M/edit?tab=t.0" />}
         />
         <Route
-          path="/dsa_arena"
+          path="/ds_arena"
           element={
             <Redirect to="https://docs.google.com/forms/d/e/1FAIpQLSePfQBCa77MlntutzbX3GoK4n4uXigza_o--Kdp8xg8gFdIQg/viewform" />
           }
