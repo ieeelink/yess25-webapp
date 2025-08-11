@@ -83,12 +83,12 @@ const UpdatesSection = () => {
               <p className="mb-4 text-base nunito-sans-body leading-relaxed text-white/90">
                 ZERO is more than a mascot — he's a symbol of unity, innovation, and the bold spirit of YESS. With antennas tuned to tech and a mission to inspire, ZERO proves that starting from nothing can lead to everything.
               </p>
-              <button
+              {/* <button
                 onClick={() => navigate('/updates')}
                 className="inline-block px-8 py-3 text-lg bg-[#fe4a56] text-white rounded-full font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-105 mt-2 cursor-pointer"
               >
-                View More
-              </button>
+                View More Updates
+              </button> */}
             </div>
 
           </div>
