@@ -121,12 +121,11 @@ function PublicUpdates() {
                     with streamlined processes and special benefits.
                   </p>
                   <button
-                    className="inline-block px-8 py-3 text-lg bg-[#fe4a56] text-white rounded-full font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-105 mt-2 cursor-pointer"
-                    onClick={() => window.open('https://docs.google.com/document/d/135kyrUojhxwm9QXA9xS7G9WSnenRHTQTvP3cerSMr-M/edit?tab=t.0', '_blank')}
-                  >
-                    
-                    Bulk Registration Guidelines
-                  </button>
+                  onClick={() => navigate('/bulk_registration')}
+                  className="inline-block px-8 py-3 text-lg bg-[#fe4a56] text-white rounded-full font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-105 cursor-pointer"
+                >
+                  Bulk Registration Guidelines
+                </button>
                 </div>
 
                 <div className="w-full md:w-1/2 rounded-xl overflow-hidden shadow-lg mb-6 md:mb-0 flex items-center justify-center order-1 md:order-2 max-w-sm mx-auto" data-aos="zoom-in">

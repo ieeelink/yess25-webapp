@@ -31,3 +31,6 @@ orgcommit.sh
 MembersList.csv
 Early Bird Registration Resolved data.csv
 *.pdf
+/dist
+*.html
+dist/index.html
