@@ -5,6 +5,7 @@ import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import BgAnimation from '../components/BgAnimation';
 import Header2 from '../components/Header2';
 
 function PublicUpdates() {
@@ -12,6 +13,29 @@ function PublicUpdates() {
   const [updates, setUpdates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isScrolled, setIsScrolled] = useState(true); // Default to true for static pages
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      
+      if (scrollPosition > 100) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(true); // Keep semi-transparent background even at top
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     AOS.init({
@@ -69,47 +93,53 @@ function PublicUpdates() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white relative pt-20">
-      {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50">
-        <Header2 />
+    <div className="min-h-screen bg-[#0a0a0a] text-white relative overflow-x-hidden">
+      <div className="fixed inset-0 z-0">
+        <BgAnimation />
       </div>
-
-      {/* Main Content */}
-      <div className="w-full flex justify-center relative z-10 backdrop-blur-sm bg-black/20 pt-4">
-        <div className="w-full px-4 lg:px-8 md:px-6 relative" style={{maxWidth: 'min(1600px, 100vw)'}}>
-          
-          {/* Page Header Section */}
-            
-
-          {/* Bulk Registration Announcement Section */}
-          <div className="w-full flex flex-col md:flex-row gap-8 items-center justify-center py-12 mt-16">
-            <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left order-2 md:order-1" data-aos="fade-right">
-              <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Bulk Registration</h3>
-              <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6"> Bulk Registration is Now Open!</h2>
-              <p className="mb-4 text-base nunito-sans-body leading-relaxed text-white/90">
-                We're excited to announce that bulk registration for YESS'25 has officially started! 
-                This is your opportunity to register multiple participants from your institution or organization 
-                with streamlined processes and special benefits.
-              </p>
-              <button
-                className="inline-block px-8 py-3 text-lg bg-[#fe4a56] text-white rounded-full font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-105 mt-2 cursor-pointer"
-                onClick={() => window.open('https://docs.google.com/document/d/135kyrUojhxwm9QXA9xS7G9WSnenRHTQTvP3cerSMr-M/edit?tab=t.0', '_blank')}
-              >
+      <div className="w-full relative z-10">
+        <Header2 isScrolled={isScrolled} onNavigate={scrollToSection} />
+        <div className="md:mt-20 mt-15 min-h-screen bg-black/20 backdrop-blur-sm [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-red-500/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-red-500/70">
+          <div className="w-full flex justify-start px-4 lg:px-16 md:px-6 pt-6 backdrop-blur-sm bg-black/20">
+            <h1 className="text-3xl font-bold text-white">Updates</h1>
+          </div>
+          {/* Main Content */}
+          <div className="w-full flex justify-center relative z-10 backdrop-blur-sm bg-black/20 pt-4">
+            <div className="w-full px-4 lg:px-8 md:px-6 relative" style={{maxWidth: 'min(1600px, 100vw)'}}>
+              
+              {/* Page Header Section */}
                 
-                Bulk Registration Guidelines
-              </button>
-            </div>
 
-            <div className="w-full md:w-1/2 rounded-xl overflow-hidden shadow-lg mb-6 md:mb-0 flex items-center justify-center order-1 md:order-2 max-w-sm mx-auto" data-aos="zoom-in">
-              <img 
-                src="/bulkregistration.webp" 
-                alt="Bulk Registration Poster" 
-                className="w-full h-full object-cover"
-              />
+              {/* Bulk Registration Announcement Section */}
+              <div className="w-full flex flex-col md:flex-row gap-8 items-center justify-center py-12 mt-16">
+                <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left order-2 md:order-1" data-aos="fade-right">
+                  <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Bulk Registration</h3>
+                  <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Bulk Registration is Now Open!</h2>
+                  <p className="mb-4 text-base nunito-sans-body leading-relaxed text-white/90">
+                    We're excited to announce that bulk registration for YESS'25 has officially started! 
+                    This is your opportunity to register multiple participants from your institution or organization 
+                    with streamlined processes and special benefits.
+                  </p>
+                  <button
+                    className="inline-block px-8 py-3 text-lg bg-[#fe4a56] text-white rounded-full font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-105 mt-2 cursor-pointer"
+                    onClick={() => window.open('https://docs.google.com/document/d/135kyrUojhxwm9QXA9xS7G9WSnenRHTQTvP3cerSMr-M/edit?tab=t.0', '_blank')}
+                  >
+                    
+                    Bulk Registration Guidelines
+                  </button>
+                </div>
+
+                <div className="w-full md:w-1/2 rounded-xl overflow-hidden shadow-lg mb-6 md:mb-0 flex items-center justify-center order-1 md:order-2 max-w-sm mx-auto" data-aos="zoom-in">
+                  <img 
+                    src="/bulkregistration.webp" 
+                    alt="Bulk Registration Poster" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+
             </div>
           </div>
-
 
         </div>
       </div>

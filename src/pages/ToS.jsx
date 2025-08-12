@@ -218,12 +218,9 @@ function ToS() {
       </div>
       <div className="w-full relative z-10">
         <Header2 isScrolled={isScrolled} onNavigate={scrollToSection} />
-        <div className="md:mt-20 mt-15 min-h-screen bg-black/20 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-red-500/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-red-500/70">
+        <div className="md:mt-20 mt-15 min-h-screen bg-black/20 backdrop-blur-xs [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-red-500/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-red-500/70">
           <ToSContent />
         </div>
-        {/* <SubFooter 
-          onNavigate={scrollToSection}
-        /> */}
       </div>
     </div>
   );
