@@ -60,7 +60,9 @@ function AddUpdate() {
         updateData.linkUrl = linkUrl;
       }
       
-      await axios.post(API_ENDPOINTS.UPDATES, updateData);
+      const token = localStorage.getItem('token');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      await axios.post(API_ENDPOINTS.UPDATES, updateData, { headers });
       setSuccess('Update submitted successfully!');
       setTitle('');
       setSubtitle('');
