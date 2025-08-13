@@ -10,6 +10,7 @@ import HighlightsSection from '../components/HighlightsSection';
 import TicketForm from '../components/TicketForm';
 import CheckStatus from '../pages/CheckStatus';
 import UpdatesSection from '../components/UpdatesSection';
+import MascotSection from '../components/MascotSection';
 
 const Home2 = ({
   showTicketForm,
@@ -169,6 +170,7 @@ const Home2 = ({
         <LandingSection scrollToSection={scrollToSection} isScrolled={isScrolled} onOpenTicketForm={() => setShowTicketForm(true)} onOpenCheckStatus={() => setShowCheckStatus(true)} />
         <PartnersSection images={partnerImages} />
         <UpdatesSection />
+        <MascotSection />
         <ExploreEventsSection />
         <AboutSection />
         <HighlightsSection highlightImages={highlightImages} />

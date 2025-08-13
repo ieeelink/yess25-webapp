@@ -30,3 +30,7 @@ orgcommit.sh
 .env.development.example
 MembersList.csv
 Early Bird Registration Resolved data.csv
+*.pdf
+/dist
+*.html
+dist/index.html

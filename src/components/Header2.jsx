@@ -15,7 +15,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
 
   const navItems = [
     { name: 'HOME', path: '/', sectionId: 'landing' },
-    { name: 'UPDATES', path: '/#updates', sectionId: 'updates' },
+    { name: 'UPDATES', path: '/updates', sectionId: 'updates' },
     { name: 'EVENTS', path: '/events', sectionId: 'events' },
     { name: 'ABOUT', path: '/about', sectionId: 'about' },
     { name: "HIGHLIGHTS'24", path: '/highlights', sectionId: 'highlights' }
@@ -24,7 +24,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
   // Check if current page is not home
   const isNotHomePage = location.pathname !== '/';
 
-  const sectionIds = ['landing', 'about', 'highlights'];
+  const sectionIds = ['landing', 'updates', 'about', 'highlights'];
   const sectionRefs = useRef({});
 
   // Scrollspy effect: highlight nav based on section in viewport
@@ -32,13 +32,14 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
     // Only run on home page
     if (location.pathname !== '/' && location.pathname !== '/home2') return;
 
-    const sectionIds = ['landing', 'events', 'about', 'highlights'];
+    const sectionIds = ['landing', 'updates', 'events', 'about', 'highlights'];
     const getSectionVisibility = (id) => {
       const el = document.getElementById(id);
-      if (!el) return 0;
+      if (!el) {
+        return 0;
+      }
       const rect = el.getBoundingClientRect();
       const vh = window.innerHeight || document.documentElement.clientHeight;
-      // Calculate visible height
       const visible = Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, 0));
       return visible / Math.min(rect.height, vh);
     };
@@ -109,7 +110,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
   return (
     <>
       <header className={`fixed top-0 left-0 right-0 z-50 pt-2 transition-all duration-300 ease-in-out ${
-        isScrolled ? 'bg-black/70 backdrop-blur-sm' : 'bg-transparent'
+        isNotHomePage ? 'bg-black/30 backdrop-blur-sm' : (isScrolled ? 'bg-black/70 backdrop-blur-sm' : 'bg-transparent')
       }`}>
         <div className="w-full px-4 sm:px-6 lg:px-12">
           <div className="flex justify-between items-center h-16 sm:h-20">
@@ -199,4 +200,4 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
   );
 };
 
-export default Header2; 
+export default Header2;

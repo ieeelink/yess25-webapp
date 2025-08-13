@@ -46,7 +46,9 @@ function Updates() {
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get(API_ENDPOINTS.UPDATES);
+        const token = localStorage.getItem('token');
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const response = await axios.get(API_ENDPOINTS.UPDATES, { headers });
         setUpdates(response.data);
       } catch (err) {
         setError('Failed to fetch updates.');
@@ -60,7 +62,9 @@ function Updates() {
   const handleDeleteUpdate = async (updateId) => {
     setDeletingId(updateId);
     try {
-      await axios.delete(API_ENDPOINTS.DELETE_UPDATE(updateId));
+      const token = localStorage.getItem('token');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      await axios.delete(API_ENDPOINTS.DELETE_UPDATE(updateId), { headers });
       setConfirmDeleteId(null);
       setSuccess('Update deleted successfully!');
       
@@ -68,7 +72,7 @@ function Updates() {
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get(API_ENDPOINTS.UPDATES);
+        const response = await axios.get(API_ENDPOINTS.UPDATES, { headers });
         setUpdates(response.data);
       } catch (err) {
         setError('Failed to fetch updates.');

@@ -35,6 +35,7 @@ import React from "react";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { API_ENDPOINTS } from "./config/api";
+import BulkRegistrationGuidelines from "./pages/BulkRegistrationGuidelines";
 
 
 const ExternalRedirect = ({ to }) => {
@@ -186,6 +187,15 @@ function App() {
             <FooterWrapper />
           </>
         } />
+        <Route
+          path="/bulk_registration"
+          element={
+            <>
+              <BulkRegistrationGuidelines />
+              <FooterWrapper />
+            </>
+          }
+        />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/*" element={<ProtectedRoute />}>
           <Route path="add" element={<AddAdmin />} />
@@ -216,10 +226,7 @@ function App() {
           path="/call_for_food_vendors"
           element={<Redirect to="https://forms.gle/XLKsmkCikausV5mL9" />}
         />
-        <Route
-          path="/bulk_registration"
-          element={<Redirect to="https://docs.google.com/document/d/135kyrUojhxwm9QXA9xS7G9WSnenRHTQTvP3cerSMr-M/edit?tab=t.0" />}
-        />
+        
         <Route
           path="/ds_arena"
           element={

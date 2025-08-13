@@ -28,6 +28,8 @@ export const API_ENDPOINTS = {
   
   // Updates
   UPDATES: `${API_BASE_URL}/updates`,
+  PUBLIC_UPDATES: `${API_BASE_URL}/public/updates`,
+  LATEST_UPDATE: `${API_BASE_URL}/public/latest-update`,
   DELETE_UPDATE: (id) => `${API_BASE_URL}/updates/${id}`,
   
   // Events
