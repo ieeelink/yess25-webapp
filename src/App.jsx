@@ -226,6 +226,18 @@ function App() {
             <Redirect to="https://docs.google.com/forms/d/e/1FAIpQLSePfQBCa77MlntutzbX3GoK4n4uXigza_o--Kdp8xg8gFdIQg/viewform" />
           }
         />
+        <Route
+          path="/dsa_arena"
+          element={
+            <Redirect to="https://docs.google.com/forms/d/e/1FAIpQLSePfQBCa77MlntutzbX3GoK4n4uXigza_o--Kdp8xg8gFdIQg/viewform" />
+          }
+        />
+        <Route
+          path="/mentor_match"
+          element={
+            <Redirect to="https://forms.gle/CntkQmEoCLLBPwsSA" />
+          }
+        />
         <Route path="/ToS" element={
           <>
             <ToS />
