@@ -349,15 +349,73 @@ function BulkIEEEVerification() {
     }
   }, [verificationResults, selectedCategory, excludedTickets, verifiedTickets]);
 
-  // Verify matched results
+  // SSE Bulk Verification Implementation
+  const performBulkVerification = async (tickets, authToken, onEvent) => {
+    try {
+      const payload = { tickets };
+      const response = await fetch(API_ENDPOINTS.BULK_VERIFY_IEEE_SSE, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+          'Accept': 'text/event-stream',
+          'Cache-Control': 'no-cache'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const events = buffer.split('\n\n');
+        buffer = events.pop() || '';
+        for (const event of events) {
+          if (event.trim()) onEvent(event);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error in bulk verification:', error);
+      setError('Bulk verification failed: ' + (error.message || 'Unknown error'));
+      setIsVerifying(false);
+    }
+  };
+
+  const processSSEEvent = (eventData, handleEvent) => {
+    const lines = eventData.split('\n');
+    let eventType = 'message', data = '';
+    for (const line of lines) {
+      if (line.startsWith('event: ')) eventType = line.slice(7);
+      else if (line.startsWith('data: ')) data = line.slice(6);
+    }
+    if (data) {
+      try {
+        const parsedData = JSON.parse(data);
+        handleEvent(eventType, parsedData);
+      } catch (error) {
+        console.error('Error parsing SSE data:', error);
+      }
+    }
+  };
+
+  // Verify matched results using SSE
   const handleVerifyMatches = async () => {
     if (!verificationResults?.allTickets) return;
-    
     // Get tickets to verify (matched tickets not excluded)
-    const ticketsToVerify = verificationResults.allTickets.filter(
-      ticket => ticket.status === 'matched' && !excludedTickets.has(ticket.ieeeMembershipNumber)
-    );
-    
+    const ticketsToVerify = verificationResults.allTickets
+      .filter(ticket => ticket.status === 'matched' && !excludedTickets.has(ticket.ieeeMembershipNumber))
+      .map(ticket => ({
+        ticketId: ticket._id,
+        ieeeVerified: true,
+        ieeeVerificationCompleted: true
+      }));
+
     if (ticketsToVerify.length === 0) {
       setError('No matched tickets to verify');
       return;
@@ -366,88 +424,54 @@ function BulkIEEEVerification() {
     setIsVerifying(true);
     setError('');
     setSuccess('');
-    
-    try {
-      // Get auth token from localStorage
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Authentication token not found. Please login again.');
-      }
+    setVerificationProgress(0);
+    setVerifyingTickets(new Set());
+    setVerifiedTickets(new Map());
 
-      // Process tickets one by one
-      for (let i = 0; i < ticketsToVerify.length; i++) {
-        const ticket = ticketsToVerify[i];
-        
-        try {
-          // Mark ticket as being verified
-          setVerifyingTickets(prev => new Set([...prev, ticket._id]));
-          
-          // Make API call to verify the ticket
-          const response = await axios.post(
-            API_ENDPOINTS.VERIFY_IEEE(ticket._id),
-            {
-              ieeeVerified: true,
-              ieeeVerificationCompleted: true
-            },
-            {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              }
-            }
-          );
-
-          // Mark ticket as verified successfully
-          setVerifiedTickets(prev => new Map([
-            ...prev, 
-            [ticket._id, { status: 'success', message: 'Verified successfully', data: response.data }]
-          ]));
-          
-          console.log(`✅ Verified ticket ${ticket._id}:`, response.data);
-          
-        } catch (ticketError) {
-          console.error(`❌ Failed to verify ticket ${ticket._id}:`, ticketError);
-          
-          // Mark ticket as failed
-          setVerifiedTickets(prev => new Map([
-            ...prev, 
-            [ticket._id, { 
-              status: 'error', 
-              message: ticketError.response?.data?.message || ticketError.message,
-              error: ticketError.response?.data || ticketError.message
-            }]
-          ]));
-        } finally {
-          // Remove from verifying set
-          setVerifyingTickets(prev => {
-            const newSet = new Set(prev);
-            newSet.delete(ticket._id);
-            return newSet;
-          });
-        }
-        
-        // Update progress
-        const progress = Math.round(((i + 1) / ticketsToVerify.length) * 100);
-        setVerificationProgress(progress);
-        
-        // Small delay between requests to avoid overwhelming server
-        if (i < ticketsToVerify.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
-      }
-      
-      const successCount = Array.from(verifiedTickets.values()).filter(result => result.status === 'success').length;
-      const errorCount = Array.from(verifiedTickets.values()).filter(result => result.status === 'error').length;
-      
-      setSuccess(`Verification completed! ${successCount} tickets verified successfully, ${errorCount} failed.`);
-      
-    } catch (error) {
-      console.error('❌ Error during verification:', error);
-      setError(`Verification failed: ${error.response?.data?.message || error.message}`);
-    } finally {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Authentication token not found. Please login again.');
       setIsVerifying(false);
-      setVerificationProgress(0);
+      return;
     }
+
+    await performBulkVerification(ticketsToVerify, token, (eventData) => {
+      processSSEEvent(eventData, (eventType, data) => {
+        switch (eventType) {
+          case 'start':
+            setVerificationProgress(0);
+            break;
+          case 'processing':
+            setVerifyingTickets(prev => new Set([...prev, data.ticketId]));
+            setVerificationProgress(Math.round((data.index / data.total) * 100));
+            break;
+          case 'success':
+            setVerifiedTickets(prev => new Map([...prev, [data.ticketId, { status: 'success', message: 'Verified successfully', data }]]));
+            setVerifyingTickets(prev => {
+              const newSet = new Set(prev);
+              newSet.delete(data.ticketId);
+              return newSet;
+            });
+            break;
+          case 'error':
+            setVerifiedTickets(prev => new Map([...prev, [data.ticketId, { status: 'error', message: data.error, error: data }]]));
+            setVerifyingTickets(prev => {
+              const newSet = new Set(prev);
+              newSet.delete(data.ticketId);
+              return newSet;
+            });
+            break;
+          case 'complete':
+            setSuccess(`Verification completed! ${data.totalTickets} tickets processed.`);
+            setVerificationProgress(100);
+            setIsVerifying(false);
+            break;
+          default:
+            // Handle other events if needed
+            break;
+        }
+      });
+    });
   };
 
   return (

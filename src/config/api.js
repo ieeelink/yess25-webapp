@@ -38,7 +38,7 @@ export const API_ENDPOINTS = {
   
   // IEEE Verification
   VERIFY_IEEE: (ticketId) => `${API_BASE_URL}/admin/verifyieee/${ticketId}`,
-  BULK_IEEE_VERIFY: `${API_BASE_URL}/admin/bulk-ieee-verify`,
+  BULK_VERIFY_IEEE_SSE: `${API_BASE_URL}/admin/bulk-verify-ieee-sse`,
   UNVERIFIED_IEEE: `${API_BASE_URL}/admin/unverified-ieee`,
 };
 
