@@ -25,11 +25,13 @@ import About from "./pages/About";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
 import AddEvent from "./pages/AddEvent";
+import UpdateEvent from "./pages/UpdateEvent";
 import AddUpdate from "./pages/AddUpdate";
 import EventDetails from "./pages/EventDetails";
 import Updates from "./pages/Updates";
 import PublicUpdates from "./pages/PublicUpdates";
 import BulkIEEEVerification from "./pages/BulkIEEEVerification";
+import GenerateTickets from "./pages/GenerateTickets";
 import TestLandingSection from "./components/TestLandingSection";
 import React from "react";
 import AOS from 'aos';
@@ -202,9 +204,12 @@ function App() {
           <Route path="add-ticket" element={<AddTicket />} />
           <Route path="add-bulk-tickets" element={<AddBulkTickets />} />
           <Route path="webhook-resolve" element={<WebhookResolve />} />
+          <Route path="tickets" element={<TicketDetails />} />
           <Route path="ticket-details" element={<TicketDetails />} />
+          <Route path="generate-tickets" element={<GenerateTickets />} />
           <Route path="bulk-ieee-verification" element={<BulkIEEEVerification />} />
           <Route path="add-event" element={<AddEvent />} />
+          <Route path="update-event/:eventId" element={<UpdateEvent />} />
           <Route path="add-update" element={<AddUpdate />} />
           <Route path="event-details" element={<EventDetails />} />
           <Route path="updates" element={<Updates />} />
@@ -237,6 +242,12 @@ function App() {
           path="/dsa_arena"
           element={
             <Redirect to="https://docs.google.com/forms/d/e/1FAIpQLSePfQBCa77MlntutzbX3GoK4n4uXigza_o--Kdp8xg8gFdIQg/viewform" />
+          }
+        />
+        <Route
+          path="/overview"
+          element={
+            <Redirect to="https://docs.google.com/document/d/1d1GVtg0bB1JINDcODVZILwFc8J08_1vy20FBmjtGfpw/edit?usp=sharing" />
           }
         />
         <Route

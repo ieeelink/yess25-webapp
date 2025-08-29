@@ -5,6 +5,9 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://yess25-backen
 
 // API endpoints configuration
 export const API_ENDPOINTS = {
+  // Base API URL for custom endpoints
+  API_BASE: API_BASE_URL,
+  
   // Authentication
   ADMIN_LOGIN: `${API_BASE_URL}/admin/login`,
   ADMIN_VERIFY: `${API_BASE_URL}/admin/verify`,

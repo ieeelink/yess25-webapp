@@ -6,6 +6,9 @@ import { API_ENDPOINTS } from '../config/api';
 function AddEvent() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [location, setLocation] = useState('');
   const [image, setImage] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -29,14 +32,27 @@ function AddEvent() {
       const imgbbRes = await axios.post(`https://api.imgbb.com/1/upload?key=${apiKey}`, formData);
       const imageUrl = imgbbRes.data.data.url;
       // 2. Send event data to server
-      await axios.post(API_ENDPOINTS.EVENTS, {
+      const token = localStorage.getItem('token');
+      const eventData = {
         title,
         description,
         image: imageUrl
+      };
+      
+      // Add optional fields if they have values
+      if (startTime) eventData.startTime = startTime;
+      if (endTime) eventData.endTime = endTime;
+      if (location) eventData.location = location;
+      
+      await axios.post(API_ENDPOINTS.EVENTS, eventData, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       setSuccess('Event submitted successfully!');
       setTitle('');
       setDescription('');
+      setStartTime('');
+      setEndTime('');
+      setLocation('');
       setImage(null);
       setTimeout(() => navigate(-1), 1200);
     } catch (err) {
@@ -64,6 +80,31 @@ function AddEvent() {
           value={description}
           onChange={e => setDescription(e.target.value)}
           className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56] min-h-[100px]"
+        />
+        <div>
+          <label className="block text-gray-300 text-sm font-medium mb-1">Start Time (Optional)</label>
+          <input
+            type="datetime-local"
+            value={startTime}
+            onChange={e => setStartTime(e.target.value)}
+            className="w-full bg-[#18181b] text-gray-200 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-300 text-sm font-medium mb-1">End Time (Optional)</label>
+          <input
+            type="datetime-local"
+            value={endTime}
+            onChange={e => setEndTime(e.target.value)}
+            className="w-full bg-[#18181b] text-gray-200 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
+          />
+        </div>
+        <input
+          type="text"
+          placeholder="Location (Optional)"
+          value={location}
+          onChange={e => setLocation(e.target.value)}
+          className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
         />
         <div>
           <label htmlFor="event-image" className="inline-block px-4 py-2 bg-blue-700 text-white rounded cursor-pointer hover:bg-blue-800 font-semibold transition-colors border border-blue-800 shadow">

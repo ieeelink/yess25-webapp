@@ -46,7 +46,10 @@ function EventDetails() {
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get(API_ENDPOINTS.EVENTS);
+        const token = localStorage.getItem('token');
+        const response = await axios.get(API_ENDPOINTS.EVENTS, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         console.log(response.data)
         setEvents(response.data);
       } catch (err) {
@@ -61,7 +64,10 @@ function EventDetails() {
   const handleDeleteEvent = async (eventId) => {
     setDeletingId(eventId);
     try {
-      await axios.delete(API_ENDPOINTS.DELETE_EVENT(eventId));
+      const token = localStorage.getItem('token');
+      await axios.delete(API_ENDPOINTS.DELETE_EVENT(eventId), {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setConfirmDeleteId(null);
       setSuccess('Event deleted successfully!');
       
@@ -69,7 +75,9 @@ function EventDetails() {
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get(API_ENDPOINTS.EVENTS);
+        const response = await axios.get(API_ENDPOINTS.EVENTS, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         setEvents(response.data);
       } catch (err) {
         setError('Failed to fetch events.');
@@ -205,7 +213,7 @@ function EventDetails() {
                       ) : (
                         <>
                           <button
-                            onClick={() => console.log('Update', event.id || event._id)}
+                            onClick={() => navigate(`/admin/update-event/${event.id || event._id}`)}
                             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors text-sm font-nunito"
                           >
                             <FiEdit3 className="text-sm" />

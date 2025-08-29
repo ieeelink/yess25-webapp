@@ -11,6 +11,7 @@ function TicketDetails() {
   const [error, setError] = useState('');
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [showRegistrationsDropdown, setShowRegistrationsDropdown] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [verifyNewPassword, setVerifyNewPassword] = useState('');
@@ -55,13 +56,16 @@ function TicketDetails() {
       if (showUserDropdown && !event.target.closest('.user-dropdown')) {
         setShowUserDropdown(false);
       }
+      if (showRegistrationsDropdown && !event.target.closest('.registrations-dropdown')) {
+        setShowRegistrationsDropdown(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showUserDropdown]);
+  }, [showUserDropdown, showRegistrationsDropdown]);
 
   const handleEdit = (ticketId) => {
     const ticket = tickets.find(t => t._id === ticketId);
@@ -205,18 +209,54 @@ function TicketDetails() {
         
         {/* Navigation Menu */}
         <nav className="flex items-center gap-1">
-          <a
-            onClick={() => navigate('/admin/add-ticket')}
-            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-green-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-green-700/50"
-          >
-            + Add Ticket
-          </a>
-          <a
-            onClick={() => navigate('/admin/add-bulk-tickets')}
-            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-green-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-green-700/50"
-          >
-            + Bulk Tickets
-          </a>
+          {/* Registrations Dropdown */}
+          <div className="relative registrations-dropdown">
+            <button
+              onClick={() => setShowRegistrationsDropdown(!showRegistrationsDropdown)}
+              className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-green-700/20 px-3 py-2 rounded-lg font-medium transition-colors border border-transparent hover:border-green-700/50"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/>
+              </svg>
+              Registrations
+              <FiChevronDown className={`w-4 h-4 transition-transform ${showRegistrationsDropdown ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {/* Registrations Dropdown Menu */}
+            {showRegistrationsDropdown && (
+              <div className="absolute left-0 top-full mt-2 w-48 bg-[#232326] border border-gray-700 rounded-lg shadow-lg py-1 z-30">
+                <a
+                  onClick={() => {
+                    navigate('/admin/add-ticket');
+                    setShowRegistrationsDropdown(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-green-700/20 transition-colors cursor-pointer"
+                >
+                  + Add Ticket
+                </a>
+                <a
+                  onClick={() => {
+                    navigate('/admin/add-bulk-tickets');
+                    setShowRegistrationsDropdown(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-green-700/20 transition-colors cursor-pointer"
+                >
+                  + Bulk Tickets
+                </a>
+                <a
+                  onClick={() => {
+                    navigate('/admin/webhook-resolve');
+                    setShowRegistrationsDropdown(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-yellow-700/20 transition-colors cursor-pointer"
+                >
+                  <FiRefreshCw className="w-4 h-4" />
+                  Webhook Resolver
+                </a>
+              </div>
+            )}
+          </div>
+          
           <a
             onClick={() => navigate('/admin/event-details')}
             className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-blue-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-blue-700/50"
@@ -241,11 +281,13 @@ function TicketDetails() {
             IEEE Verify
           </a>
           <a
-            onClick={() => navigate('/admin/webhook-resolve')}
-            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-yellow-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-yellow-700/50"
+            onClick={() => navigate('/admin/generate-tickets')}
+            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-indigo-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-indigo-700/50"
           >
-            <FiRefreshCw className="w-4 h-4" />
-            Webhook Resolver
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+            </svg>
+            Generate Tickets
           </a>
           
           {/* User Dropdown */}
