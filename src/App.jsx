@@ -34,15 +34,14 @@ import BulkIEEEVerification from "./pages/BulkIEEEVerification";
 import GenerateTickets from "./pages/GenerateTickets";
 import TestLandingSection from "./components/TestLandingSection";
 import React from "react";
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import AOS from "aos";
+import "aos/dist/aos.css";
 import { API_ENDPOINTS } from "./config/api";
 import BulkRegistrationGuidelines from "./pages/BulkRegistrationGuidelines";
 
-
 const ExternalRedirect = ({ to }) => {
   useEffect(() => {
-    window.open(to, '_blank', 'noopener,noreferrer');
+    window.open(to, "_blank", "noopener,noreferrer");
     window.history.back();
   }, [to]);
 
@@ -62,18 +61,18 @@ function ProtectedRoute() {
 
   useEffect(() => {
     const verifyToken = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
         setIsVerified(false);
         return;
       }
       try {
         await axios.get(API_ENDPOINTS.ADMIN_VERIFY, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         setIsVerified(true);
       } catch {
-        localStorage.removeItem('token');
+        localStorage.removeItem("token");
         setIsVerified(false);
       }
     };
@@ -81,7 +80,11 @@ function ProtectedRoute() {
   }, []);
 
   if (isVerified === null) {
-    return <div className="flex items-center justify-center h-screen text-2xl text-center text-white">Verifying...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen text-2xl text-center text-white">
+        Verifying...
+      </div>
+    );
   }
   return isVerified ? <Outlet /> : <Navigate to="/admin" replace />;
 }
@@ -108,13 +111,13 @@ function App() {
   // Disable background scroll when any overlay/modal is open
   React.useEffect(() => {
     if (showOverlay || showTicketForm || showCheckStatus) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     // Clean up on unmount
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [showOverlay, showTicketForm, showCheckStatus]);
 
@@ -134,7 +137,7 @@ function App() {
   // FooterWrapper is a child of Router, so useLocation is safe here
   function FooterWrapper() {
     const location = useLocation();
-    const isAdminRoute = location.pathname.startsWith('/admin');
+    const isAdminRoute = location.pathname.startsWith("/admin");
     if (isAdminRoute) return null;
     return <NewFooter onShowOverlay={() => setShowOverlay(true)} />;
   }
@@ -142,53 +145,74 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={
-          <>
-            <Home2
-              showTicketForm={showTicketForm}
-              setShowTicketForm={setShowTicketForm}
-              showCheckStatus={showCheckStatus}
-              setShowCheckStatus={setShowCheckStatus}
-            />
-            <FooterWrapper />
-          </>
-        } />
-        <Route path="/test-ticket" element={
-          <>
-            <TestTicketPage />
-            <FooterWrapper />
-          </>
-        } />
-        <Route path="/privacy" element={
-          <>
-            <Privacy />
-            <FooterWrapper />
-          </>
-        } />
-        <Route path="/pricing" element={
-          <>
-            <Pricing />
-            <FooterWrapper />
-          </>
-        } />
-        <Route path="/contact" element={
-          <>
-            <Contact />
-            <FooterWrapper />
-          </>
-        } />
-        <Route path="/about" element={
-          <>
-            <About />
-            <FooterWrapper />
-          </>
-        } />
-        <Route path="/updates" element={
-          <>
-            <PublicUpdates />
-            <FooterWrapper />
-          </>
-        } />
+        <Route
+          path="/"
+          element={
+            <>
+              <Home2
+                showTicketForm={showTicketForm}
+                setShowTicketForm={setShowTicketForm}
+                showCheckStatus={showCheckStatus}
+                setShowCheckStatus={setShowCheckStatus}
+              />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="/test-ticket"
+          element={
+            <>
+              <TestTicketPage />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <>
+              <Privacy />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="/pricing"
+          element={
+            <>
+              <Pricing />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <>
+              <Contact />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <>
+              <About />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="/updates"
+          element={
+            <>
+              <PublicUpdates />
+              <FooterWrapper />
+            </>
+          }
+        />
         <Route
           path="/bulk_registration"
           element={
@@ -221,7 +245,9 @@ function App() {
         />
         <Route
           path="/mascot"
-          element={<Redirect to="https://docs.google.com/forms/d/e/1FAIpQLScC_kUmGRZTPC3QGTtauYYYUIMgXWzevEGv9DiKqPDLO2dn0Q/viewform" />}
+          element={
+            <Redirect to="https://docs.google.com/forms/d/e/1FAIpQLScC_kUmGRZTPC3QGTtauYYYUIMgXWzevEGv9DiKqPDLO2dn0Q/viewform" />
+          }
         />
         <Route
           path="/call_for_startups"
@@ -231,7 +257,7 @@ function App() {
           path="/call_for_food_vendors"
           element={<Redirect to="https://forms.gle/XLKsmkCikausV5mL9" />}
         />
-        
+
         <Route
           path="/ds_arena"
           element={
@@ -252,22 +278,44 @@ function App() {
         />
         <Route
           path="/mentor_match"
+          element={<Redirect to="https://forms.gle/CntkQmEoCLLBPwsSA" />}
+        />
+        <Route
+          path="/efootball-championship"
           element={
-            <Redirect to="https://forms.gle/CntkQmEoCLLBPwsSA" />
+            <Redirect to="https://links.ieeesbnitc.in/yess-efootball-championship" />
           }
         />
-        <Route path="/ToS" element={
-          <>
-            <ToS />
-            <FooterWrapper />
-          </>
-        } />
-        <Route path="*" element={
-          <>
-            <NotFound />
-            <FooterWrapper />
-          </>
-        } />
+        <Route
+          path="/bgmi-showdown"
+          element={
+            <Redirect to="https://links.ieeesbnitc.in/yess-bgmi-showdown" />
+          }
+        />
+        <Route
+          path="/free-fire-clash"
+          element={
+            <Redirect to="https://links.ieeesbnitc.in/yess-free-fire-clash" />
+          }
+        />
+        <Route
+          path="/ToS"
+          element={
+            <>
+              <ToS />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <>
+              <NotFound />
+              <FooterWrapper />
+            </>
+          }
+        />
       </Routes>
       <Overlay visible={showOverlay} onClose={() => setShowOverlay(false)} />
     </Router>
@@ -275,4 +323,3 @@ function App() {
 }
 
 export default App;
-
