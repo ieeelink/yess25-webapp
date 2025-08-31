@@ -151,20 +151,20 @@ function PublicEvents() {
       <div className="fixed inset-0 z-0">
         <BgAnimation />
       </div>
-      <div className="w-full relative z-10">
+      <div className="relative z-10 w-full">
         <Header2 isScrolled={isScrolled} onNavigate={scrollToSection} />
         <div className="md:mt-20 mt-15 min-h-screen bg-black/20 backdrop-blur-sm [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-red-500/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-red-500/70">
           {/* Main Content */}
-          <div className="w-full flex justify-center relative z-10 pt-4">
-            <div className="w-full px-4 lg:px-8 md:px-6 relative" style={{maxWidth: 'min(1600px, 100vw)'}}>
+          <div className="relative z-10 flex justify-center w-full pt-4">
+            <div className="relative w-full px-4 lg:px-8 md:px-6" style={{maxWidth: 'min(1600px, 100vw)'}}>
               
               {/* Page Header Section */}
-              <div className="text-center py-8" data-aos="fade-up">
+              <div className="py-8 text-center" data-aos="fade-up">
                 <div className="flex items-center justify-center gap-3 mb-4">
                   <FiCalendar className="text-3xl text-[#fe4a56]" />
-                  <h2 className="text-3xl lg:text-4xl font-bold text-white">Upcoming Events</h2>
+                  <h2 className="text-3xl font-bold text-white lg:text-4xl">Upcoming Events</h2>
                 </div>
-                <p className="text-lg text-white/80 max-w-2xl mx-auto">
+                <p className="max-w-2xl mx-auto text-lg text-white/80">
                   Discover exciting events, workshops, and activities planned for YESS'25. Join us for an unforgettable experience.
                 </p>
               </div>
@@ -176,9 +176,9 @@ function PublicEvents() {
                   <span className="ml-3 text-white">Loading events...</span>
                 </div>
               ) : error ? (
-                <div className="text-center py-16">
-                  <FiCalendar className="mx-auto text-6xl text-gray-500 mb-4 opacity-50" />
-                  <h3 className="text-xl font-semibold text-gray-400 mb-2">{error}</h3>
+                <div className="py-16 text-center">
+                  <FiCalendar className="mx-auto mb-4 text-6xl text-gray-500 opacity-50" />
+                  <h3 className="mb-2 text-xl font-semibold text-gray-400">{error}</h3>
                   <button
                     onClick={() => window.location.reload()}
                     className="inline-flex items-center gap-2 px-6 py-3 bg-[#fe4a56] text-white rounded-lg hover:bg-[#ea1212] transition-colors"
@@ -187,13 +187,13 @@ function PublicEvents() {
                   </button>
                 </div>
               ) : events.length === 0 ? (
-                <div className="text-center py-16">
-                  <FiCalendar className="mx-auto text-6xl text-gray-500 mb-4 opacity-50" />
-                  <h3 className="text-xl font-semibold text-gray-400 mb-2">No Events Available</h3>
-                  <p className="text-gray-500 mb-6">Check back later for upcoming events and activities.</p>
+                <div className="py-16 text-center">
+                  <FiCalendar className="mx-auto mb-4 text-6xl text-gray-500 opacity-50" />
+                  <h3 className="mb-2 text-xl font-semibold text-gray-400">No Events Available</h3>
+                  <p className="mb-6 text-gray-500">Check back later for upcoming events and activities.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 py-8">
+                <div className="grid grid-cols-1 gap-6 py-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {events.map((event, index) => (
                     <div 
                       key={event.id || event._id || index} 
@@ -212,15 +212,15 @@ function PublicEvents() {
                       }}
                       onClick={() => handleEventClick(event)}
                     >
-                      <div className="aspect-[4/3] bg-gray-800 relative overflow-hidden">
+                      <div className="relative overflow-hidden bg-gray-800 ">
                         {event.image ? (
                           <img 
                             src={event.image} 
                             alt={event.title} 
-                            className="w-full h-full object-cover"
+                            className="w-full"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                          <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-gray-800 to-gray-900">
                             <FiCalendar className="text-4xl text-gray-500" />
                           </div>
                         )}
@@ -228,7 +228,7 @@ function PublicEvents() {
                           <div className="absolute top-2 left-2">
                             <div className="flex items-center gap-1 bg-black/70 backdrop-blur-sm rounded-full px-2 py-0.5">
                               <FiClock className="text-xs text-[#fe4a56]" />
-                              <span className="text-xs text-white font-medium">
+                              <span className="text-xs font-medium text-white">
                                 {formatTime(event.startTime)}
                                 {event.endTime && ` - ${formatTime(event.endTime)}`}
                               </span>
@@ -248,11 +248,11 @@ function PublicEvents() {
                       </div>
                       
                       <div className="p-4">
-                        <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
+                        <h3 className="mb-2 text-lg font-bold text-white line-clamp-2">
                           {event.title}
                         </h3>
                         
-                        <p className="text-gray-300 text-sm mb-3 line-clamp-3 leading-relaxed">
+                        <p className="mb-3 text-sm leading-relaxed text-gray-300 line-clamp-3">
                           {event.description}
                         </p>
                         
@@ -313,7 +313,7 @@ function PublicEvents() {
               </div>
               <button
                 onClick={handleCloseModal}
-                className="p-2 hover:bg-gray-700/50 rounded-full transition-colors"
+                className="p-2 transition-colors rounded-full hover:bg-gray-700/50"
               >
                 <FiX className="text-xl text-gray-400 hover:text-white" />
               </button>
@@ -321,18 +321,18 @@ function PublicEvents() {
 
             {/* Modal Content */}
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {/* Image Section */}
                 <div className="space-y-4">
-                  <div className="aspect-[4/3] bg-gray-800 rounded-xl overflow-hidden">
+                  <div className="aspect-[4/3] flex justify-center rounded-xl overflow-hidden">
                     {selectedEvent.image ? (
                       <img 
                         src={selectedEvent.image} 
                         alt={selectedEvent.title} 
-                        className="w-full h-full object-cover"
+                        className="object-contain h-full "
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                      <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-gray-800 to-gray-900">
                         <FiCalendar className="text-6xl text-gray-500" />
                       </div>
                     )}
@@ -341,11 +341,11 @@ function PublicEvents() {
                   {/* Event Info Cards */}
                   <div className="space-y-3">
                     {selectedEvent.startTime && (
-                      <div className="flex items-center gap-3 bg-black/50 backdrop-blur-sm rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-3 px-4 py-3 bg-black/50 backdrop-blur-sm rounded-xl">
                         <FiClock className="text-[#fe4a56] text-xl" />
                         <div>
-                          <p className="text-white font-medium">Time</p>
-                          <p className="text-gray-300 text-sm">
+                          <p className="font-medium text-white">Time</p>
+                          <p className="text-sm text-gray-300">
                             {formatTime(selectedEvent.startTime)}
                             {selectedEvent.endTime && ` - ${formatTime(selectedEvent.endTime)}`}
                           </p>
@@ -354,11 +354,11 @@ function PublicEvents() {
                     )}
                     
                     {selectedEvent.location && (
-                      <div className="flex items-center gap-3 bg-black/50 backdrop-blur-sm rounded-xl px-4 py-3">
+                      <div className="flex items-center gap-3 px-4 py-3 bg-black/50 backdrop-blur-sm rounded-xl">
                         <FiMapPin className="text-[#fe4a56] text-xl" />
                         <div>
-                          <p className="text-white font-medium">Location</p>
-                          <p className="text-gray-300 text-sm">{selectedEvent.location}</p>
+                          <p className="font-medium text-white">Location</p>
+                          <p className="text-sm text-gray-300">{selectedEvent.location}</p>
                         </div>
                       </div>
                     )}
@@ -382,13 +382,13 @@ function PublicEvents() {
                 {/* Content Section */}
                 <div className="space-y-6">
                   <div>
-                    <h1 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+                    <h1 className="mb-4 text-3xl font-bold text-white lg:text-4xl">
                       {selectedEvent.title}
                     </h1>
                   </div>
                   
                   <div className="prose prose-invert max-w-none">
-                    <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">
+                    <p className="text-lg leading-relaxed text-gray-300 whitespace-pre-wrap">
                       {selectedEvent.description}
                     </p>
                   </div>
