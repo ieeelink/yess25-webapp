@@ -55,6 +55,13 @@ const UpdatesSection = () => {
             ) : error || !latestUpdate ? (
               // Fallback to default bulk registration content if no update or error
               <>
+                {/* Mobile: Heading First */}
+                <div className="w-full md:hidden mb-6" data-aos="fade-up">
+                  <h3 className="text-lg font-semibold text-[#fe4a56] mb-3">Updates</h3>
+                  <h2 className="text-2xl font-bold text-white mb-4">Bulk Registration is Now Open!</h2>
+                </div>
+
+                {/* Image - Mobile: Between heading and content, Desktop: Right side */}
                 <div className="w-full md:w-1/2 rounded-xl overflow-hidden shadow-lg mb-6 md:mb-0 flex items-center justify-center order-1 md:order-2 max-w-xs mx-auto cursor-pointer" data-aos="zoom-in"
                      style={{
                        transform: 'scale(1)',
@@ -73,9 +80,15 @@ const UpdatesSection = () => {
                   />
                 </div>
 
+                {/* Content - Desktop: Include heading, Mobile: Content only */}
                 <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left order-2 md:order-1" data-aos="fade-right">
-                  <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Updates</h3>
-                  <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Bulk Registration is Now Open!</h2>
+                  {/* Desktop: Show heading */}
+                  <div className="hidden md:block">
+                    <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Updates</h3>
+                    <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Bulk Registration is Now Open!</h2>
+                  </div>
+                  
+                  {/* Content */}
                   <p className="mb-4 text-base nunito-sans-body leading-relaxed text-white/90">
                     We're excited to announce that bulk registration for YESS'25 has officially started! 
                     This is your opportunity to register multiple participants from your institution or organization 
@@ -100,6 +113,25 @@ const UpdatesSection = () => {
             ) : (
               // Display latest update from server
               <>
+                {/* Mobile: Heading First */}
+                <div className="w-full md:hidden mb-6" data-aos="fade-up">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-lg font-semibold text-[#fe4a56]">Updates</h3>
+                    {latestUpdate.date && (
+                      <span className="text-sm text-gray-400">• {formatDate(latestUpdate.date)}</span>
+                    )}
+                  </div>
+                  <h3 className="text-lg font-semibold text-[#fe4a56] mb-3">
+                    {latestUpdate.title}
+                  </h3>
+                  {latestUpdate.subtitle && (
+                    <h2 className="text-2xl font-bold text-white mb-4">
+                      {latestUpdate.subtitle}
+                    </h2>
+                  )}
+                </div>
+
+                {/* Image - Mobile: Between heading and content, Desktop: Right side */}
                 <div className="w-full md:w-1/2 rounded-xl overflow-hidden shadow-lg mb-6 md:mb-0 flex items-center justify-center order-1 md:order-2 max-w-xs mx-auto cursor-pointer" data-aos="zoom-in"
                      style={{
                        transform: 'scale(1)',
@@ -118,21 +150,27 @@ const UpdatesSection = () => {
                   />
                 </div>
 
+                {/* Content - Desktop: Include heading, Mobile: Content only */}
                 <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left order-2 md:order-1" data-aos="fade-right">
-                  <div className="flex items-center gap-2 mb-3 lg:mb-4">
-                    <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56]">Updates</h3>
-                    {latestUpdate.date && (
-                      <span className="text-sm text-gray-400">• {formatDate(latestUpdate.date)}</span>
+                  {/* Desktop: Show heading */}
+                  <div className="hidden md:block">
+                    <div className="flex items-center gap-2 mb-3 lg:mb-4">
+                      <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56]">Updates</h3>
+                      {latestUpdate.date && (
+                        <span className="text-sm text-gray-400">• {formatDate(latestUpdate.date)}</span>
+                      )}
+                    </div>
+                    <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">
+                      {latestUpdate.title}
+                    </h3>
+                    {latestUpdate.subtitle && (
+                      <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">
+                        {latestUpdate.subtitle}
+                      </h2>
                     )}
                   </div>
-                  <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">
-                    {latestUpdate.title}
-                  </h3>
-                  {latestUpdate.subtitle && (
-                    <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">
-                      {latestUpdate.subtitle}
-                    </h2>
-                  )}
+                  
+                  {/* Content */}
                   <p className="mb-4 text-base nunito-sans-body leading-relaxed text-white/90">
                     {latestUpdate.description}
                   </p>

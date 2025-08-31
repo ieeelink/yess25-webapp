@@ -5,6 +5,7 @@ import Header2 from "../components/Header2";
 import LandingSection from '../components/LandingSection';
 import PartnersSection from '../components/PartnersSection';
 import ExploreEventsSection from '../components/ExploreEventsSection';
+import SponsorsSection from '../components/SponsorsSection';
 import AboutSection from '../components/AboutSection';
 import HighlightsSection from '../components/HighlightsSection';
 import TicketForm from '../components/TicketForm';
@@ -172,6 +173,7 @@ const Home2 = ({
         <UpdatesSection />
         <MascotSection />
         <ExploreEventsSection />
+        <SponsorsSection />
         <AboutSection />
         <HighlightsSection highlightImages={highlightImages} />
         {showTicketForm && (

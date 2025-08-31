@@ -30,6 +30,7 @@ import AddUpdate from "./pages/AddUpdate";
 import EventDetails from "./pages/EventDetails";
 import Updates from "./pages/Updates";
 import PublicUpdates from "./pages/PublicUpdates";
+import PublicEvents from "./pages/PublicEvents";
 import BulkIEEEVerification from "./pages/BulkIEEEVerification";
 import GenerateTickets from "./pages/GenerateTickets";
 import TestLandingSection from "./components/TestLandingSection";
@@ -209,6 +210,15 @@ function App() {
           element={
             <>
               <PublicUpdates />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="/events"
+          element={
+            <>
+              <PublicEvents />
               <FooterWrapper />
             </>
           }

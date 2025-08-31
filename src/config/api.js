@@ -37,6 +37,8 @@ export const API_ENDPOINTS = {
   
   // Events
   EVENTS: `${API_BASE_URL}/events`,
+  PUBLIC_EVENTS: `${API_BASE_URL}/public/events`,
+  PUBLIC_LATEST_EVENT: `${API_BASE_URL}/public/latest-event`,
   DELETE_EVENT: (id) => `${API_BASE_URL}/events/${id}`,
   
   // IEEE Verification

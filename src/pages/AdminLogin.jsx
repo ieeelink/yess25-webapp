@@ -12,15 +12,18 @@ function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setLoading(true);
 
     if (!username || !password) {
       setError('Please enter both username and password.');
+      setLoading(false);
       return;
     }
 
@@ -48,6 +51,9 @@ function AdminLogin() {
           setError('An error occurred during login. Please try again.');
         }
         console.error('Error logging in:', error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -89,9 +95,17 @@ function AdminLogin() {
             </div>
             <button
               type="submit"
-              className="w-full bg-[#fe4a56] text-white py-2 rounded font-semibold hover:bg-[#ea1212] transition-colors"
+              disabled={loading}
+              className={`w-full text-white py-2 rounded font-semibold transition-colors flex items-center justify-center gap-2 ${
+                loading 
+                  ? 'bg-gray-500 cursor-not-allowed' 
+                  : 'bg-[#fe4a56] hover:bg-[#ea1212]'
+              }`}
             >
-              Login
+              {loading && (
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+              )}
+              {loading ? 'Logging in...' : 'Login'}
             </button>
             
             {/* Back to Home Link */}

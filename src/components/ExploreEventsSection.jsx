@@ -1,12 +1,82 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { API_ENDPOINTS } from '../config/api';
 
 const ExploreEventsSection = () => {
+  const [latestEvent, setLatestEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fallback content
+  const fallbackContent = {
+    title: "Discover What Awaits You",
+    description: "IEEE YESS'25 brings you an exciting lineup of events designed to inspire, educate, and connect engineering students from across India. From technical workshops to networking sessions, there's something for everyone.",
+    buttonText: "Coming Soon..."
+  };
+
   useEffect(() => {
     AOS.refresh();
+    fetchLatestEvent();
   }, []);
+
+  const fetchLatestEvent = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(API_ENDPOINTS.PUBLIC_LATEST_EVENT);
+      if (response.data) {
+        setLatestEvent(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching latest event:', error);
+      // Use fallback content if API fails
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDateTime = (dateTimeString) => {
+    if (!dateTimeString) return '';
+    const date = new Date(dateTimeString);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getEventContent = () => {
+    if (loading) {
+      return {
+        title: "Loading Latest Event...",
+        description: "Fetching the latest event information for you.",
+        buttonText: "Loading..."
+      };
+    }
+
+    if (latestEvent) {
+      let description = latestEvent.description;
+                 
+      // Add location if available
+      if (latestEvent.location) {
+        description += `\nLocation: ${latestEvent.location}`;
+      }
+
+      return {
+        title: latestEvent.title,
+        description: description,
+        buttonText: "Explore more Events"
+      };
+    }
+
+    return fallbackContent;
+  };
+
+  const eventContent = getEventContent();
 
   return (
     <div id="events" className="w-full backdrop-blur-xs">
@@ -17,7 +87,7 @@ const ExploreEventsSection = () => {
             {/* Mobile: Headings Only */}
             <div className="w-full flex flex-col justify-center items-start px-0 lg:hidden order-1" data-aos="fade-right">
               <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Explore Events</h3>
-              <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Discover What Awaits You</h2>
+              <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">{eventContent.title}</h2>
             </div>
 
             {/* Video Content - Mobile: Between headings and text, Desktop: Right side */}
@@ -42,17 +112,21 @@ const ExploreEventsSection = () => {
               {/* Desktop: Show all content including headings */}
               <div className="hidden lg:block">
                 <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Explore Events</h3>
-                <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Discover What Awaits You</h2>
+                <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">{eventContent.title}</h2>
               </div>
               
               {/* Mobile: Only paragraph and button */}
-              <p className="mb-6 text-base nunito-sans-body leading-relaxed">
-                IEEE YESS'25 brings you an exciting lineup of events designed to inspire, educate, and connect engineering students from across India. From technical workshops to networking sessions, there's something for everyone.
+              <p className="mb-6 text-base nunito-sans-body leading-relaxed whitespace-pre-line">
+                {eventContent.description}
               </p>
               <Link 
-                className="inline-block px-8 py-3 text-lg bg-[#fe4a56] text-white rounded-full font-semibold hover:bg-[#ea1212] transition-all duration-300 hover:scale-105"
+                to="/events"
+                className={`inline-block px-8 py-3 text-lg text-white rounded-full font-semibold transition-all duration-300 hover:scale-105 ${
+                  loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-[#fe4a56] hover:bg-[#ea1212]'
+                }`}
+                style={{ pointerEvents: loading ? 'none' : 'auto' }}
               >
-                Coming Soon...
+                {eventContent.buttonText}
               </Link>
             </div>
           </div>
