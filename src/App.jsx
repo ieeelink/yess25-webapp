@@ -309,6 +309,24 @@ function App() {
           }
         />
         <Route
+          path="/session_underwater_robotics"
+          element={
+            <Redirect to="https://links.ieeesbnitc.in/talk-session-on-underwater-robotics" />
+          }
+        />
+        <Route
+          path="/explain_like_im_5"
+          element={
+            <Redirect to="https://links.ieeesbnitc.in/explain-to-me-like-im-five-quantum-edition" />
+          }
+        />
+        <Route
+          path="/ideapitching"
+          element={
+            <Redirect to="https://links.ieeesbnitc.in/ideapitching-on-underwater-robotics" />
+          }
+        />
+        <Route
           path="/ToS"
           element={
             <>
