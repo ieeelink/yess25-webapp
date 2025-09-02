@@ -120,6 +120,24 @@ const SponsorsSection = () => {
       name: "Young Professionals Kerala Section",
       logo: "/yesslogo/collab/Yp KC.png",
       website: "https://ieee-kerala.org"
+    },
+    {
+      id: 17,
+      name: "WIE Kerala Section",
+      logo: "/yesslogo/collab/WIE KS.png",
+      website: "https://ieee-kerala.org"
+    },
+    {
+      id: 18,
+      name: "SIGHT IEEE Kerala Section",
+      logo: "/yesslogo/collab/SIGHT KS.png",
+      website: "https://ieee-kerala.org"
+    },
+    {
+      id: 19,
+      name: "IEEE R10 Industry Relations Committee",
+      logo: "/yesslogo/collab/R10 IRC.png",
+      website: "https://www.ieeer10.org/"
     }
   ];
 
@@ -177,7 +195,7 @@ const SponsorsSection = () => {
                   key={collaborator.id}
                   className="group relative transition-transform duration-500 ease-in-out hover:scale-110 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex items-center justify-center"
                   data-aos="zoom-in"
-                  data-aos-delay={index * 100 + 200}
+                  data-aos-delay={index * 100}
                 >
                   <img
                     src={collaborator.logo}
