@@ -327,6 +327,12 @@ function App() {
           }
         />
         <Route
+          path="/SPS_ProjectCall"
+          element={
+            <Redirect to="https://forms.gle/7CHQdrngA9oahair5" />
+          }
+        />
+        <Route
           path="/ToS"
           element={
             <>
