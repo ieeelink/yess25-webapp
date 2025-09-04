@@ -17,6 +17,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
     { name: 'HOME', path: '/', sectionId: 'landing' },
     { name: 'UPDATES', path: '/updates', sectionId: 'updates' },
     { name: 'EVENTS', path: '/events', sectionId: 'events' },
+    { name: 'SPONSORS', path: '/sponsors', sectionId: 'sponsors' },
     { name: 'ABOUT', path: '/about', sectionId: 'about' },
     { name: "HIGHLIGHTS'24", path: '/highlights', sectionId: 'highlights' }
   ];
@@ -24,7 +25,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
   // Check if current page is not home
   const isNotHomePage = location.pathname !== '/';
 
-  const sectionIds = ['landing', 'updates', 'about', 'highlights'];
+  const sectionIds = ['landing', 'updates', 'events', 'about', 'sponsors', 'highlights'];
   const sectionRefs = useRef({});
 
   // Scrollspy effect: highlight nav based on section in viewport
@@ -32,7 +33,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
     // Only run on home page
     if (location.pathname !== '/' && location.pathname !== '/home2') return;
 
-    const sectionIds = ['landing', 'updates', 'events', 'about', 'highlights'];
+    const sectionIds = ['landing', 'updates', 'events', 'about', 'sponsors', 'highlights'];
     const getSectionVisibility = (id) => {
       const el = document.getElementById(id);
       if (!el) {
@@ -54,18 +55,24 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
     const onScroll = () => {
       let maxRatio = 0;
       let active = 'landing';
+      const visibilityData = {};
+      
       sectionIds.forEach((id) => {
         const ratio = getSectionVisibility(id);
-        if (ratio > 0.3 && ratio > maxRatio) {
+        visibilityData[id] = ratio;
+        if (ratio > 0.2 && ratio > maxRatio) {
           maxRatio = ratio;
           active = id;
         }
       });
+      
       // Check contact/footer last
       const contactRatio = getFooterVisibility();
-      if (contactRatio > 0.3 && contactRatio > maxRatio) {
+      visibilityData['contact'] = contactRatio;
+      if (contactRatio > 0.2 && contactRatio > maxRatio) {
         active = 'contact';
       }
+      
       setCurrentSection(active);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -75,8 +82,8 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
   }, [location.pathname]);
 
   const handleNavigation = (item) => {
-    if (location.pathname === '/home2') {
-      // If we're already on home2 page, scroll to section
+    if (location.pathname === '/' || location.pathname === '/home2') {
+      // If we're already on home page, scroll to section
       if (item.name === 'CONTACT') {
         // For contact, scroll to footer
         const footer = document.querySelector('footer');
@@ -84,21 +91,30 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
           footer.scrollIntoView({ behavior: 'smooth' });
         }
         setCurrentSection('contact');
-      } else if (onNavigate) {
-        onNavigate(item.sectionId);
-        setCurrentSection(item.sectionId);
       } else {
-        // Fallback: scroll to section manually
-        const section = document.getElementById(item.sectionId);
-        if (section) {
-          section.scrollIntoView({ behavior: 'smooth' });
+        // Use the onNavigate prop from parent (Home2.jsx)
+        if (onNavigate) {
+          onNavigate(item.sectionId);
+        } else {
+          // Fallback: scroll to section manually with smooth behavior
+          const section = document.getElementById(item.sectionId);
+          if (section) {
+            try {
+              section.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+            } catch (e) {
+              // Fallback for older browsers
+              window.scrollTo({
+                top: section.offsetTop - 80,
+                behavior: 'smooth'
+              });
+            }
+          }
         }
         setCurrentSection(item.sectionId);
       }
     } else {
-      // If we're on a different page, navigate to home2 with section
+      // If we're on a different page, navigate to home with section
       if (item.name === 'CONTACT') {
-        // For contact, navigate to home2 and scroll to footer
         navigate('/', { state: { scrollToFooter: true } });
       } else {
         navigate('/', { state: { section: item.sectionId } });
@@ -135,7 +151,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-8 xl:space-x-10">
+            <nav className="hidden lg:flex space-x-2 xl:space-x-4">
               {navItems.map((item) => (
                 <button
                   key={item.name}

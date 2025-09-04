@@ -90,21 +90,23 @@ const ExploreEventsSection = () => {
               <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">{eventContent.title}</h2>
             </div>
 
-            {/* Video Content - Mobile: Between headings and text, Desktop: Right side */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center px-0 lg:px-8 order-2 lg:order-2" data-aos="zoom-in">
-              <div className="w-full aspect-video rounded-xl overflow-hidden shadow-lg flex items-center justify-center bg-black">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/BE7HODa3ESg?si=D3AxFNQUd373mCg9"
-                  title="YouTube video player"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="w-full h-full"
-                  style={{ minHeight: '220px', maxHeight: '420px' }}
-                ></iframe>
-              </div>
+            {/* Event Poster - Mobile: Between headings and text, Desktop: Right side */}
+            <div className="w-full lg:w-1/2 rounded-xl overflow-hidden shadow-lg mb-6 lg:mb-0 flex items-center justify-center order-2 lg:order-2 max-w-xs mx-auto cursor-pointer" data-aos="zoom-in"
+                 style={{
+                   transform: 'scale(1)',
+                   transition: 'transform 0.3s ease-out, box-shadow 0.3s ease-out'
+                 }}
+                 onMouseEnter={(e) => {
+                   e.currentTarget.style.transform = 'scale(1.05)';
+                 }}
+                 onMouseLeave={(e) => {
+                   e.currentTarget.style.transform = 'scale(1)';
+                 }}>
+              <img 
+                src={latestEvent?.image || "/poster1.webp"} 
+                alt={latestEvent?.title || "Latest Event Poster"} 
+                className="w-full h-full object-cover"
+              />
             </div>
 
             {/* Text Content - Mobile: Bottom, Desktop: Left side with all content */}
