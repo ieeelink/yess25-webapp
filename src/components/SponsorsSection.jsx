@@ -132,11 +132,20 @@ const SponsorsSection = () => {
       name: "SIGHT IEEE Kerala Section",
       logo: "/yesslogo/collab/SIGHT KS.png",
       website: "https://ieee-kerala.org"
-    },
+    }
+  ];
+
+  const internationalCollaborators = [
     {
-      id: 19,
+      id: 1,
       name: "IEEE R10 Industry Relations Committee",
       logo: "/yesslogo/collab/R10 IRC.png",
+      website: "https://www.ieeer10.org/"
+    },
+    {
+      id: 2,
+      name: "IEEE R10 AdHoc Committee on Entrepreneurship and Innovation",
+      logo: "/yesslogo/collab/AdHoc Logo.png",
       website: "https://www.ieeer10.org/"
     }
   ];
@@ -180,7 +189,7 @@ const SponsorsSection = () => {
           </div>
 
           {/* Collaborators Subsection */}
-          <div className="mb-8" data-aos="fade-up" data-aos-delay="400">
+          <div className="mb-16" data-aos="fade-up" data-aos-delay="400">
             <div className="text-center mb-12">
               <h3 className="text-2xl lg:text-3xl font-bold text-[#fe4a56] mb-4">
                 Collaborators
@@ -191,6 +200,38 @@ const SponsorsSection = () => {
             {/* Collaborators Grid */}
             <div className="flex flex-wrap justify-center items-center gap-12 max-w-6xl mx-auto">
               {collaborators.map((collaborator, index) => (
+                <div
+                  key={collaborator.id}
+                  className="group relative transition-transform duration-500 ease-in-out hover:scale-110 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex items-center justify-center"
+                  data-aos="zoom-in"
+                  data-aos-delay={index * 100}
+                >
+                  <img
+                    src={collaborator.logo}
+                    alt={collaborator.name}
+                    className="w-full h-full object-contain filter brightness-90 group-hover:brightness-100 transition-all duration-300"
+                  />
+                  
+                  {/* Tooltip */}
+                  <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-black/80 text-white px-3 py-1 rounded-lg text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap z-10">
+                    {collaborator.name}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* International Collaborators Subsection */}
+          <div className="mb-8" data-aos="fade-up" data-aos-delay="400">
+            <div className="text-center mb-12">
+              <h3 className="text-2xl lg:text-3xl font-bold text-[#fe4a56] mb-4">
+                International Collaborators
+              </h3>
+              <div className="w-24 h-1 bg-[#fe4a56] mx-auto rounded-full"></div>
+            </div>
+
+            {/* International Collaborators Grid */}
+            <div className="flex flex-wrap justify-center items-center gap-12 max-w-6xl mx-auto">
+              {internationalCollaborators.map((collaborator, index) => (
                 <div
                   key={collaborator.id}
                   className="group relative transition-transform duration-500 ease-in-out hover:scale-110 w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 flex items-center justify-center"
