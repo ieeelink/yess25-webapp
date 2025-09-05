@@ -81,7 +81,7 @@ const ExploreEventsSection = () => {
   return (
     <div id="events" className="w-full backdrop-blur-xs">
       <div className="w-full py-16 flex flex-col items-center justify-center relative z-10 bg-black/20">
-        <div className="w-full px-4 lg:px-8 md:px-6 flex flex-col min-h-0 flex-1" style={{maxWidth: 'min(1600px, 100vw)'}}>
+        <div className="w-full px-4 lg:px-12 md:px-6 flex flex-col min-h-0 flex-1" style={{maxWidth: 'min(1600px, 100vw)'}}>
           <div className="w-full flex flex-col lg:flex-row gap-8 items-center justify-center py-12">
             
             {/* Mobile: Headings Only */}

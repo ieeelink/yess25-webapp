@@ -9,7 +9,7 @@ import 'swiper/css/effect-coverflow';
 
 const HighlightsSection = ({ highlightImages }) => (
   <div id="highlights" className="w-full flex justify-center pb-16 z-20 relative backdrop-blur-sm bg-black/20">
-    <div className="w-full px-4 lg:px-8 md:px-6 relative z-10" style={{maxWidth: 'min(1600px, 100vw)'}}>
+    <div className="w-full px-4 lg:px-12 md:px-6 relative z-10" style={{maxWidth: 'min(1600px, 100vw)'}}>
       <div className="w-full flex flex-col lg:flex-row gap-8 items-center justify-center py-12">
         {/* Left: Heading, images, text, button (mobile: images between headings and text) */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center items-start px-0" data-aos="fade-right">

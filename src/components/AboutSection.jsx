@@ -3,7 +3,7 @@ import React from 'react';
 const AboutSection = () => (
   <div className="w-screen backdrop-blur-sm">
     <div id="about" className="w-full min-h-screen flex flex-col items-center justify-center relative z-10 bg-black/20 pt-4">
-      <div className="w-full px-4 lg:px-8 md:px-6 flex flex-col min-h-0 flex-1" style={{maxWidth: 'min(1600px, 100vw)'}}>
+      <div className="w-full px-4 lg:px-12 md:px-6 flex flex-col min-h-0 flex-1" style={{maxWidth: 'min(1600px, 100vw)'}}>
         {/* About YESS Section - Desktop Layout */}
         <div className="hidden lg:flex lg:gap-8 lg:mb-12">
           {/* Left Div - YESS Images */}

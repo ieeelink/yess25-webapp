@@ -46,7 +46,7 @@ const UpdatesSection = () => {
     <div>
       {/* Updates Section */}
       <div id="updates" className="w-full flex justify-center z-20 relative backdrop-blur-sm bg-black/20 pt-4">
-        <div className="w-full px-4 lg:px-8 md:px-6 relative z-10" style={{maxWidth: 'min(1600px, 100vw)'}}>
+        <div className="w-full px-4 lg:px-12 md:px-6 relative z-10" style={{maxWidth: 'min(1600px, 100vw)'}}>
           <div className="w-full flex flex-col md:flex-row gap-8 items-center justify-center py-12">
             {loading ? (
               <div className="w-full flex items-center justify-center py-16">
@@ -203,7 +203,7 @@ const UpdatesSection = () => {
       {/* Promo Video Section */}
       <div className="w-full backdrop-blur-xs">
         <div className="w-full py-16 flex flex-col items-center justify-center relative z-10 bg-black/20">
-          <div className="w-full px-4 lg:px-8 md:px-6 flex flex-col min-h-0 flex-1" style={{maxWidth: 'min(1600px, 100vw)'}}>
+          <div className="w-full px-4 lg:px-12 md:px-6 flex flex-col min-h-0 flex-1" style={{maxWidth: 'min(1600px, 100vw)'}}>
             <div className="w-full flex flex-col lg:flex-row gap-8 items-center justify-center py-12">
               
               {/* Mobile: Headings Only */}
@@ -212,8 +212,8 @@ const UpdatesSection = () => {
                 <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Watch Our Promo Video</h2>
               </div>
 
-              {/* Video Content - Mobile: Between headings and text, Desktop: Right side */}
-              <div className="w-full lg:w-1/2 flex items-center justify-center px-0 lg:px-8 order-2 lg:order-2" data-aos="zoom-in">
+              {/* Video Content - Mobile: Between headings and text, Desktop: Left side */}
+              <div className="w-full lg:w-1/2 flex items-center justify-center px-0 lg:px-8 order-2 lg:order-1" data-aos="zoom-in">
                 <div className="w-full aspect-video rounded-xl overflow-hidden shadow-lg flex items-center justify-center bg-black">
                   <iframe
                     width="100%"
@@ -229,8 +229,8 @@ const UpdatesSection = () => {
                 </div>
               </div>
 
-              {/* Text Content - Mobile: Bottom, Desktop: Left side with all content */}
-              <div className="w-full lg:w-1/2 flex flex-col justify-center items-start px-0 order-3 lg:order-1" data-aos="fade-right">
+              {/* Text Content - Mobile: Bottom, Desktop: Right side with all content */}
+              <div className="w-full lg:w-1/2 flex flex-col justify-center items-start px-0 order-3 lg:order-2" data-aos="fade-right">
                 {/* Desktop: Show all content including headings */}
                 <div className="hidden lg:block">
                   <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">IEEE YESS'25</h3>
@@ -239,7 +239,7 @@ const UpdatesSection = () => {
                 
                 {/* Content */}
                 <p className="mb-6 text-base nunito-sans-body leading-relaxed">
-                  Get excited for IEEE YESS'25! Watch our official promo video to discover what awaits you at one of India's premier engineering student symposiums. From technical workshops and research presentations to networking opportunities and cultural events, YESS'25 promises an unforgettable experience for every participant.
+                  Get excited for IEEE YESS'25! Watch our official promo video to discover what awaits you at one of India's premier engineering student summit. From technical workshops and research presentations to networking opportunities and cultural events, YESS'25 promises an unforgettable experience for every participant.
                 </p>
               </div>
             </div>
@@ -249,7 +249,7 @@ const UpdatesSection = () => {
 
       {/* Mascot Section */}
       <div id="mascot" className="w-full flex justify-center z-20 relative backdrop-blur-sm bg-black/20 pt-4">
-        <div className="w-full px-4 lg:px-8 md:px-6 relative z-10" style={{maxWidth: 'min(1600px, 100vw)'}}>
+        <div className="w-full px-4 lg:px-12 md:px-6 relative z-10" style={{maxWidth: 'min(1600px, 100vw)'}}>
           <div className="w-full flex flex-col md:flex-row gap-8 items-center justify-center py-12">
             
             {/* Headings Section - Mobile Only */}
@@ -259,7 +259,7 @@ const UpdatesSection = () => {
             </div>
 
             {/* YouTube Video */}
-            <div className="w-full md:w-1/2 flex items-center justify-center px-0 lg:px-8 order-2 md:order-1" data-aos="zoom-in">
+            <div className="w-full md:w-1/2 flex items-center justify-center px-0 lg:px-8 order-2 md:order-2" data-aos="zoom-in">
               <div className="w-full aspect-video rounded-xl overflow-hidden shadow-lg flex items-center justify-center bg-black">
                 <iframe
                   width="100%"
@@ -276,7 +276,7 @@ const UpdatesSection = () => {
             </div>
 
             {/* Content */}
-            <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left order-3 md:order-2" data-aos="fade-right">
+            <div className="w-full md:w-1/2 flex flex-col justify-center items-start text-left order-3 md:order-1" data-aos="fade-right">
               <div className="hidden md:block">
                 <h3 className="text-lg lg:text-xl font-semibold text-[#fe4a56] mb-3 lg:mb-4">Our Mascot</h3>
                 <h2 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">Meet ZERO – The Official Mascot of IEEE YESS 2025!</h2>

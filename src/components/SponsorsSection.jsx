@@ -153,7 +153,7 @@ const SponsorsSection = () => {
   return (
     <div id="sponsors" className="w-full min-h-screen backdrop-blur-sm">
       <div className="w-full flex pt-10 flex-col items-center justify-center relative z-10 bg-black/30 min-h-screen">
-        <div className="w-full md:px-6 flex flex-col min-h-0 flex-1" style={{maxWidth: 'min(1600px, 100vw)'}}>
+        <div className="w-full px-4 lg:px-12 md:px-6 flex flex-col min-h-0 flex-1" style={{maxWidth: 'min(1600px, 100vw)'}}>
 
           {/* Sponsors Subsection */}
           <div className="mb-16" data-aos="fade-up" data-aos-delay="200">
