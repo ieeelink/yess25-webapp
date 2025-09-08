@@ -25,6 +25,9 @@ export const API_ENDPOINTS = {
   PAYMENT_STATUS: `${API_BASE_URL}/paymentstatus`,
   RETRY_PAYMENT: `${API_BASE_URL}/retrypayment`,
   
+  // Ticket Transfer
+  TICKET_TRANSFER: (registrationId) => `${API_BASE_URL}/ticket_transfer/${registrationId}`,
+  
   // Data
   COLLEGES: `${API_BASE_URL}/colleges`,
   ADMIN_DATA: `${API_BASE_URL}/admin/data`,

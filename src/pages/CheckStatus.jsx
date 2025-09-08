@@ -8,6 +8,7 @@ function CheckStatus({ onClose }) {
   const [error, setError] = useState('');
   const [showContactPopup, setShowContactPopup] = useState(false);
   const [showStatus, setShowStatus] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -15,10 +16,9 @@ function CheckStatus({ onClose }) {
     setError('');
     setIsLoading(true);
 
-    // Set email in cookie
-    document.cookie = `email=${email}; path=/; max-age=${14*24*60*60}`;
     setTimeout(() => {
       setIsLoading(false);
+      setSubmittedEmail(email);
       setShowStatus(true);
     }, 500);
   };
@@ -26,7 +26,7 @@ function CheckStatus({ onClose }) {
   return (
     <div className="w-full max-w-2xl px-4 sm:px-0">
       {showStatus ? (
-        <Status closeAllPopups={onClose} />
+        <Status closeAllPopups={onClose} email={submittedEmail} />
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6 bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-lg border border-white/20">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8 text-center">Check Registration Status</h1>
