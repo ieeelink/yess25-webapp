@@ -339,6 +339,12 @@ function App() {
           }
         />
         <Route
+          path="CMOS_Competition"
+          element={
+            <Redirect to="https://forms.gle/mW1ErM2AhVhCW8Gi6" />
+          }
+        />
+        <Route
           path="/ToS"
           element={
             <>
