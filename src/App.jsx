@@ -333,6 +333,12 @@ function App() {
           }
         />
         <Route
+          path="/call_for_pitchers"
+          element={
+            <Redirect to="https://forms.gle/pfFC8yNzFc9pp6Mf9" />
+          }
+        />
+        <Route
           path="/ToS"
           element={
             <>
