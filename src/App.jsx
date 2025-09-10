@@ -345,6 +345,12 @@ function App() {
           }
         />
         <Route
+          path="/click-capture-classify"
+          element={
+            <Redirect to="https://links.ieeesbnitc.in/click-capture-classify" />
+          }
+        />
+        <Route
           path="/ToS"
           element={
             <>
