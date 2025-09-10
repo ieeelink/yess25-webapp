@@ -11,6 +11,7 @@ import HighlightsSection from '../components/HighlightsSection';
 import TicketForm from '../components/TicketForm';
 import CheckStatus from '../pages/CheckStatus';
 import UpdatesSection from '../components/UpdatesSection';
+import MeetTheSpeakers from '../components/MeetTheSpeakers';
 
 const Home2 = ({
   showTicketForm,
@@ -220,6 +221,7 @@ const Home2 = ({
         <PartnersSection images={partnerImages} />
         <UpdatesSection />
         <ExploreEventsSection />
+        <MeetTheSpeakers />
         <SponsorsSection />
         <AboutSection />
         <HighlightsSection highlightImages={highlightImages} />
