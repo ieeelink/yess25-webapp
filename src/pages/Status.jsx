@@ -4,28 +4,28 @@ import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import TicketTransferForm from '../components/TicketTransferForm';
 
-let globalEmail = null;
+let globalTicketId = null;
 
-function Status({ closeAllPopups, email }) {
+function Status({ closeAllPopups, ticketId }) {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showTransferForm, setShowTransferForm] = useState(false);
 
   useEffect(() => {
-    // Use the email prop directly
-    if (email) {
-      globalEmail = email;
-      fetchPaymentStatus(email);
+    // Only use ticketId for server requests
+    if (ticketId) {
+      globalTicketId = ticketId;
+      fetchPaymentStatusByTicketId(ticketId);
     } else {
-      setError('No registration email provided. Please try again.');
+      setError('No ticket ID provided. Please try again.');
       setLoading(false);
     }
-  }, [email]);
+  }, [ticketId]);
 
-  const fetchPaymentStatus = async (email) => {
+  const fetchPaymentStatusByTicketId = async (ticketId) => {
     try {
-      const statusResponse = await axios.post(API_ENDPOINTS.PAYMENT_STATUS, { email });
+      const statusResponse = await axios.post(API_ENDPOINTS.PAYMENT_STATUS, { ticketId });
       console.log(statusResponse.data.payments[0]);
       setPaymentStatus(statusResponse.data.payments[0]);
     } catch (error) {
@@ -43,7 +43,8 @@ function Status({ closeAllPopups, email }) {
   const handleRetryPayment = async () => {
     try {
       setLoading(true);
-      const response = await axios.post(API_ENDPOINTS.RETRY_PAYMENT, { email: globalEmail });
+      // Only use ticketId for retry payment requests
+      const response = await axios.post(API_ENDPOINTS.RETRY_PAYMENT, { ticketId: globalTicketId });
       if (response.status === 200) {
         window.location.href = response.data.response.redirectUrl;
       }

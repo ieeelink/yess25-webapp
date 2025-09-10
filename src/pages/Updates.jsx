@@ -229,7 +229,7 @@ function Updates() {
                       ) : (
                         <>
                           <button
-                            onClick={() => console.log('Update', update.id || update._id)}
+                            onClick={() => navigate(`/admin/update-update/${update.id || update._id}`)}
                             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition-colors text-sm font-nunito"
                           >
                             <FiEdit3 className="text-sm" />

@@ -446,7 +446,7 @@ const TicketTransferForm = ({ onClose, ticketData, closeAllPopups }) => {
 		showStatus ? (
 			<div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-sm min-h-screen overflow-y-auto py-8 pointer-events-auto">
 				<div className="w-full max-w-2xl px-4 sm:px-0">
-					<Status closeAllPopups={closeAllPopups || onClose} email={transferEmail} />
+					<Status closeAllPopups={closeAllPopups || onClose} ticketId={ticketData?.order_id} />
 				</div>
 			</div>
 		) : (

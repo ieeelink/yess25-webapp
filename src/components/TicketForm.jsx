@@ -177,6 +177,7 @@ const TicketForm = ({ onClose }) => {
   const [formCols, setFormCols] = useState('md:grid-cols-2');
   const [showCheckStatus, setShowCheckStatus] = useState(false);
   const [showStatus, setShowStatus] = useState(false);
+  const [paymentTicketId, setPaymentTicketId] = useState('');
 
   // Use a stable callback for closing the modal
   const handleCloseCheckStatus = useCallback(() => {
@@ -353,6 +354,7 @@ const TicketForm = ({ onClose }) => {
       const serverresponse = response.data;
       setIsPaymentProcessing(true);
       paymentProcessingRef.current = true;
+      setPaymentTicketId(serverresponse.id); // Store ticket ID for Status component
       document.cookie = `email=${serverresponse.notes.email}; path=/; max-age=${14*24*60*60}`;
       window.updatePaymentProcessingState = setIsPaymentProcessing;
       displayRazorpay(serverresponse.amount, serverresponse.id, paymentProcessingRef, () => setShowStatus(true));
@@ -383,7 +385,7 @@ const TicketForm = ({ onClose }) => {
   const SPINNER_PATH = "M12,2 A10,10 0 1,1 11.99,2 Z"; // circle for spinner
 
   if (showStatus) {
-    return <Status />;
+    return <Status ticketId={paymentTicketId} />;
   }
 
   return (

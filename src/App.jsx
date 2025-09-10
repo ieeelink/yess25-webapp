@@ -27,6 +27,7 @@ import Contact from "./pages/Contact";
 import AddEvent from "./pages/AddEvent";
 import UpdateEvent from "./pages/UpdateEvent";
 import AddUpdate from "./pages/AddUpdate";
+import UpdateUpdate from "./pages/UpdateUpdate";
 import EventDetails from "./pages/EventDetails";
 import Updates from "./pages/Updates";
 import PublicUpdates from "./pages/PublicUpdates";
@@ -245,6 +246,7 @@ function App() {
           <Route path="add-event" element={<AddEvent />} />
           <Route path="update-event/:eventId" element={<UpdateEvent />} />
           <Route path="add-update" element={<AddUpdate />} />
+          <Route path="update-update/:updateId" element={<UpdateUpdate />} />
           <Route path="event-details" element={<EventDetails />} />
           <Route path="updates" element={<Updates />} />
         </Route>
