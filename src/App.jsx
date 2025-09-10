@@ -351,6 +351,12 @@ function App() {
           }
         />
         <Route
+          path="/sckc_projectcall"
+          element={
+            <Redirect to="https://docs.google.com/forms/d/e/1FAIpQLSda40hUsL-6Kg6YR2dtMOy3gCio-tqylERowbzJsbvlFXN00A/viewform" />
+          }
+        />
+        <Route
           path="/ToS"
           element={
             <>
