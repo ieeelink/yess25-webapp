@@ -3,23 +3,43 @@ import axios from 'axios';
 import { FiLock, FiLogOut, FiUser, FiChevronDown, FiCalendar, FiBell, FiMail, FiRefreshCw } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import UpdateTicketForm from '../components/UpdateTicketForm';
+import Pagination from '../components/Pagination';
+import TicketSummary from '../components/TicketSummary';
+import usePaginatedTickets from '../hooks/usePaginatedTickets';
 import { API_ENDPOINTS } from '../config/api';
 
 function TicketDetails() {
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  // Use the paginated tickets hook
+  const {
+    tickets,
+    pagination,
+    summary,
+    loading,
+    error,
+    filters,
+    fetchTickets,
+    goToPage,
+    goToFirstPage,
+    goToLastPage,
+    nextPage,
+    prevPage,
+    updateFilters,
+    setLimit,
+    refreshTickets,
+    clearFilters,
+    debouncedSearch,
+    setTickets
+  } = usePaginatedTickets(1, 50);
+
+  // Keep existing state for UI components
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showRegistrationsDropdown, setShowRegistrationsDropdown] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [verifyNewPassword, setVerifyNewPassword] = useState('');
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [institutionFilter, setInstitutionFilter] = useState('');
-  const [ieeeFilter, setIeeeFilter] = useState('');
-  const [ieeeVerifiedFilter, setIeeeVerifiedFilter] = useState('');
   const [changePasswordError, setChangePasswordError] = useState('');
   const [changePasswordSuccess, setChangePasswordSuccess] = useState('');
   const [editingTicket, setEditingTicket] = useState(null); // ticket being edited
@@ -27,28 +47,33 @@ function TicketDetails() {
   const [emailStatus, setEmailStatus] = useState({}); // track email success/error messages
   const navigate = useNavigate();
 
+  // Local filter states for UI components (synced with pagination hook)
+  const [search, setSearch] = useState(filters.search);
+  const [statusFilter, setStatusFilter] = useState(filters.status);
+  const [institutionFilter, setInstitutionFilter] = useState('');
+  const [ieeeFilter, setIeeeFilter] = useState(filters.isIEEEMember);
+  const [ieeeVerifiedFilter, setIeeeVerifiedFilter] = useState(filters.ieeeVerified);
+
+  // Check if local filters differ from applied filters
+  const hasUnappliedFilters = () => {
+    return search !== filters.search ||
+           statusFilter !== filters.status ||
+           ieeeFilter !== filters.isIEEEMember ||
+           ieeeVerifiedFilter !== filters.ieeeVerified;
+  };
+
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setError('Authentication required.');
-          setLoading(false);
-          return;
-        }
-        const response = await axios.get(API_ENDPOINTS.ADMIN_DATA, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setTickets(response.data);
-      } catch (err) {
-        setError('Failed to fetch tickets. Please try again.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchTickets();
   }, []);
+
+  // Sync local filters with pagination hook
+  useEffect(() => {
+    setSearch(filters.search);
+    setStatusFilter(filters.status);
+    setInstitutionFilter(''); // Keep for UI state but don't sync from API
+    setIeeeFilter(filters.isIEEEMember);
+    setIeeeVerifiedFilter(filters.ieeeVerified);
+  }, [filters]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -59,17 +84,63 @@ function TicketDetails() {
       if (showRegistrationsDropdown && !event.target.closest('.registrations-dropdown')) {
         setShowRegistrationsDropdown(false);
       }
+      if (showMobileMenu && !event.target.closest('.mobile-menu') && !event.target.closest('.hamburger-btn')) {
+        setShowMobileMenu(false);
+      }
+      if (showMobileFilters && !event.target.closest('.mobile-filters') && !event.target.closest('.filter-btn')) {
+        setShowMobileFilters(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showUserDropdown, showRegistrationsDropdown]);
+  }, [showUserDropdown, showRegistrationsDropdown, showMobileMenu, showMobileFilters]);
 
   const handleEdit = (ticketId) => {
     const ticket = tickets.find(t => t._id === ticketId);
     setEditingTicket(ticket);
+  };
+
+  // Handle filter changes - now only update local state
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+  };
+
+  const handleStatusChange = (e) => {
+    const value = e.target.value;
+    setStatusFilter(value);
+  };
+
+  const handleIeeeChange = (e) => {
+    const value = e.target.value;
+    setIeeeFilter(value);
+  };
+
+  const handleIeeeVerifiedChange = (e) => {
+    const value = e.target.value;
+    setIeeeVerifiedFilter(value);
+  };
+
+  // Apply filters when user clicks the Filter button
+  const handleApplyFilters = () => {
+    updateFilters({
+      search: search,
+      status: statusFilter,
+      isIEEEMember: ieeeFilter,
+      ieeeVerified: ieeeVerifiedFilter
+    });
+  };
+
+  const handleResetFilters = () => {
+    setSearch('');
+    setStatusFilter('');
+    setInstitutionFilter(''); // Clear local state only
+    setIeeeFilter('');
+    setIeeeVerifiedFilter('');
+    clearFilters();
   };
 
   const handleSendInvoiceEmail = async (ticketId) => {
@@ -174,22 +245,19 @@ function TicketDetails() {
   const institutions = Array.from(new Set(tickets.map(t => t.institution).filter(Boolean)));
   const statuses = Array.from(new Set(tickets.map(t => t.status).filter(Boolean)));
 
-  // Filtered tickets
-  const filteredTickets = tickets.filter(ticket => {
-    const matchesSearch =
-      ticket.fullName?.toLowerCase().includes(search.toLowerCase()) ||
-      ticket.email?.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter ? ticket.status === statusFilter : true;
-    const matchesInstitution = institutionFilter ? ticket.institution === institutionFilter : true;
-    const matchesIEEE = ieeeFilter ? ticket.isIEEEMember === ieeeFilter : true;
-    const matchesIEEEVerified = ieeeVerifiedFilter === '' ? true : (ieeeVerifiedFilter === 'true' ? ticket.ieeeVerified === true : ticket.ieeeVerified === false);
-    return matchesSearch && matchesStatus && matchesInstitution && matchesIEEE && matchesIEEEVerified;
-  });
+  // Remove client-side filtering since it's now handled by the pagination hook
+  const filteredTickets = tickets;
 
   if (loading) {
     return (
       <div className="text-white text-center text-2xl h-screen flex items-center justify-center">
-        Loading tickets...
+        <div className="flex flex-col items-center">
+          <svg className="animate-spin -ml-1 mr-3 h-8 w-8 text-[#fe4a56] mb-4" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Loading tickets...
+        </div>
       </div>
     );
   }
@@ -207,8 +275,8 @@ function TicketDetails() {
           <span className="text-white text-xl font-bold tracking-wide">YESS'25 Admin Dashboard</span>
         </div>
         
-        {/* Navigation Menu */}
-        <nav className="flex items-center gap-1">
+        {/* Desktop Navigation Menu */}
+        <nav className="hidden lg:flex items-center gap-1">
           {/* Registrations Dropdown */}
           <div className="relative registrations-dropdown">
             <button
@@ -336,7 +404,307 @@ function TicketDetails() {
             )}
           </div>
         </nav>
+
+        {/* Mobile Menu Icons */}
+        <div className="lg:hidden flex items-center gap-2">
+          {/* Filter Icon */}
+          <button
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="filter-btn p-2 text-gray-300 hover:text-white hover:bg-gray-700/20 rounded-lg transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+            </svg>
+          </button>
+
+          {/* Hamburger Menu */}
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="hamburger-btn p-2 text-gray-300 hover:text-white hover:bg-gray-700/20 rounded-lg transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+        </div>
       </header>
+
+      {/* Mobile Navigation Panel */}
+      {showMobileMenu && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowMobileMenu(false)}></div>
+          <div className="mobile-menu fixed right-0 top-0 h-full w-72 bg-[#1a1a1a] border-l border-gray-800 shadow-xl">
+            <div className="p-4 border-b border-gray-800">
+              <div className="flex items-center justify-between">
+                <span className="text-white font-semibold">Menu</span>
+                <button
+                  onClick={() => setShowMobileMenu(false)}
+                  className="p-2 text-gray-300 hover:text-white hover:bg-gray-700/20 rounded-lg"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-4 space-y-2">
+              {/* Registrations Section */}
+              <div className="space-y-1">
+                <div className="text-sm text-gray-400 font-medium px-2 mb-2">Registrations</div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/admin/add-ticket');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-green-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500 text-left"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  Add Ticket
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/admin/add-bulk-tickets');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-green-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500 text-left"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/>
+                  </svg>
+                  Bulk Tickets
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/admin/webhook-resolve');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-yellow-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-yellow-500 text-left"
+                >
+                  <FiRefreshCw className="w-4 h-4" />
+                  Webhook Resolver
+                </button>
+              </div>
+
+              {/* Main Navigation */}
+              <div className="space-y-1 pt-4 border-t border-gray-700">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/admin/event-details');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-blue-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 text-left"
+                >
+                  <FiCalendar className="w-4 h-4" />
+                  Event Details
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/admin/updates');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-purple-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500 text-left"
+                >
+                  <FiBell className="w-4 h-4" />
+                  Updates
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/admin/bulk-ieee-verification');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-orange-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500 text-left"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  IEEE Verify
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/admin/generate-tickets');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-indigo-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 text-left"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                  </svg>
+                  Generate Tickets
+                </button>
+              </div>
+
+              {/* User Actions */}
+              <div className="space-y-1 pt-4 border-t border-gray-700">
+                <div className="text-sm text-gray-400 font-medium px-2 mb-2">Account</div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/admin/add');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-green-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500 text-left"
+                >
+                  <FiUser className="w-4 h-4" />
+                  Add User
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleChangePassword();
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-red-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500 text-left"
+                >
+                  <FiLock className="w-4 h-4" />
+                  Change Password
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleLogout();
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-red-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500 text-left"
+                >
+                  <FiLogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Filters Panel */}
+      {showMobileFilters && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setShowMobileFilters(false)}></div>
+          <div className="mobile-filters fixed left-0 top-0 h-full w-80 bg-[#1a1a1a] border-r border-gray-800 shadow-xl overflow-y-auto">
+            <div className="p-4 border-b border-gray-800">
+              <div className="flex items-center justify-between">
+                <span className="text-white font-semibold">Filters</span>
+                <button
+                  onClick={() => setShowMobileFilters(false)}
+                  className="p-2 text-gray-300 hover:text-white hover:bg-gray-700/20 rounded-lg"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-4 space-y-4">
+              {/* Search */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Search</label>
+                <input
+                  type="text"
+                  placeholder="Search by name, email, ticket ID, phone, or institution..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#2a2a2a] border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Status Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Payment Status</label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#2a2a2a] border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">All Statuses</option>
+                  <option value="paid">Paid</option>
+                  <option value="attempted">Attempted</option>
+                  <option value="pending">Pending</option>
+                </select>
+              </div>
+
+              {/* IEEE Member Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">IEEE Membership</label>
+                <select
+                  value={ieeeFilter}
+                  onChange={(e) => setIeeeFilter(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#2a2a2a] border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">All Members</option>
+                  <option value="true">IEEE Members</option>
+                  <option value="false">Non-IEEE Members</option>
+                </select>
+              </div>
+
+              {/* IEEE Verified Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">IEEE Verification</label>
+                <select
+                  value={ieeeVerifiedFilter}
+                  onChange={(e) => setIeeeVerifiedFilter(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#2a2a2a] border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">All</option>
+                  <option value="true">Verified</option>
+                  <option value="false">Not Verified</option>
+                </select>
+              </div>
+
+              {/* Apply/Reset Buttons */}
+              <div className="flex gap-2 pt-4 border-t border-gray-700">
+                <button
+                  onClick={() => {
+                    handleApplyFilters();
+                    setShowMobileFilters(false);
+                  }}
+                  className="flex-1 px-4 py-2 bg-[#fe4a56] hover:bg-[#8c0505] text-white rounded-lg font-medium transition-colors"
+                >
+                  Apply Filters
+                </button>
+                <button
+                  onClick={() => {
+                    handleResetFilters();
+                    setShowMobileFilters(false);
+                  }}
+                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Change Password Modal */}
       {showChangePassword && (
@@ -415,79 +783,121 @@ function TicketDetails() {
           </div>
         </div>
       )}
-      {/* Filters Section */}
-      <div className="w-full flex flex-wrap items-center gap-4 px-6 py-4 bg-[#232326] border-b border-gray-800 z-10">
-        <input
-          type="text"
-          placeholder="Search by name or email..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56] w-64"
-        />
-        <select
-          value={statusFilter}
-          onChange={e => setStatusFilter(e.target.value)}
-          className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
-        >
-          <option value="">All Statuses</option>
-          <option value="paid">Paid</option>
-          <option value="attempted">Attempted</option>
-          <option value="pending">Pending</option>
-        </select>
-        <select
-          value={institutionFilter}
-          onChange={e => setInstitutionFilter(e.target.value)}
-          className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
-        >
-          <option value="">All Institutions</option>
-          {institutions.map(inst => (
-            <option key={inst} value={inst}>{inst}</option>
-          ))}
-        </select>
-        <select
-          value={ieeeFilter}
-          onChange={e => setIeeeFilter(e.target.value)}
-          className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
-        >
-          <option value="">All IEEE Members</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-          <option value="gsm">GSM</option>
-        </select>
-        <select
-          value={ieeeVerifiedFilter}
-          onChange={e => setIeeeVerifiedFilter(e.target.value)}
-          className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
-        >
-          <option value="">All Verified Status</option>
-          <option value="true">Verified</option>
-          <option value="false">Not Verified</option>
-        </select>
-        <button
-          onClick={() => { setSearch(''); setStatusFilter(''); setInstitutionFilter(''); setIeeeFilter(''); setIeeeVerifiedFilter(''); }}
-          className="bg-gray-700 text-gray-200 px-4 py-2 rounded hover:bg-gray-600 border border-gray-600"
-        >
-          Reset
-        </button>
-        <span className="ml-auto text-gray-300 text-sm font-semibold">
-          Showing {filteredTickets.length} result{filteredTickets.length !== 1 ? 's' : ''}
-        </span>
+      {/* Desktop Filters Section - Hidden on Mobile */}
+      <div className="hidden lg:block w-full px-6 py-4 bg-[#232326] border-b border-gray-800 z-10">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          {/* Filter Controls */}
+          <div className="flex items-center gap-3 flex-wrap min-w-0 flex-1">
+            <input
+              type="text"
+              placeholder="Search by name, email, ticket ID, phone, or institution..."
+              value={search}
+              onChange={handleSearchChange}
+              onKeyPress={(e) => e.key === 'Enter' && handleApplyFilters()}
+              className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56] w-80 text-sm"
+            />
+            <select
+              value={statusFilter}
+              onChange={handleStatusChange}
+              className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56] text-sm min-w-0"
+            >
+              <option value="">All Statuses</option>
+              <option value="paid">Paid</option>
+              <option value="attempted">Attempted</option>
+              <option value="pending">Pending</option>
+            </select>
+            <select
+              value={ieeeFilter}
+              onChange={handleIeeeChange}
+              className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56] text-sm min-w-0"
+            >
+              <option value="">All IEEE</option>
+              <option value="yes">IEEE Member</option>
+              <option value="no">Non-IEEE</option>
+              <option value="gsm">GSM</option>
+            </select>
+            <select
+              value={ieeeVerifiedFilter}
+              onChange={handleIeeeVerifiedChange}
+              className="bg-[#18181b] text-gray-200 border border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#fe4a56] text-sm min-w-0"
+            >
+              <option value="">All Verified</option>
+              <option value="true">Verified</option>
+              <option value="false">Not Verified</option>
+            </select>
+          </div>
+          
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={handleApplyFilters}
+              disabled={loading}
+              className={`px-3 py-2 rounded border text-sm font-semibold flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
+                hasUnappliedFilters() 
+                  ? 'bg-green-600 text-white hover:bg-green-700 border-green-600 hover:border-green-700 shadow-md' 
+                  : 'bg-green-600/50 text-green-200 border-green-600/50 cursor-default'
+              }`}
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+              </svg>
+              {loading ? 'Filtering...' : hasUnappliedFilters() ? 'Apply' : 'Applied'}
+              {hasUnappliedFilters() && (
+                <span className="inline-flex items-center justify-center w-1.5 h-1.5 bg-yellow-400 rounded-full"></span>
+              )}
+            </button>
+            
+            <button
+              onClick={handleResetFilters}
+              className="bg-gray-700 text-gray-200 px-3 py-2 rounded hover:bg-gray-600 border border-gray-600 text-sm font-semibold"
+            >
+              Reset
+            </button>
+            
+            <button
+              onClick={refreshTickets}
+              disabled={loading}
+              className="bg-[#fe4a56] text-white px-3 py-2 rounded hover:bg-[#8c0505] border border-[#fe4a56] hover:border-[#8c0505] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 text-sm font-semibold"
+            >
+              <FiRefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
+          
+          {/* Results Counter */}
+          <div className="text-gray-300 text-xs font-semibold whitespace-nowrap flex-shrink-0">
+            {pagination.totalTickets.toLocaleString()} result{pagination.totalTickets !== 1 ? 's' : ''} 
+            {pagination.totalPages > 1 && (
+              <span className="ml-1 text-gray-400">
+                (Page {pagination.currentPage}/{pagination.totalPages})
+              </span>
+            )}
+          </div>
+        </div>
       </div>
       
-      <div className="w-full" style={{ height: 'calc(100vh - 72px - 64px)' }}>
+      {/* Summary Statistics Section - Responsive */}
+      <div className="w-full px-4 lg:px-6 py-3 bg-[#18181b] border-b border-gray-800">
+        <TicketSummary summary={summary} loading={loading} />
+      </div>
+      
+      <div className="w-full" style={{ height: 'calc(100vh - 72px - 64px - 48px)' }}>
         {/* Show UpdateTicketForm modal if editingTicket is set */}
         {editingTicket && (
           <UpdateTicketForm
             ticket={editingTicket}
             onClose={() => setEditingTicket(null)}
             onSave={updatedTicket => {
+              // Update the tickets list with the edited ticket
               setTickets(prev => prev.map(t => t._id === updatedTicket._id ? updatedTicket : t));
               setEditingTicket(null);
+              // Optionally refresh to get the latest data
+              refreshTickets();
             }}
           />
         )}
         <div
-          className="flex flex-col items-center text-white p-4 pb-16 overflow-y-auto w-full h-full \
+          className="flex flex-col items-center text-white p-2 lg:p-4 pb-30 overflow-y-auto w-full h-full \
             [&::-webkit-scrollbar]:w-2 \
             [&::-webkit-scrollbar-track]:bg-transparent \
             [&::-webkit-scrollbar-thumb]:bg-[#fe4a56]/60 \
@@ -595,7 +1005,45 @@ function TicketDetails() {
                 </div>
               </div>
             ))}
+            
+            {/* No results message */}
+            {!loading && filteredTickets.length === 0 && (
+              <div className="text-center py-12 text-gray-400">
+                <svg className="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+                <h3 className="text-lg font-medium text-gray-500 mb-2">No tickets found</h3>
+                <p className="text-gray-600 mb-4">Try adjusting your filters or search criteria.</p>
+                <button
+                  onClick={handleResetFilters}
+                  className="bg-[#fe4a56] text-white px-4 py-2 rounded-lg hover:bg-[#8c0505] transition-colors"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            )}
           </div>
+          
+          {/* Pagination Component */}
+          {!loading && filteredTickets.length > 0 && pagination.totalPages > 1 && (
+            <div className="w-full max-w-6xl mt-8 mb-12">
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                totalTickets={pagination.totalTickets}
+                hasNextPage={pagination.hasNextPage}
+                hasPrevPage={pagination.hasPrevPage}
+                onPageChange={goToPage}
+                onNext={nextPage}
+                onPrev={prevPage}
+                onFirst={goToFirstPage}
+                onLast={goToLastPage}
+                limit={pagination.limit}
+                onLimitChange={setLimit}
+                loading={loading}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
