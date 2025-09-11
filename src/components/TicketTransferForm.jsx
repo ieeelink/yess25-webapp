@@ -313,12 +313,17 @@ const TicketTransferForm = ({ onClose, ticketData, closeAllPopups }) => {
 			
 			const response = await axios.post(API_ENDPOINTS.TICKET_TRANSFER(registrationId), transferData);
 			
+			// Log the complete server response to console
+			console.log('Server Response:', response);
+			console.log('Response Status:', response.status);
+			console.log('Response Data:', response.data);
+			
 			// Check response status
 			if (response.status === 200) {
 				// Success - transfer completed
 				setSuccess('Ticket transfer request submitted successfully! You will receive a confirmation email shortly.');
 				setShowSuccessLoader(true);
-				setTransferEmail(data.newEmail);
+				setTransferEmail(response.data.newEmail || data.newEmail);
 				
 				// Wait for 3 seconds, then show status component
 				setTimeout(() => {
@@ -330,6 +335,11 @@ const TicketTransferForm = ({ onClose, ticketData, closeAllPopups }) => {
 				handleNeetoFormRedirection(data, institutionValue, courseValue);
 			}
 		} catch (error) {
+			// Log the error response to console
+			console.log('Error Response:', error);
+			console.log('Error Response Status:', error.response?.status);
+			console.log('Error Response Data:', error.response?.data);
+			
 			// Handle different error response codes
 			if (error.response) {
 				const { status, data: responseData } = error.response;
@@ -446,7 +456,7 @@ const TicketTransferForm = ({ onClose, ticketData, closeAllPopups }) => {
 		showStatus ? (
 			<div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-sm min-h-screen overflow-y-auto py-8 pointer-events-auto">
 				<div className="w-full max-w-2xl px-4 sm:px-0">
-					<Status closeAllPopups={closeAllPopups || onClose} ticketId={ticketData?.order_id} />
+					<Status closeAllPopups={closeAllPopups || onClose} ticketId={ticketData?.order_id} email={transferEmail} />
 				</div>
 			</div>
 		) : (

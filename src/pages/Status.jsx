@@ -7,7 +7,7 @@ import TicketTransferForm from '../components/TicketTransferForm';
 let globalUserInput = null;
 let globalInputType = null; // 'email' or 'ticketId'
 
-function Status({ closeAllPopups, userInput }) {
+function Status({ closeAllPopups, userInput, ticketId, email }) {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,15 +29,18 @@ function Status({ closeAllPopups, userInput }) {
   };
 
   useEffect(() => {
-    if (userInput) {
-      globalUserInput = userInput;
-      globalInputType = identifyInputType(userInput);
-      fetchPaymentStatus(userInput, globalInputType);
+    // Determine which input to use - priority: userInput, then email, then ticketId
+    const inputToUse = userInput || email || ticketId;
+    
+    if (inputToUse) {
+      globalUserInput = inputToUse;
+      globalInputType = identifyInputType(inputToUse);
+      fetchPaymentStatus(inputToUse, globalInputType);
     } else {
       setError('No input provided. Please try again.');
       setLoading(false);
     }
-  }, [userInput]);
+  }, [userInput, email, ticketId]);
 
   const fetchPaymentStatus = async (input, inputType) => {
     try {
@@ -53,7 +56,6 @@ function Status({ closeAllPopups, userInput }) {
       }
 
       const statusResponse = await axios.post(API_ENDPOINTS.PAYMENT_STATUS, requestBody);
-      console.log(statusResponse.data.payments[0]);
       setPaymentStatus(statusResponse.data.payments[0]);
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -66,7 +68,6 @@ function Status({ closeAllPopups, userInput }) {
         setError(errorMessage);
       } else {
         setError('Failed to fetch payment status. Please contact support.');
-        console.log(error.message);
       }
     } finally {
       setLoading(false);
@@ -103,7 +104,6 @@ function Status({ closeAllPopups, userInput }) {
       }
       
       setError(errorMessage);
-      console.log(error);
       setLoading(false);
     }
   };
@@ -218,7 +218,7 @@ function Status({ closeAllPopups, userInput }) {
             >
               Go to Home
             </button>
-            {paymentStatus && paymentStatus.status === 'paid' && (
+            {paymentStatus && paymentStatus.status === 'paid' && globalInputType === 'ticketId' && (
               <button
                 onClick={() => setShowTransferForm(true)}
                 className="px-8 py-3 bg-[#fe4a56] text-white rounded-md hover:bg-[#8c0505] transition-colors focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2 text-lg font-semibold"
