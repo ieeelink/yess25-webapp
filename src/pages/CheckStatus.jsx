@@ -3,12 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import Status from './Status';
 
 function CheckStatus({ onClose }) {
-  const [ticketId, setTicketId] = useState('');
+  const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showContactPopup, setShowContactPopup] = useState(false);
   const [showStatus, setShowStatus] = useState(false);
-  const [submittedTicketId, setSubmittedTicketId] = useState('');
+  const [submittedInput, setSubmittedInput] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -18,7 +18,7 @@ function CheckStatus({ onClose }) {
 
     setTimeout(() => {
       setIsLoading(false);
-      setSubmittedTicketId(ticketId);
+      setSubmittedInput(userInput);
       setShowStatus(true);
     }, 500);
   };
@@ -26,23 +26,23 @@ function CheckStatus({ onClose }) {
   return (
     <div className="w-full max-w-2xl px-4 sm:px-0">
       {showStatus ? (
-        <Status closeAllPopups={onClose} ticketId={submittedTicketId} />
+        <Status closeAllPopups={onClose} userInput={submittedInput} />
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6 bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-lg border border-white/20">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8 text-center">Check Registration Status</h1>
           <div>
-            <label htmlFor="ticketId" className="block text-sm font-medium text-white mb-1">
-              Ticket ID
+            <label htmlFor="userInput" className="block text-sm font-medium text-white mb-1">
+              Ticket ID or Email Address
             </label>
             <input
               type="text"
-              id="ticketId"
-              name="ticketId"
-              value={ticketId}
-              onChange={(e) => setTicketId(e.target.value)}
+              id="userInput"
+              name="userInput"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
               required
               className="w-full px-3 py-2 bg-white/5 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white placeholder-gray-400"
-              placeholder="Enter your ticket ID (e.g., YESS25-ABC123)"
+              placeholder="Enter your ticket ID (e.g., YESS25-ABC123) or email address"
             />
           </div>
           {error && (

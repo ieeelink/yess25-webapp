@@ -4,33 +4,66 @@ import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import TicketTransferForm from '../components/TicketTransferForm';
 
-let globalTicketId = null;
+let globalUserInput = null;
+let globalInputType = null; // 'email' or 'ticketId'
 
-function Status({ closeAllPopups, ticketId }) {
+function Status({ closeAllPopups, userInput }) {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showTransferForm, setShowTransferForm] = useState(false);
 
-  useEffect(() => {
-    // Only use ticketId for server requests
-    if (ticketId) {
-      globalTicketId = ticketId;
-      fetchPaymentStatusByTicketId(ticketId);
+  // Helper function to identify if input is email or ticket ID
+  const identifyInputType = (input) => {
+    if (!input) return null;
+    
+    // Check if it's an email using a simple regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (emailRegex.test(input)) {
+      return 'email';
     } else {
-      setError('No ticket ID provided. Please try again.');
+      // Assume it's a ticket ID if it's not an email
+      return 'ticketId';
+    }
+  };
+
+  useEffect(() => {
+    if (userInput) {
+      globalUserInput = userInput;
+      globalInputType = identifyInputType(userInput);
+      fetchPaymentStatus(userInput, globalInputType);
+    } else {
+      setError('No input provided. Please try again.');
       setLoading(false);
     }
-  }, [ticketId]);
+  }, [userInput]);
 
-  const fetchPaymentStatusByTicketId = async (ticketId) => {
+  const fetchPaymentStatus = async (input, inputType) => {
     try {
-      const statusResponse = await axios.post(API_ENDPOINTS.PAYMENT_STATUS, { ticketId });
+      let requestBody = {};
+      
+      // Build request body based on input type
+      if (inputType === 'email') {
+        requestBody = { email: input };
+      } else if (inputType === 'ticketId') {
+        requestBody = { ticketId: input };
+      } else {
+        throw new Error('Invalid input type');
+      }
+
+      const statusResponse = await axios.post(API_ENDPOINTS.PAYMENT_STATUS, requestBody);
       console.log(statusResponse.data.payments[0]);
       setPaymentStatus(statusResponse.data.payments[0]);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        setError('No ticket found.');
+        // Use the error message from response body if available
+        const errorMessage = error.response.data?.message || error.response.data?.error || 'No ticket found.';
+        setError(errorMessage);
+      } else if (error.response && error.response.data) {
+        // Use the error message from response body for other errors
+        const errorMessage = error.response.data.message || error.response.data.error || 'Failed to fetch payment status. Please contact support.';
+        setError(errorMessage);
       } else {
         setError('Failed to fetch payment status. Please contact support.');
         console.log(error.message);
@@ -43,13 +76,33 @@ function Status({ closeAllPopups, ticketId }) {
   const handleRetryPayment = async () => {
     try {
       setLoading(true);
-      // Only use ticketId for retry payment requests
-      const response = await axios.post(API_ENDPOINTS.RETRY_PAYMENT, { ticketId: globalTicketId });
+      
+      // For retry payment, we need to use ticket ID
+      // If the original input was email, we should have the ticket ID from the response
+      let retryRequestBody = {};
+      
+      if (globalInputType === 'ticketId') {
+        retryRequestBody = { ticketId: globalUserInput };
+      } else if (paymentStatus && paymentStatus.order_id) {
+        // Use the ticket ID from the payment status response
+        retryRequestBody = { ticketId: paymentStatus.order_id };
+      } else {
+        throw new Error('Unable to retry payment: No ticket ID available');
+      }
+
+      const response = await axios.post(API_ENDPOINTS.RETRY_PAYMENT, retryRequestBody);
       if (response.status === 200) {
         window.location.href = response.data.response.redirectUrl;
       }
     } catch (error) {
-      setError('Failed to retry payment. Please try again later.');
+      // Use the error message from response body if available
+      let errorMessage = 'Failed to retry payment. Please try again later.';
+      
+      if (error.response && error.response.data) {
+        errorMessage = error.response.data.message || error.response.data.error || errorMessage;
+      }
+      
+      setError(errorMessage);
       console.log(error);
       setLoading(false);
     }
