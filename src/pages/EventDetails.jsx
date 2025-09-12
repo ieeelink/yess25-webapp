@@ -50,7 +50,6 @@ function EventDetails() {
         const response = await axios.get(API_ENDPOINTS.EVENTS, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        console.log(response.data)
         setEvents(response.data);
       } catch (err) {
         setError('Failed to fetch events.');

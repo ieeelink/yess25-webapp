@@ -96,7 +96,7 @@ function loadScript(src) {
 async function displayRazorpay(amount, id, paymentProcessingRef, onPaymentComplete) {
   const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js');
   if (!res) {
-    alert('Razorpay failed to load!!');
+    console.error('Razorpay failed to load');
     paymentProcessingRef.current = false;
     return;
   }
@@ -129,7 +129,7 @@ async function displayRazorpay(amount, id, paymentProcessingRef, onPaymentComple
           if (onPaymentComplete) onPaymentComplete();
         })
         .catch((error) => {
-          alert('Payment verification failed. Please contact support.');
+          console.error('Payment verification failed');
         });
     },
     modal: {

@@ -14,7 +14,7 @@ export const API_ENDPOINTS = {
   ADMIN_CHANGE_PASSWORD: `${API_BASE_URL}/admin/changepassword`,
   ADMIN_ADD_USER: `${API_BASE_URL}/admin/adduser`,
   ADMIN_ADD_TICKET: `${API_BASE_URL}/admin/addticket`,
-  ADMIN_ADD_BULK_TICKETS: `${API_BASE_URL}/admin/addbulktickets`,
+  ADMIN_ADD_BULK_TICKETS: `${API_BASE_URL}/admin/bulk-add-tickets-sse`,
   ADMIN_UPDATE_TICKET: (id) => `${API_BASE_URL}/admin/update-ticket/${id}`,
   ADMIN_GENERATE_INVOICE: (ticketId) => `${API_BASE_URL}/admin/generate-invoice/${ticketId}`,
   ADMIN_WEBHOOK_RESOLVE: `${API_BASE_URL}/ticket_webhook`,
@@ -65,5 +65,5 @@ export const getEnvironmentInfo = () => {
 
 // Log current environment (only in development)
 if (import.meta.env.DEV) {
-  console.log('🔧 API Configuration:', getEnvironmentInfo());
+  // API configuration logging removed for production security
 }

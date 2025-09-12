@@ -223,10 +223,6 @@ function BulkIEEEVerification() {
       const csvText = await file.text();
       const ieeeMembers = parseCSV(csvText);
       
-      // Log parsed CSV data
-      console.log('📋 Parsed CSV Data:', ieeeMembers);
-      console.log(`📊 Total IEEE members found in CSV: ${ieeeMembers.length}`);
-      
       // Step 3: Match IEEE members with tickets (60%)
       await new Promise(resolve => setTimeout(resolve, 500));
       setUploadProgress(60);
@@ -254,7 +250,6 @@ function BulkIEEEVerification() {
       setSuccess(`File processed successfully! Found ${matchResults.matched} matches out of ${matchResults.total} unverified tickets.`);
       
     } catch (error) {
-      console.error('❌ Error processing file:', error);
       setError(`Failed to process file: ${error.response?.data?.message || error.message}`);
     } finally {
       setIsUploading(false);
@@ -342,10 +337,7 @@ function BulkIEEEVerification() {
   // Auto-log ticket IDs whenever verification results or filters change
   useEffect(() => {
     if (verificationResults?.allTickets) {
-      console.log('📋 Ticket ID Lists:');
-      console.log('  • Current filtered IDs:', getCurrentTicketIds());
-      console.log('  • All ticket IDs:', getAllTicketIds());
-      console.log('  • Matched ticket IDs:', getMatchedTicketIds());
+      // Ticket ID lists computed for verification
     }
   }, [verificationResults, selectedCategory, excludedTickets, verifiedTickets]);
 
@@ -381,7 +373,6 @@ function BulkIEEEVerification() {
         }
       }
     } catch (error) {
-      console.error('❌ Error in bulk verification:', error);
       setError('Bulk verification failed: ' + (error.message || 'Unknown error'));
       setIsVerifying(false);
     }
@@ -399,7 +390,7 @@ function BulkIEEEVerification() {
         const parsedData = JSON.parse(data);
         handleEvent(eventType, parsedData);
       } catch (error) {
-        console.error('Error parsing SSE data:', error);
+        // Skip malformed SSE data
       }
     }
   };

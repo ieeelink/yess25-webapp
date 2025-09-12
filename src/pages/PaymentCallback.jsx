@@ -18,12 +18,6 @@ function PaymentCallback() {
         const razorpay_payment_id = searchParams.get('razorpay_payment_id');
         const razorpay_signature = searchParams.get('razorpay_signature');
 
-        console.log('Payment callback received:', {
-          razorpay_order_id,
-          razorpay_payment_id,
-          razorpay_signature
-        });
-
         if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
           throw new Error('Missing payment parameters');
         }
@@ -35,12 +29,8 @@ function PaymentCallback() {
           razorpay_signature
         };
 
-        console.log('Sending verification data to backend:', verificationData);
-
         const response = await axios.post(API_ENDPOINTS.PAYMENT_SUCCESS_CALLBACK, verificationData);
         
-        console.log('Backend verification response:', response.data);
-
         if (response.data.success) {
           // Store order ID in cookie for status page
           document.cookie = `order_id=${encodeURIComponent(razorpay_order_id)}; path=/; max-age=${14*24*60*60}`;
@@ -54,7 +44,6 @@ function PaymentCallback() {
           throw new Error(response.data.error || 'Payment verification failed');
         }
       } catch (error) {
-        console.error('Payment verification error:', error);
         setError(error.response?.data?.error || error.message || 'Payment verification failed');
         setStatus('error');
       }

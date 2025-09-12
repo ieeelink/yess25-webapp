@@ -14,14 +14,14 @@ const MeetTheSpeakers = () => {
       id: 2,
       name: "Mishal Aboobacker",
       position: "Co - Organizer, Friends of Figma Kozhikode",
-      image: "/images/speaker2.jpg",
+      image: "/images/speaker3.jpg",
       description: "UX Designer at Aufait Technologies Pvt. Ltd."
     },
     {
       id: 3,
       name: "Hafis CP",
       position: "Co - Organizer, Friends of Figma Kozhikode",
-      image: "/images/speaker3.jpg",
+      image: "/images/speaker2.jpg",
       description: "Product Generalist at MakeMyPass"
     }
   ];

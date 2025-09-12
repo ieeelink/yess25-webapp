@@ -259,8 +259,7 @@ function UpdateTicketForm({ ticket, onClose, onSave }) {
         throw new Error(response.data.message || 'Failed to update ticket');
       }
     } catch (error) {
-      console.error('Error updating ticket:', error);
-      alert(error.response?.data?.message || error.message || 'Failed to update ticket. Please try again.');
+      setError(error.response?.data?.message || error.message || 'Failed to update ticket. Please try again.');
     }
   };
 
