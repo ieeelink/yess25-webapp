@@ -18,7 +18,6 @@ function AddBulkTickets() {
   
   // SSE state management
   const [isProcessing, setIsProcessing] = useState(false);
-  const [eventSource, setEventSource] = useState(null);
   const [processingStats, setProcessingStats] = useState({
     total: 0,
     completed: 0,
@@ -178,22 +177,23 @@ function AddBulkTickets() {
     window.URL.revokeObjectURL(url);
   };
 
-  // SSE Event Handlers
-  const setupSSEEventHandlers = (eventSource) => {
-    // 🚀 Start Event
-    eventSource.addEventListener('start', (event) => {
-      const data = JSON.parse(event.data);
+  // Handle SSE Messages from the server
+  const handleSSEMessage = (data) => {
+    // Check if this is a specific event based on the presence of certain fields
+    
+    // 🚀 START Event - has message "Bulk ticket addition started"
+    if (data.message === "Bulk ticket addition started" && data.totalTickets) {
       setProcessingPhase('processing');
       setProcessingStats(prev => ({
         ...prev,
         total: data.totalTickets
       }));
       setSuccess(`Bulk processing started for ${data.totalTickets} tickets`);
-    });
+      return;
+    }
 
-    // ⚡ Processing Event (Three Stages)
-    eventSource.addEventListener('processing', (event) => {
-      const data = JSON.parse(event.data);
+    // ⚡ PROCESSING Event - has email, index, status (validating/inserting/sending-email)
+    if (data.email && data.index && data.status && ['validating', 'inserting', 'sending-email'].includes(data.status)) {
       setCurrentProcessing(data.index - 1);
       
       // Update individual ticket progress
@@ -208,12 +208,11 @@ function AddBulkTickets() {
         });
         return newMap;
       });
-    });
+      return;
+    }
 
-    // ✅ Success Event
-    eventSource.addEventListener('success', (event) => {
-      const data = JSON.parse(event.data);
-      
+    // ✅ SUCCESS Event - has email, status "completed", insertedId
+    if (data.email && data.status === 'completed' && data.insertedId) {
       // Update ticket progress
       setTicketProgress(prev => {
         const newMap = new Map(prev);
@@ -260,13 +259,12 @@ function AddBulkTickets() {
         completed: prev.completed + 1,
         successful: prev.successful + 1
       }));
-    });
+      return;
+    }
 
-    // ❌ Error Event
-    eventSource.addEventListener('error', (event) => {
-      const data = JSON.parse(event.data);
-      
-      if (data.email) {
+    // ❌ ERROR Event - has error field or status "failed"
+    if (data.error || data.status === 'failed') {
+      if (data.email && data.index) {
         // Individual ticket error
         setTicketProgress(prev => {
           const newMap = new Map(prev);
@@ -309,29 +307,27 @@ function AddBulkTickets() {
           failed: prev.failed + 1
         }));
       } else {
-        // Global error
-        setError(data.message || 'Bulk processing failed');
+        // Global error (no email/index)
+        setError(data.message || data.error || 'Bulk processing failed');
         setIsProcessing(false);
         setProcessingPhase('idle');
-        eventSource.close();
-        setEventSource(null);
       }
-    });
+      return;
+    }
 
-    // 📦 Batch Event
-    eventSource.addEventListener('batch', (event) => {
-      const data = JSON.parse(event.data);
+    // 📦 BATCH Event - has batchNumber and totalBatches
+    if (data.batchNumber && data.totalBatches) {
       setProcessingStats(prev => ({
         ...prev,
         currentBatch: data.batchNumber,
         totalBatches: data.totalBatches,
         completed: data.completedTickets
       }));
-    });
+      return;
+    }
 
-    // 🏁 Complete Event
-    eventSource.addEventListener('complete', (event) => {
-      const data = JSON.parse(event.data);
+    // 🏁 COMPLETE Event - has message "Bulk ticket addition completed"
+    if (data.message === "Bulk ticket addition completed" && data.totalTickets) {
       setProcessingPhase('completed');
       setIsProcessing(false);
       setCurrentProcessing(-1);
@@ -345,30 +341,23 @@ function AddBulkTickets() {
         successful: successful,
         failed: failed
       });
+      return;
+    }
 
-      // Close SSE connection
-      eventSource.close();
-      setEventSource(null);
-    });
-
-    // Handle SSE connection errors
-    eventSource.onerror = (error) => {
-      setError('Connection lost. Please try again.');
-      setIsProcessing(false);
-      setProcessingPhase('idle');
-      eventSource.close();
-      setEventSource(null);
-    };
+    // Log unknown events for debugging
+    console.log('Unknown SSE event:', data);
   };
 
-  // Cleanup SSE connection on component unmount
+  // Cleanup any ongoing stream reading on component unmount
   useEffect(() => {
     return () => {
-      if (eventSource) {
-        eventSource.close();
+      // Cleanup will be handled by the stream reader itself
+      if (isProcessing) {
+        setIsProcessing(false);
+        setProcessingPhase('idle');
       }
     };
-  }, [eventSource]);
+  }, [isProcessing]);
 
   const handleInsertTickets = async () => {
     if (csvData.length === 0) {
@@ -401,43 +390,87 @@ function AddBulkTickets() {
         return;
       }
 
-      // Start SSE connection for real-time updates
-      const sseUrl = `${API_ENDPOINTS.ADMIN_ADD_BULK_TICKETS}?token=${encodeURIComponent(token)}`;
-      const newEventSource = new EventSource(sseUrl);
-      setEventSource(newEventSource);
+      // Convert CSV data to the required JSON structure
+      const ticketsData = csvData.map(row => ({
+        fullName: row.fullName || row.name || '',
+        email: row.email || '',
+        phone: row.phone || '',
+        gender: row.gender || '',
+        yearOfStudy: row.yearOfStudy || '',
+        institution: row.institution || '',
+        course: row.course || '',
+        foodPreference: row.foodPreference || '',
+        isIEEEMember: row.isIEEEMember || 'no',
+        ieeeMembershipNumber: row.ieeeMembershipNumber || ''
+      }));
 
-      // Set up SSE event handlers
-      setupSSEEventHandlers(newEventSource);
-
-      // Send the CSV data to trigger processing
-      const formData = new FormData();
-      const csvHeaders = Object.keys(csvData[0]).filter(key => key !== 'id');
-      const csvContent = [
-        csvHeaders.join(','),
-        ...csvData.map(row => 
-          csvHeaders.map(header => row[header] || '').join(',')
-        )
-      ].join('\n');
-      
-      const csvBlob = new Blob([csvContent], { type: 'text/csv' });
-      formData.append('csvFile', csvBlob, 'bulk_tickets.csv');
-
-      // Send POST request to trigger SSE processing
-      await axios.post(API_ENDPOINTS.ADMIN_ADD_BULK_TICKETS, formData, {
+      // For SSE endpoints that expect JSON data, we need to send it as a POST request
+      // and then establish SSE connection to receive the streaming response
+      const response = await fetch(API_ENDPOINTS.ADMIN_ADD_BULK_TICKETS, {
+        method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
+          'Accept': 'text/event-stream',
+          'Cache-Control': 'no-cache',
         },
+        body: JSON.stringify({ tickets: ticketsData })
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Read the SSE stream
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      const readStream = async () => {
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            
+            if (done) {
+              break;
+            }
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const eventData = line.slice(6); // Remove 'data: ' prefix
+                  if (eventData.trim() === '') continue;
+                  
+                  const data = JSON.parse(eventData);
+                  
+                  // Handle the different event types from the SSE stream
+                  handleSSEMessage(data);
+                } catch (parseError) {
+                  console.error('Error parsing SSE data:', parseError);
+                }
+              } else if (line.startsWith('event: ')) {
+                // Handle event type if sent separately
+                const eventType = line.slice(7);
+                console.log('Event type:', eventType);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error reading SSE stream:', error);
+          setError('Connection lost. Please try again.');
+          setIsProcessing(false);
+          setProcessingPhase('idle');
+        }
+      };
+
+      readStream();
+
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to start bulk ticket processing');
+      setError(err.message || 'Failed to start bulk ticket processing');
       setIsProcessing(false);
       setProcessingPhase('idle');
-      if (eventSource) {
-        eventSource.close();
-        setEventSource(null);
-      }
     }
   };
 
@@ -592,10 +625,6 @@ function AddBulkTickets() {
                 {isProcessing && (
                   <button
                     onClick={() => {
-                      if (eventSource) {
-                        eventSource.close();
-                        setEventSource(null);
-                      }
                       setIsProcessing(false);
                       setProcessingPhase('idle');
                       setError('Processing stopped by user');
