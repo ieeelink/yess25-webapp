@@ -18,8 +18,8 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
     { name: 'UPDATES', path: '/updates', sectionId: 'updates' },
     { name: 'EVENTS', path: '/events', sectionId: 'events' },
     { name: 'SPONSORS', path: '/sponsors', sectionId: 'sponsors' },
+    { name:"SPEAKERS", path:"/speakers",sectionId:"speakers" },
     { name: 'ABOUT', path: '/about', sectionId: 'about' },
-    { name: "HIGHLIGHTS'24", path: '/highlights', sectionId: 'highlights' }
   ];
 
   // Check if current page is not home
@@ -129,7 +129,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
         isNotHomePage ? 'bg-black/30 backdrop-blur-sm' : (isScrolled ? 'bg-black/70 backdrop-blur-sm' : 'bg-transparent')
       }`}>
         <div className="w-full px-4 sm:px-6 lg:px-12">
-          <div className="flex justify-between items-center h-16 sm:h-20">
+          <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
             <div className="flex-shrink-0">
               <Link to="/" className="flex items-center">
@@ -143,7 +143,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
                 <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
                   isNotHomePage ? 'max-w-[140px] opacity-100' : (isScrolled ? 'max-w-[140px] opacity-100' : 'max-w-0 opacity-0')
                 }`}>
-                  <span className="ml-2 sm:ml-3 text-lg sm:text-2xl font-bold text-white whitespace-nowrap inline-block">
+                  <span className="inline-block ml-2 text-lg font-bold text-white sm:ml-3 sm:text-2xl whitespace-nowrap">
                     YESS'25
                   </span>
                 </div>
@@ -151,7 +151,7 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
             </div>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-2 xl:space-x-4">
+            <nav className="hidden space-x-2 lg:flex xl:space-x-4">
               {navItems.map((item) => (
                 <button
                   key={item.name}
@@ -171,9 +171,9 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
             <div className="lg:hidden">
               <button
                 onClick={toggleMenu}
-                className="inline-flex items-center justify-center p-2 sm:p-3 rounded-md text-white hover:text-red-400 hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500 transition-colors duration-200 relative z-50"
+                className="relative z-50 inline-flex items-center justify-center p-2 text-white transition-colors duration-200 rounded-md sm:p-3 hover:text-red-400 hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500"
               >
-                <FaBars className="h-5 w-5 sm:h-6 sm:w-6" />
+                <FaBars className="w-5 h-5 sm:h-6 sm:w-6" />
               </button>
             </div>
           </div>
@@ -183,17 +183,17 @@ const Header2 = ({ isScrolled = false, onNavigate }) => {
       {/* Mobile Menu Overlay rendered via Portal */}
       {isMenuOpen && ReactDOM.createPortal(
         <div
-          className="lg:hidden fixed inset-0 bg-black/90 z-60 transition-all duration-300 ease-in-out opacity-100 visible"
+          className="fixed inset-0 visible transition-all duration-300 ease-in-out opacity-100 lg:hidden bg-black/90 z-60"
         >
           <button
             onClick={toggleMenu}
-            className="absolute top-4 right-4 p-2 sm:p-3 rounded-md text-white hover:text-red-400 hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500 transition-colors duration-200 z-70"
+            className="absolute p-2 text-white transition-colors duration-200 rounded-md top-4 right-4 sm:p-3 hover:text-red-400 hover:bg-red-900/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500 z-70"
             aria-label="Close menu"
           >
-            <FaTimes className="h-5 w-5 sm:h-6 sm:w-6" />
+            <FaTimes className="w-5 h-5 sm:h-6 sm:w-6" />
           </button>
-          <div className="h-full w-full flex flex-col items-center">
-            <div className="flex-grow flex flex-col items-center justify-center space-y-4">
+          <div className="flex flex-col items-center w-full h-full">
+            <div className="flex flex-col items-center justify-center flex-grow space-y-4">
               {navItems.map((item) => (
                 <button
                   key={item.name}
