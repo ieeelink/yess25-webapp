@@ -242,7 +242,10 @@ function App() {
           <Route path="tickets" element={<TicketDetails />} />
           <Route path="ticket-details" element={<TicketDetails />} />
           <Route path="generate-tickets" element={<GenerateTickets />} />
-          <Route path="bulk-ieee-verification" element={<BulkIEEEVerification />} />
+          <Route
+            path="bulk-ieee-verification"
+            element={<BulkIEEEVerification />}
+          />
           <Route path="add-event" element={<AddEvent />} />
           <Route path="update-event/:eventId" element={<UpdateEvent />} />
           <Route path="add-update" element={<AddUpdate />} />
@@ -330,21 +333,15 @@ function App() {
         />
         <Route
           path="/SPS_ProjectCall"
-          element={
-            <Redirect to="https://forms.gle/7CHQdrngA9oahair5" />
-          }
+          element={<Redirect to="https://forms.gle/7CHQdrngA9oahair5" />}
         />
         <Route
           path="/call_for_pitchers"
-          element={
-            <Redirect to="https://forms.gle/pfFC8yNzFc9pp6Mf9" />
-          }
+          element={<Redirect to="https://forms.gle/pfFC8yNzFc9pp6Mf9" />}
         />
         <Route
           path="CMOS_Competition"
-          element={
-            <Redirect to="https://forms.gle/mW1ErM2AhVhCW8Gi6" />
-          }
+          element={<Redirect to="https://forms.gle/mW1ErM2AhVhCW8Gi6" />}
         />
         <Route
           path="/click-capture-classify"
@@ -360,9 +357,15 @@ function App() {
         />
         <Route
           path="/comsoc_projectcall"
-          element={
-            <Redirect to="https://forms.gle/9e7nfwJvJCZkRS3a9" />
-          }
+          element={<Redirect to="https://forms.gle/9e7nfwJvJCZkRS3a9" />}
+        />
+        <Route
+          path="/Sight_projectcall"
+          element={<Redirect to="https://forms.gle/upPJLa31AvcJ8p9b7" />}
+        />
+        <Route
+          path="/nextgen_innovare"
+          element={<Redirect to="https://forms.gle/DXDAWS9EvFTz6xmp8" />}
         />
         <Route
           path="/ToS"
