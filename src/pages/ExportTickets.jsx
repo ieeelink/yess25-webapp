@@ -74,6 +74,73 @@ function ExportTickets() {
     URL.revokeObjectURL(url);
   };
 
+  const downloadCSV = (data, filename) => {
+    if (!data || data.length === 0) return;
+    
+    // Define the CSV headers
+    const headers = [
+      'Full Name',
+      'Email',
+      'Phone',
+      'Gender',
+      'Institution',
+      'Course',
+      'Year of Study',
+      'IEEE Member',
+      'IEEE Membership Number',
+      'IEEE Verified',
+      'IEEE Verification Completed',
+      'Food Preference',
+      'Amount (INR)',
+      'Payment Status',
+      'Payment Verified',
+      'YESS Ticket ID',
+      'Registration ID',
+      'Timestamp',
+      'Payment Completed At',
+      'Payment Verified At'
+    ];
+    
+    // Convert data to CSV rows
+    const csvRows = data.map(ticket => [
+      `"${ticket.fullName || ''}"`,
+      `"${ticket.email || ''}"`,
+      `"${ticket.phone || ''}"`,
+      `"${ticket.gender || ''}"`,
+      `"${ticket.institution || ''}"`,
+      `"${ticket.course || ''}"`,
+      `"${ticket.yearOfStudy || ''}"`,
+      `"${ticket.isIEEEMember || ''}"`,
+      `"${ticket.ieeeMembershipNumber || ''}"`,
+      `"${ticket.ieeeVerified || false}"`,
+      `"${ticket.ieeeVerificationCompleted || false}"`,
+      `"${ticket.foodPreference || ''}"`,
+      `"${ticket.amount ? (ticket.amount / 100).toFixed(2) : '0.00'}"`,
+      `"${ticket.paymentStatus || ''}"`,
+      `"${ticket.paymentVerified || false}"`,
+      `"${ticket.yessTicketId || ''}"`,
+      `"${ticket.registrationId || ''}"`,
+      `"${ticket.timestamp ? new Date(ticket.timestamp).toLocaleString() : ''}"`,
+      `"${ticket.paymentCompletedAt ? new Date(ticket.paymentCompletedAt).toLocaleString() : ''}"`,
+      `"${ticket.paymentVerifiedAt ? new Date(ticket.paymentVerifiedAt).toLocaleString() : ''}"`
+    ]);
+    
+    // Combine headers and rows
+    const csvContent = [headers.join(','), ...csvRows.map(row => row.join(','))].join('\n');
+    
+    // Create and download the CSV file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handleExportAllData = async () => {
     if (!data || !data.tickets) return;
     
@@ -109,9 +176,9 @@ function ExportTickets() {
       );
       
       const currentDate = new Date().toISOString().split('T')[0];
-      const filename = `yess25_unverified_ieee_${currentDate}.json`;
+      const filename = `yess25_unverified_ieee_${currentDate}.csv`;
       
-      downloadJSON(unverifiedIEEETickets, filename);
+      downloadCSV(unverifiedIEEETickets, filename);
       
       // Show success message briefly
       setTimeout(() => {
@@ -430,7 +497,7 @@ function ExportTickets() {
                   <div className="border border-gray-700 rounded-lg p-4">
                     <h4 className="text-white font-semibold mb-2">Export Unverified IEEE Members</h4>
                     <p className="text-gray-400 text-sm mb-4">
-                      Download {formatNumber(unverifiedIEEECount)} unverified IEEE/GSM member records for verification processing.
+                      Download {formatNumber(unverifiedIEEECount)} unverified IEEE/GSM member records for verification processing in CSV format.
                     </p>
                     <button
                       onClick={handleExportUnverifiedIEEE}
@@ -438,7 +505,7 @@ function ExportTickets() {
                       className="w-full bg-orange-600 text-white px-4 py-3 rounded-lg hover:bg-orange-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
                     >
                       <FiDownload className="w-4 h-4" />
-                      {exporting.unverified ? 'Exporting...' : 'Export Unverified IEEE'}
+                      {exporting.unverified ? 'Exporting...' : 'Export Unverified IEEE (CSV)'}
                     </button>
                   </div>
                 </div>
