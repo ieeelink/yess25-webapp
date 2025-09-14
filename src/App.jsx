@@ -359,6 +359,12 @@ function App() {
           }
         />
         <Route
+          path="/comsoc_projectcall"
+          element={
+            <Redirect to="https://forms.gle/9e7nfwJvJCZkRS3a9" />
+          }
+        />
+        <Route
           path="/ToS"
           element={
             <>
