@@ -31,6 +31,7 @@ export const API_ENDPOINTS = {
   // Data
   COLLEGES: `${API_BASE_URL}/colleges`,
   ADMIN_DATA: `${API_BASE_URL}/admin/data`,
+  ADMIN_ALL_TICKETS: `${API_BASE_URL}/admin/all-tickets`,
   
   // Updates
   UPDATES: `${API_BASE_URL}/updates`,
