@@ -35,6 +35,7 @@ import PublicEvents from "./pages/PublicEvents";
 import BulkIEEEVerification from "./pages/BulkIEEEVerification";
 import GenerateTickets from "./pages/GenerateTickets";
 import TestLandingSection from "./components/TestLandingSection";
+import Schedule from "./pages/Schedule";
 import React from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -229,6 +230,15 @@ function App() {
           element={
             <>
               <BulkRegistrationGuidelines />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="/schedule"
+          element={
+            <>
+              <Schedule />
               <FooterWrapper />
             </>
           }
