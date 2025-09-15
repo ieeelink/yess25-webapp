@@ -1,5 +1,6 @@
 import React from "react";
 import { FiMapPin, FiCalendar } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 const LandingSection = ({
   scrollToSection,
@@ -7,6 +8,7 @@ const LandingSection = ({
   onOpenTicketForm,
   onOpenCheckStatus,
 }) => {
+  const navigate = useNavigate();
   return (
     <div className="relative z-10 w-full h-screen">
       <div
@@ -27,9 +29,11 @@ const LandingSection = ({
           <p className="text-lg text-white lg:text-2xl ">
             Yearly Engineering Students Summit
           </p>
-          <p className="max-w-2xl text-sm lg:text-base text-white/80 nunito-sans-body">
-            Registrations are closed!. See you at NIT Calicut on 20th September
-          </p>
+          <button
+            onClick={() => navigate("/schedule")}
+            className="inline-block px-8 py-3 text-lg hover:bg-transparent border-2 border-[#fe4a56]  rounded-full font-semibold bg-[#fe4a56] text-white transition-all duration-300 hover:scale-105 cursor-pointer">
+            View Schedule
+          </button>
           {/* Event Location and Date - Single Line */}
           <div className="flex flex-col items-center justify-center gap-2 mb-2 text-sm sm:flex-row sm:gap-6 text-white/90 sm:text-base lg:text-lg">
             <span className="flex items-center gap-1">
@@ -42,7 +46,6 @@ const LandingSection = ({
             </span>
           </div>
           <div className="pt-2">
-            
             <div className="mt-3">
               <button
                 type="button"
@@ -50,7 +53,9 @@ const LandingSection = ({
                 onClick={onOpenCheckStatus}>
                 Check Registration Status
               </button>
-              <p className="text-sm text-gray-300">Ticket Swapping is available now!!</p>
+              <p className="text-sm text-gray-300">
+                Ticket Swapping is available now!!
+              </p>
             </div>
           </div>
         </div>
