@@ -86,6 +86,14 @@ const MeetTheSpeakers = () => {
       description: "",
       image: "/images/speaker12.webp",
     },
+    {
+      id: 12,
+      name: "Dr Sudeendra Koushik",
+      position:
+        "President Elect - IEEE TEMS | Chief Innovator & Founder - Innovation by Design",
+      description: "",
+      image: "/images/speaker13.jpg",
+    },
   ];
 
   return (
