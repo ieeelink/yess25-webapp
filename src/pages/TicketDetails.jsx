@@ -35,6 +35,7 @@ function TicketDetails() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showRegistrationsDropdown, setShowRegistrationsDropdown] = useState(false);
+  const [showTicketOptionsDropdown, setShowTicketOptionsDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -84,6 +85,9 @@ function TicketDetails() {
       if (showRegistrationsDropdown && !event.target.closest('.registrations-dropdown')) {
         setShowRegistrationsDropdown(false);
       }
+      if (showTicketOptionsDropdown && !event.target.closest('.ticket-options-dropdown')) {
+        setShowTicketOptionsDropdown(false);
+      }
       if (showMobileMenu && !event.target.closest('.mobile-menu') && !event.target.closest('.hamburger-btn')) {
         setShowMobileMenu(false);
       }
@@ -96,7 +100,7 @@ function TicketDetails() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showUserDropdown, showRegistrationsDropdown, showMobileMenu, showMobileFilters]);
+  }, [showUserDropdown, showRegistrationsDropdown, showTicketOptionsDropdown, showMobileMenu, showMobileFilters]);
 
   const handleEdit = (ticketId) => {
     const ticket = tickets.find(t => t._id === ticketId);
@@ -339,24 +343,62 @@ function TicketDetails() {
             <FiBell className="w-4 h-4" />
             Updates
           </a>
-          <a
-            onClick={() => navigate('/admin/bulk-ieee-verification')}
-            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-orange-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-orange-700/50"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            IEEE Verify
-          </a>
-          <a
-            onClick={() => navigate('/admin/generate-tickets')}
-            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-indigo-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-indigo-700/50"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
-            </svg>
-            Generate Tickets
-          </a>
+          
+          {/* Ticket Options Dropdown */}
+          <div className="relative ticket-options-dropdown">
+            <button
+              onClick={() => setShowTicketOptionsDropdown(!showTicketOptionsDropdown)}
+              className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-cyan-700/20 px-3 py-2 rounded-lg font-medium transition-colors border border-transparent hover:border-cyan-700/50"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h2m0 0h2a2 2 0 002-2V7a2 2 0 00-2-2H9m0 8v6m0-6h2a2 2 0 002-2V7a2 2 0 00-2-2H9"/>
+              </svg>
+              Ticket Options
+              <FiChevronDown className={`w-4 h-4 transition-transform ${showTicketOptionsDropdown ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {/* Ticket Options Dropdown Menu */}
+            {showTicketOptionsDropdown && (
+              <div className="absolute left-0 top-full mt-2 w-48 bg-[#232326] border border-gray-700 rounded-lg shadow-lg py-1 z-30">
+                <a
+                  onClick={() => {
+                    navigate('/admin/bulk-ieee-verification');
+                    setShowTicketOptionsDropdown(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-orange-700/20 transition-colors cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  IEEE Verify
+                </a>
+                <a
+                  onClick={() => {
+                    navigate('/admin/generate-tickets');
+                    setShowTicketOptionsDropdown(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-indigo-700/20 transition-colors cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                  </svg>
+                  Generate Tickets
+                </a>
+                <a
+                  onClick={() => {
+                    navigate('/admin/export-tickets');
+                    setShowTicketOptionsDropdown(false);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-teal-700/20 transition-colors cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  Export Tickets
+                </a>
+              </div>
+            )}
+          </div>
           
           {/* User Dropdown */}
           <div className="relative ml-4 pl-4 border-l border-gray-700 user-dropdown">
@@ -525,6 +567,8 @@ function TicketDetails() {
                   <FiBell className="w-4 h-4" />
                   Updates
                 </button>
+              <div className="space-y-1 pt-4 border-t border-gray-700">
+                <div className="text-sm text-gray-400 font-medium px-2 mb-2">Ticket Options</div>
                 <button
                   type="button"
                   onClick={(e) => {
@@ -555,6 +599,22 @@ function TicketDetails() {
                   </svg>
                   Generate Tickets
                 </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/admin/export-tickets');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-teal-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500 text-left"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  Export Tickets
+                </button>
+              </div>
               </div>
 
               {/* User Actions */}

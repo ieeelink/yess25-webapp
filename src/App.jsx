@@ -34,6 +34,7 @@ import PublicUpdates from "./pages/PublicUpdates";
 import PublicEvents from "./pages/PublicEvents";
 import BulkIEEEVerification from "./pages/BulkIEEEVerification";
 import GenerateTickets from "./pages/GenerateTickets";
+import ExportTickets from "./pages/ExportTickets";
 import TestLandingSection from "./components/TestLandingSection";
 import Schedule from "./pages/Schedule";
 import React from "react";
@@ -252,10 +253,8 @@ function App() {
           <Route path="tickets" element={<TicketDetails />} />
           <Route path="ticket-details" element={<TicketDetails />} />
           <Route path="generate-tickets" element={<GenerateTickets />} />
-          <Route
-            path="bulk-ieee-verification"
-            element={<BulkIEEEVerification />}
-          />
+          <Route path="export-tickets" element={<ExportTickets />} />
+          <Route path="bulk-ieee-verification" element={<BulkIEEEVerification />} />
           <Route path="add-event" element={<AddEvent />} />
           <Route path="update-event/:eventId" element={<UpdateEvent />} />
           <Route path="add-update" element={<AddUpdate />} />
