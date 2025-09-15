@@ -54,7 +54,7 @@ const LandingSection = ({
                 Check Registration Status
               </button>
               <p className="text-sm text-gray-300">
-                Ticket Swapping is available now!!
+                Ticket Swapping is closing soon!!
               </p>
             </div>
           </div>
