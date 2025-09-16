@@ -126,16 +126,16 @@ function Status({ closeAllPopups, userInput, ticketId, email }) {
   return (
     <>
       <div className="w-full max-w-2xl mx-auto my-16">
-        <div className="bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-lg border border-white/20">
-          <h1 className="text-4xl font-bold text-white mb-8 text-center">Payment Status</h1>
+        <div className="p-8 border rounded-lg shadow-lg bg-white/10 backdrop-blur-md border-white/20">
+          <h1 className="mb-8 text-4xl font-bold text-center text-white">Payment Status</h1>
           {loading ? (
             <div className="text-center text-white">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+              <div className="w-12 h-12 mx-auto border-b-2 border-white rounded-full animate-spin"></div>
               <p className="mt-4">Processing your registration...</p>
             </div>
           ) : error ? (
-            <div className="p-4 rounded-lg bg-red-500/20 border border-red-500">
-              <h2 className="text-2xl font-semibold text-white mb-2">Error</h2>
+            <div className="p-4 border border-red-500 rounded-lg bg-red-500/20">
+              <h2 className="mb-2 text-2xl font-semibold text-white">Error</h2>
               <p className="text-white/80">{error}</p>
             </div>
           ) : paymentStatus ? (
@@ -147,7 +147,7 @@ function Status({ closeAllPopups, userInput, ticketId, email }) {
                   ? 'bg-yellow-500/20 border border-yellow-500'
                   : 'bg-red-500/20 border border-red-500'
               }`}>
-                <h2 className="text-2xl font-semibold text-white mb-2">
+                <h2 className="mb-2 text-2xl font-semibold text-white">
                   {paymentStatus.status === 'paid' 
                     ? 'Payment Successful!' 
                     : paymentStatus.status === 'created'
@@ -158,13 +158,13 @@ function Status({ closeAllPopups, userInput, ticketId, email }) {
                   {getStatusMessage(paymentStatus.status)}
                 </p>
                 {paymentStatus.reason && (
-                  <p className="text-white/80 mt-2">
+                  <p className="mt-2 text-white/80">
                     <span className="font-medium">Reason:</span> {paymentStatus.reason}
                   </p>
                 )}
               </div>
-              <div className="bg-white/5 p-4 rounded-lg">
-                <h3 className="text-xl font-semibold text-white mb-4">Registration Details</h3>
+              <div className="p-4 rounded-lg bg-white/5">
+                <h3 className="mb-4 text-xl font-semibold text-white">Registration Details</h3>
                 <div className="space-y-2 text-white/80">
                   <p className='nunito-sans-body'><span className="font-medium">Name:</span> {paymentStatus.name}</p>
                   <p className='nunito-sans-body'><span className="font-medium">Email:</span> {paymentStatus.email}</p>
@@ -189,7 +189,7 @@ function Status({ closeAllPopups, userInput, ticketId, email }) {
                   >
                     {loading ? (
                       <>
-                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -214,18 +214,18 @@ function Status({ closeAllPopups, userInput, ticketId, email }) {
               onClick={() => {
                 if (closeAllPopups) closeAllPopups();
               }}
-              className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 text-lg font-semibold"
+              className="px-8 py-3 text-lg font-semibold text-white transition-colors bg-gray-600 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2"
             >
               Go to Home
             </button>
-            {paymentStatus && paymentStatus.status === 'paid' && globalInputType === 'ticketId' && (
+            {/* {paymentStatus && paymentStatus.status === 'paid' && globalInputType === 'ticketId' && (
               <button
                 onClick={() => setShowTransferForm(true)}
                 className="px-8 py-3 bg-[#fe4a56] text-white rounded-md hover:bg-[#8c0505] transition-colors focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2 text-lg font-semibold"
               >
                 Transfer Ticket
               </button>
-            )}
+            )} */}
           </div>
           
         </div>
