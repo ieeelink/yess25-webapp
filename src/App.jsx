@@ -32,6 +32,7 @@ import EventDetails from "./pages/EventDetails";
 import Updates from "./pages/Updates";
 import PublicUpdates from "./pages/PublicUpdates";
 import PublicEvents from "./pages/PublicEvents";
+import Venue from "./pages/Venue";
 import BulkIEEEVerification from "./pages/BulkIEEEVerification";
 import GenerateTickets from "./pages/GenerateTickets";
 import ExportTickets from "./pages/ExportTickets";
@@ -227,6 +228,15 @@ function App() {
           }
         />
         <Route
+          path="/venue"
+          element={
+            <>
+              <Venue />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
           path="/bulk_registration"
           element={
             <>
@@ -254,7 +264,10 @@ function App() {
           <Route path="ticket-details" element={<TicketDetails />} />
           <Route path="generate-tickets" element={<GenerateTickets />} />
           <Route path="export-tickets" element={<ExportTickets />} />
-          <Route path="bulk-ieee-verification" element={<BulkIEEEVerification />} />
+          <Route
+            path="bulk-ieee-verification"
+            element={<BulkIEEEVerification />}
+          />
           <Route path="add-event" element={<AddEvent />} />
           <Route path="update-event/:eventId" element={<UpdateEvent />} />
           <Route path="add-update" element={<AddUpdate />} />
@@ -376,9 +389,11 @@ function App() {
           path="/nextgen_innovare"
           element={<Redirect to="https://forms.gle/DXDAWS9EvFTz6xmp8" />}
         />
-       <Route
+        <Route
           path="/proshow"
-          element={<Redirect to="https://tiqr.events/e/YESS'25-Cultural-Night-(Non-NITC)-1382" />}
+          element={
+            <Redirect to="https://tiqr.events/e/YESS'25-Cultural-Night-(Non-NITC)-1382" />
+          }
         />
         <Route
           path="/ToS"
