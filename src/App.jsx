@@ -376,6 +376,10 @@ function App() {
           path="/nextgen_innovare"
           element={<Redirect to="https://forms.gle/DXDAWS9EvFTz6xmp8" />}
         />
+       <Route
+          path="/proshow"
+          element={<Redirect to="https://tiqr.events/e/YESS'25-Cultural-Night-(Non-NITC)-1382" />}
+        />
         <Route
           path="/ToS"
           element={
