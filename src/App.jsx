@@ -395,6 +395,18 @@ function App() {
             <Redirect to="https://tiqr.events/e/YESS'25-Cultural-Night-(Non-NITC)-1382" />
           }
         />
+      <Route
+          path="/tech_for_debate"
+          element={
+            <Redirect to="https://forms.gle/Ft75TeKwrzu16U877" />
+          }
+        />
+      <Route
+          path="/Archade"
+          element={
+            <Redirect to="https://docs.google.com/forms/d/e/1FAIpQLSfZ2m4A0yYlAS9cSdN7UhpOxh-RY5jo1Z3jozGdX0JTyOhBrQ/viewform?usp=header" />
+          }
+        />
         <Route
           path="/ToS"
           element={
