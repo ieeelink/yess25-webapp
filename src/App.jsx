@@ -36,6 +36,8 @@ import Venue from "./pages/Venue";
 import BulkIEEEVerification from "./pages/BulkIEEEVerification";
 import GenerateTickets from "./pages/GenerateTickets";
 import ExportTickets from "./pages/ExportTickets";
+import PaymentCallback from "./pages/PaymentCallback";
+import PaymentCancelled from "./pages/PaymentCancelled";
 import TestLandingSection from "./components/TestLandingSection";
 import Schedule from "./pages/Schedule";
 import React from "react";
@@ -241,6 +243,24 @@ function App() {
           element={
             <>
               <BulkRegistrationGuidelines />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="/payment-success"
+          element={
+            <>
+              <PaymentCallback />
+              <FooterWrapper />
+            </>
+          }
+        />
+        <Route
+          path="/payment-cancelled"
+          element={
+            <>
+              <PaymentCancelled />
               <FooterWrapper />
             </>
           }
