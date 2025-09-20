@@ -126,8 +126,8 @@ const INLINE_EVENTS = [
     id: "yess-4",
     title: "MYOSA EXHIBITION (IEEE SENSORS COUNCIL)",
     description: "",
-    venue: "BHASKARA HALL",
-    location: "BHASKARA HALL",
+    venue: "ELHC 201",
+    location: "ELHC 201",
     speaker: "",
   },
   {
@@ -533,8 +533,8 @@ const INLINE_EVENTS = [
     id: "yess-54",
     title: "MYOSA EXHIBITION (IEEE SENSORS COUNCIL)",
     description: "",
-    venue: "BHASKARA HALL",
-    location: "BHASKARA HALL",
+    venue: "ELHC 201",
+    location: "ELHC 201",
     speaker: "",
   },
   {
@@ -717,8 +717,6 @@ function Venue() {
   const [venues, setVenues] = useState([]);
   const [selectedVenue, setSelectedVenue] = useState("");
   const [selectedEventId, setSelectedEventId] = useState(null);
-  const [mode, setMode] = useState("venue"); // 'venue' or 'event'
-  const [eventQuery, setEventQuery] = useState("");
   const [isScrolled, setIsScrolled] = useState(true);
   const mapRef = useRef(null);
 
@@ -870,18 +868,7 @@ function Venue() {
     }
   }, [selectedVenue, selectedEventId]);
 
-  const listToRender =
-    mode === "event" && eventQuery.trim().length > 0
-      ? events.filter((ev) => {
-          const q = eventQuery.trim().toLowerCase();
-          const inTitle = (ev.title || "").toLowerCase().includes(q);
-          const inSpeaker = (ev.speaker || "").toLowerCase().includes(q);
-          const inVenue = (ev.venue || ev.location || "")
-            .toLowerCase()
-            .includes(q);
-          return inTitle || inSpeaker || inVenue;
-        })
-      : events;
+  const listToRender = events;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white relative overflow-x-hidden">
@@ -899,8 +886,7 @@ function Venue() {
                 Venues & Schedules
               </h2>
               <p className="text-white/80 mt-2 max-w-2xl mx-auto">
-                Select a venue to view all scheduled events and the location on
-                map.
+                Select a venue to view all scheduled events and location on map.
               </p>
             </div>
 
@@ -908,166 +894,37 @@ function Venue() {
               <div className="lg:col-span-1">
                 <div className="bg-black/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-4">
                   <div className="mt-2 text-sm text-gray-300">
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium">Search options</div>
-                      <div className="text-xs text-gray-400">Choose mode</div>
-                    </div>
-                    <div className="mt-2 flex gap-2">
-                      <button
-                        onClick={() => setMode("venue")}
-                        className={`px-3 py-1 rounded-lg text-sm font-medium border ${
-                          mode === "venue"
-                            ? "bg-[#fe4a56] text-white border-[#fe4a56]"
-                            : "text-gray-300 border-gray-700/40"
-                        }`}
+                    <label className="block text-sm font-medium text-gray-300 mt-4 mb-2">
+                      Choose Venue
+                    </label>
+                    <div className="relative">
+                      <select
+                        className="w-full appearance-none bg-transparent border border-gray-700/40 px-4 py-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
+                        value={selectedVenue}
+                        onChange={(e) => setSelectedVenue(e.target.value)}
                       >
-                        Search by Venue
-                      </button>
-                      <button
-                        onClick={() => setMode("event")}
-                        className={`px-3 py-1 rounded-lg text-sm font-medium border ${
-                          mode === "event"
-                            ? "bg-[#fe4a56] text-white border-[#fe4a56]"
-                            : "text-gray-300 border-gray-700/40"
-                        }`}
-                      >
-                        Search by Event
-                      </button>
-                    </div>
-
-                    {mode === "venue" ? (
-                      <>
-                        <label className="block text-sm font-medium text-gray-300 mt-4 mb-2">
-                          Choose Venue
-                        </label>
-                        <div className="relative">
-                          <select
-                            className="w-full appearance-none bg-transparent border border-gray-700/40 px-4 py-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#fe4a56]"
-                            value={selectedVenue}
-                            onChange={(e) => setSelectedVenue(e.target.value)}
+                        {venues.map((v) => (
+                          <option
+                            key={v.name}
+                            value={v.name}
+                            className="text-black"
                           >
-                            {venues.map((v) => (
-                              <option
-                                key={v.name}
-                                value={v.name}
-                                className="text-black"
-                              >
-                                {v.name}
-                              </option>
-                            ))}
-                          </select>
-                          <FiChevronDown className="absolute right-3 top-3 text-gray-300 pointer-events-none" />
-                        </div>
-                        <div className="mt-3 text-xs text-gray-400">
-                          <div className="font-medium">
-                            Events at this venue
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            {eventsForSelectedVenue.length} event(s)
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="mt-3 text-xs text-gray-400">
-                        <div className="font-medium">Search events</div>
-                        <div className="text-xs mt-1 relative">
-                          <input
-                            value={eventQuery}
-                            onChange={(e) => setEventQuery(e.target.value)}
-                            placeholder="Search by event title, speaker or venue"
-                            className="w-full bg-transparent border border-gray-700/40 px-3 py-2 rounded-lg text-white focus:outline-none pr-10"
-                          />
-                          {eventQuery && (
-                            <button
-                              onClick={() => {
-                                setEventQuery("");
-                                setSelectedEventId(null);
-                              }}
-                              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
-                              aria-label="Clear search"
-                            >
-                              ✕
-                            </button>
-                          )}
-                        </div>
-                        {/* No-results message when search active but no matches */}
-                        {mode === "event" &&
-                          eventQuery.trim() &&
-                          listToRender.length === 0 && (
-                            <div className="mt-2 text-xs text-gray-400">
-                              No events match your search.
-                              <button
-                                onClick={() => {
-                                  setEventQuery("");
-                                  setSelectedEventId(null);
-                                }}
-                                className="ml-2 text-sm text-[#fe4a56] underline"
-                              >
-                                Clear
-                              </button>
-                            </div>
-                          )}
+                            {v.name}
+                          </option>
+                        ))}
+                      </select>
+                      <FiChevronDown className="absolute right-3 top-3 text-gray-300 pointer-events-none" />
+                    </div>
+                    <div className="mt-3 text-xs text-gray-400">
+                      <div className="font-medium">
+                        Events at this venue
                       </div>
-                    )}
+                      <div className="text-xs text-gray-400">
+                        {eventsForSelectedVenue.length} event(s)
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="mt-4">
-                    <div className="text-sm text-gray-300 font-medium mb-2">
-                      All events
-                    </div>
-                    <div className="space-y-2 max-h-64 overflow-auto pr-2">
-                      {loading ? (
-                        <div className="flex items-center gap-2 text-gray-300">
-                          <div className="h-6 w-6 rounded-full border-2 border-[#fe4a56] border-t-transparent animate-spin"></div>
-                          Loading events...
-                        </div>
-                      ) : error ? (
-                        <div className="text-red-400">{error}</div>
-                      ) : events.length === 0 ? (
-                        <div className="text-gray-400">
-                          No events available.
-                        </div>
-                      ) : (
-                        listToRender.map((ev) => {
-                          const evId = ev.id || ev._id;
-                          const evVenue = ev.venue || ev.location || "";
-                          const isSelected = selectedEventId === evId;
-                          return (
-                            <button
-                              key={evId}
-                              onClick={() => {
-                                const nextSelected = isSelected ? null : evId;
-                                setSelectedEventId(nextSelected);
-                                if (nextSelected) {
-                                  setMode("event");
-                                  if (evVenue && evVenue.trim().length > 0)
-                                    setSelectedVenue(evVenue);
-                                }
-                              }}
-                              className={`w-full text-left flex items-start gap-3 bg-black/30 p-3 rounded-lg border ${
-                                isSelected
-                                  ? "border-[#fe4a56]"
-                                  : "border-gray-700/40"
-                              }`}
-                            >
-                              <div className="flex-1">
-                                <div className="flex items-center justify-between gap-3">
-                                  <h4 className="text-sm font-semibold text-white line-clamp-2">
-                                    {ev.title}
-                                  </h4>
-                                </div>
-                                {evVenue && (
-                                  <div className="text-xs text-gray-400 mt-1">
-                                    {evVenue}
-                                  </div>
-                                )}
-                              </div>
-                            </button>
-                          );
-                        })
-                      )}
-                    </div>
-                  </div>
                 </div>
               </div>
 
@@ -1130,36 +987,6 @@ function Venue() {
                     </div>
                   )}
 
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-300">
-                      Events at{" "}
-                      <span className="font-semibold">{selectedVenue}</span>
-                    </p>
-                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {eventsForSelectedVenue.map((ev) => (
-                        <div
-                          key={ev.id || ev._id}
-                          className="bg-black/30 p-3 rounded-lg border border-gray-700/40"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-white">
-                                {ev.title}
-                              </p>
-                              <p className="text-xs text-gray-400">
-                                {ev.venue || ev.location}
-                              </p>
-                            </div>
-                            {ev.speaker && (
-                              <div className="text-xs text-gray-400">
-                                {ev.speaker}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
