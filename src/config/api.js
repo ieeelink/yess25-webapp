@@ -49,6 +49,10 @@ export const API_ENDPOINTS = {
   VERIFY_IEEE: (ticketId) => `${API_BASE_URL}/admin/verifyieee/${ticketId}`,
   BULK_VERIFY_IEEE_SSE: `${API_BASE_URL}/admin/bulk-verify-ieee-sse`,
   UNVERIFIED_IEEE: `${API_BASE_URL}/admin/unverified-ieee`,
+  
+  // Attendance
+  ADMIN_MARK_ATTENDANCE: `${API_BASE_URL}/admin/mark-attendance`,
+  ADMIN_MARK_ATTENDANCE_BULK: `${API_BASE_URL}/admin/mark-attendance-bulk`,
 };
 
 // Export the base URL for custom endpoints

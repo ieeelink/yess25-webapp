@@ -7,6 +7,7 @@ const LandingSection = ({
   isScrolled,
   onOpenTicketForm,
   onOpenCheckStatus,
+  onOpenCertificateDownload,
 }) => {
   const navigate = useNavigate();
   return (
@@ -30,16 +31,16 @@ const LandingSection = ({
             Yearly Engineering Students Summit
           </p>
           <button
-            onClick={() => navigate("/schedule")}
+            onClick={onOpenCertificateDownload}
             className="inline-block px-8 py-3 text-lg hover:bg-transparent border-2 border-[#fe4a56]  rounded-full font-semibold bg-[#fe4a56] text-white transition-all duration-300 hover:scale-105 cursor-pointer">
-            View Schedule
+            Download Certificate
           </button>
           {/* View Map CTA */}
-          <button
+          {/* <button
             onClick={() => navigate("/venue")}
             className="inline-block px-8 py-3 text-lg hover:bg-transparent border-2 border-[#fe4a56] rounded-full font-semibold bg-[#fe4a56] text-white transition-all duration-300 hover:scale-105 cursor-pointer mt-2">
             View Map
-          </button>
+          </button> */}
           {/* Event Location and Date - Single Line */}
           <div className="flex flex-col items-center justify-center gap-2 mb-2 text-sm sm:flex-row sm:gap-6 text-white/90 sm:text-base lg:text-lg">
             <span className="flex items-center gap-1">
@@ -51,7 +52,7 @@ const LandingSection = ({
               <span>20 September 2025</span>
             </span>
           </div>
-          <div className="pt-2">
+          {/* <div className="pt-2">
             <div className="mt-3">
               <button
                 type="button"
@@ -63,7 +64,7 @@ const LandingSection = ({
                 Ticket Swapping is closed!!
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

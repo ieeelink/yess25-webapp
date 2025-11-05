@@ -10,6 +10,7 @@ import AboutSection from '../components/AboutSection';
 import HighlightsSection from '../components/HighlightsSection';
 import TicketForm from '../components/TicketForm';
 import CheckStatus from '../pages/CheckStatus';
+import CertificateDownload from '../components/CertificateDownload';
 import UpdatesSection from '../components/UpdatesSection';
 import MeetTheSpeakers from '../components/MeetTheSpeakers';
 
@@ -17,7 +18,9 @@ const Home2 = ({
   showTicketForm,
   setShowTicketForm,
   showCheckStatus,
-  setShowCheckStatus
+  setShowCheckStatus,
+  showCertificateDownload,
+  setShowCertificateDownload
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
@@ -217,7 +220,7 @@ const Home2 = ({
           <BgAnimation />
         </div>
         <Header2 isScrolled={isScrolled} onNavigate={scrollToSection}/>
-        <LandingSection scrollToSection={scrollToSection} isScrolled={isScrolled} onOpenTicketForm={() => setShowTicketForm(true)} onOpenCheckStatus={() => setShowCheckStatus(true)} />
+        <LandingSection scrollToSection={scrollToSection} isScrolled={isScrolled} onOpenTicketForm={() => setShowTicketForm(true)} onOpenCheckStatus={() => setShowCheckStatus(true)} onOpenCertificateDownload={() => setShowCertificateDownload(true)} />
         <PartnersSection images={partnerImages} />
         <UpdatesSection />
         <ExploreEventsSection />
@@ -233,6 +236,11 @@ const Home2 = ({
         {showCheckStatus && (
           <div className="fixed inset-0 z-[9999] flex items-start px-2 md:items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto py-8 md:pt-0">
               <CheckStatus onClose={() => setShowCheckStatus(false)} />
+          </div>
+        )}
+        {showCertificateDownload && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto p-4">
+              <CertificateDownload onClose={() => setShowCertificateDownload(false)} />
           </div>
         )}
       </div>

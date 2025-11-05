@@ -446,4 +446,446 @@ This project is developed for IEEE YESS'25. All rights reserved by IEEE LINK and
 
 ---
 
+# 📚 Additional Documentation
+
+## 🌍 Environment Configuration Guide
+
+### Overview
+This project uses environment-based configuration to automatically switch between localhost and production backend URLs.
+
+### How it Works
+- **Development**: Uses `http://localhost:5000/api` when running `npm run dev`
+- **Production**: Uses `https://yess25-backend.up.railway.app/api` when building for production
+- **Railway Deployment**: Automatically uses production environment variables
+
+### Environment Files
+
+#### Setup for Local Development
+1. Copy `.env.development.example` to `.env.development`
+2. Update the values with your development keys
+
+#### `.env.development` (for local development)
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+VITE_RAZORPAY_KEY_ID=rzp_test_xgawYkbdrfISRM
+VITE_IMGBB_API_KEY=0e9cde7ae8a30c258f12071cc6a4eced
+```
+
+#### `.env.production` (for production builds)
+```env
+VITE_API_BASE_URL=https://yess25-backend.up.railway.app/api
+VITE_RAZORPAY_KEY_ID=rzp_live_sTkXOTd2O2D904
+VITE_IMGBB_API_KEY=0e9cde7ae8a30c258f12071cc6a4eced
+```
+
+#### `.env` (fallback/default)
+Contains production values as fallback
+
+### Usage
+
+#### For Development
+```bash
+npm run dev
+# Automatically uses localhost backend
+```
+
+#### For Production Build
+```bash
+npm run build
+# Automatically uses production backend
+```
+
+#### For Development Build (if needed)
+```bash
+npm run build:dev
+# Uses localhost backend in build
+```
+
+### Railway Deployment
+
+Railway automatically detects the environment and uses the appropriate configuration:
+- Set environment variables in Railway's project dashboard (not in files)
+- Railway automatically sets `NODE_ENV=production`
+- Fallback values in `api.js` ensure the app works even without explicit env vars
+- No `.env` files needed in the repository
+
+#### Setting up Railway Environment Variables:
+1. Go to your Railway project dashboard
+2. Navigate to Variables tab
+3. Add these variables:
+   - `VITE_API_BASE_URL`: `https://yess25-backend.up.railway.app/api`
+   - `VITE_RAZORPAY_KEY_ID`: Your live Razorpay key
+   - `VITE_IMGBB_API_KEY`: Your ImgBB API key
+
+### API Configuration
+
+All API endpoints are centralized in `src/config/api.js`:
+- Import `API_ENDPOINTS` for predefined endpoints
+- Import `API_BASE` for custom endpoints
+- Environment info available via `getEnvironmentInfo()`
+
+### Benefits
+
+1. **No more manual URL switching** between development and production
+2. **Environment-specific configuration** (test vs live Razorpay keys)
+3. **Centralized API endpoint management**
+4. **Railway-compatible** - works seamlessly with Railway's deployment process
+5. **Development logging** - see current environment in browser console during development
+
+---
+
+## 🎓 Bulk IEEE Verification - Backend Implementation Guide
+
+### Overview
+The bulk IEEE verification feature processes CSV files containing IEEE membership data and matches them against registered tickets.
+
+### Data Structure
+The uploaded CSV can have either format:
+
+#### Format 1: Simple Template Format
+```csv
+ieee_number,first_name,last_name,institution
+99739023,ALEESHA,SHAMINS,College of Engineering-Perumon
+100490042,Joshua,Bose,
+```
+
+#### Format 2: Official IEEE Export Format
+```csv
+School Name,Member/Customer Number,Last Name,First Name
+College of Engineering-Perumon,99739023,SHAMINS,ALEESHA
+,100490042,Bose,Joshua
+```
+
+### API Endpoint: `/api/bulk-ieee-verify`
+
+#### Request
+- **Method**: POST
+- **Content-Type**: multipart/form-data
+- **Field**: `ieeeFile` (the uploaded CSV/Excel file)
+- **Headers**: Authorization: Bearer {token}
+
+#### Response Format
+```json
+{
+  "verified": 25,
+  "failed": 3,
+  "notFound": 15,
+  "total": 43,
+  "details": [
+    {
+      "ieee_number": "99739023",
+      "name": "ALEESHA SHAMINS",
+      "status": "verified",
+      "message": "IEEE membership verified and ticket updated"
+    },
+    {
+      "ieee_number": "100490042",
+      "name": "Joshua Bose", 
+      "status": "not_found",
+      "message": "No matching ticket found for this IEEE member"
+    }
+  ]
+}
+```
+
+### Backend Processing Logic
+
+#### 1. File Processing
+```javascript
+// Parse CSV file (handle both formats)
+const records = parseCsv(uploadedFile);
+
+// Normalize to standard format
+const normalizedRecords = records.map(record => ({
+  ieee_number: record['Member/Customer Number'] || record['ieee_number'],
+  first_name: record['First Name'] || record['first_name'], 
+  last_name: record['Last Name'] || record['last_name'],
+  institution: record['School Name'] || record['institution']
+}));
+```
+
+#### 2. Verification Logic
+```javascript
+const results = {
+  verified: 0,
+  failed: 0, 
+  notFound: 0,
+  total: normalizedRecords.length,
+  details: []
+};
+
+for (const member of normalizedRecords) {
+  // Find matching ticket by IEEE number and name similarity
+  const ticket = await findMatchingTicket(member);
+  
+  if (!ticket) {
+    results.notFound++;
+    results.details.push({
+      ieee_number: member.ieee_number,
+      name: `${member.first_name} ${member.last_name}`,
+      status: 'not_found',
+      message: 'No matching ticket found for this IEEE member'
+    });
+    continue;
+  }
+  
+  // Verify IEEE number matches and update ticket
+  if (ticket.ieeeMembershipNumber === member.ieee_number) {
+    await updateTicketVerification(ticket._id, true);
+    results.verified++;
+  } else {
+    results.failed++;
+  }
+}
+```
+
+#### 3. Matching Strategy
+```javascript
+async function findMatchingTicket(member) {
+  // Strategy 1: Exact IEEE number match
+  let ticket = await Ticket.findOne({ 
+    ieeeMembershipNumber: member.ieee_number,
+    isIEEEMember: 'yes'
+  });
+  
+  if (ticket) return ticket;
+  
+  // Strategy 2: Name similarity + no IEEE number in ticket yet
+  const nameVariations = generateNameVariations(member.first_name, member.last_name);
+  
+  ticket = await Ticket.findOne({
+    isIEEEMember: 'yes',
+    $or: nameVariations.map(name => ({
+      fullName: { $regex: name, $options: 'i' }
+    })),
+    $or: [
+      { ieeeMembershipNumber: { $exists: false } },
+      { ieeeMembershipNumber: '' },
+      { ieeeMembershipNumber: null }
+    ]
+  });
+  
+  return ticket;
+}
+```
+
+### Key Features
+1. **Flexible Format Support**: Handles both template and official IEEE export formats
+2. **Smart Matching**: Uses IEEE number and name similarity for matching
+3. **Detailed Results**: Provides specific feedback for each record
+4. **Bulk Processing**: Efficiently handles large files
+5. **Error Handling**: Graceful handling of malformed data
+
+### Security Considerations
+- Validate file size (max 10MB)
+- Sanitize CSV input
+- Require admin authentication
+- Log all verification activities
+- Rate limiting for bulk operations
+
+---
+
+## ✅ Mark Attendance - Bulk CSV Upload with SSE Streaming
+
+> **Complete documentation for the Mark Attendance feature with real-time Server-Sent Events (SSE) integration**
+
+### Overview
+
+The Mark Attendance feature allows administrators to mark attendance for multiple students in bulk by uploading a CSV file. The system uses **Server-Sent Events (SSE)** for real-time progress updates, providing instant feedback as each ticket is processed.
+
+#### Key Capabilities:
+- ✅ Bulk attendance marking via CSV upload
+- 📊 Real-time progress tracking with SSE
+- 🎨 Live visual feedback for each ticket
+- 📈 Statistics dashboard (success/skipped/failed)
+- 🔄 Batch processing (20 tickets per batch)
+- ⚡ Instant status updates without page refresh
+
+### Features
+
+#### 1. CSV File Upload
+- Drag-and-drop or click-to-upload interface
+- CSV file validation (must end with .csv)
+- Automatic parsing of CSV data
+- Preview of parsed data (first 5 entries)
+- File removal option with reset functionality
+- Format instructions displayed inline
+
+#### 2. Real-Time Processing with SSE
+- EventSource connection for live updates
+- Sends CSV data as JSON to backend
+- Listens for 8 different event types
+- Handles connection errors gracefully
+- Automatically closes connection on completion
+- Progress bar with percentage and count
+
+#### 3. Visual Feedback System
+- 🟢 **Green cards** - Successfully marked attendance
+- 🟡 **Yellow cards** - Already marked (skipped)
+- 🔴 **Red cards** - Failed to process
+- **Batch indicator** - Shows current batch being processed
+- **Live statistics** - Updates in real-time
+- **Progress bar** - Animated with smooth transitions
+
+### SSE Event Structure
+
+The backend sends 8 different event types:
+
+#### 1. `start` - Processing Begins
+```json
+{
+  "message": "Bulk attendance marking started",
+  "totalTickets": 100,
+  "timestamp": "2025-10-21T10:30:00.000Z"
+}
+```
+
+#### 2. `batch-start` - Batch Processing Begins
+```json
+{
+  "batchNumber": 1,
+  "totalBatches": 5,
+  "batchSize": 20,
+  "startIndex": 1,
+  "endIndex": 20,
+  "timestamp": "2025-10-21T10:30:01.000Z"
+}
+```
+
+#### 3. `processing` - Individual Ticket Check
+```json
+{
+  "ticketId": "YESS25001",
+  "index": 1,
+  "total": 100,
+  "status": "checking",
+  "timestamp": "2025-10-21T10:30:02.000Z"
+}
+```
+
+#### 4. `success` ✅ - Attendance Marked Successfully
+```json
+{
+  "ticketId": "YESS25001",
+  "yessTicketId": "YESS25001",
+  "fullName": "John Doe",
+  "email": "john@example.com",
+  "institution": "ABC College",
+  "index": 1,
+  "total": 100,
+  "status": "completed",
+  "attendanceMarked": true,
+  "attendanceMarkedAt": "2025-10-21T10:30:02.500Z",
+  "timestamp": "2025-10-21T10:30:02.500Z"
+}
+```
+
+#### 5. `skipped` ⚠️ - Already Marked
+```json
+{
+  "ticketId": "YESS25002",
+  "yessTicketId": "YESS25002",
+  "fullName": "Jane Smith",
+  "email": "jane@example.com",
+  "index": 2,
+  "total": 100,
+  "status": "already-marked",
+  "message": "Attendance already marked",
+  "timestamp": "2025-10-21T10:30:03.000Z"
+}
+```
+
+#### 6. `error` ❌ - Processing Failed
+```json
+{
+  "ticketId": "YESS25003",
+  "index": 3,
+  "total": 100,
+  "status": "failed",
+  "error": "Ticket not found: YESS25003",
+  "timestamp": "2025-10-21T10:30:03.500Z"
+}
+```
+
+#### 7. `batch-complete` - Batch Finished
+```json
+{
+  "batchNumber": 1,
+  "totalBatches": 5,
+  "completedTickets": 20,
+  "totalTickets": 100,
+  "successCount": 18,
+  "errorCount": 2,
+  "timestamp": "2025-10-21T10:30:05.000Z"
+}
+```
+
+#### 8. `complete` 🎉 - All Tickets Processed
+```json
+{
+  "message": "Bulk attendance marking completed",
+  "totalTickets": 100,
+  "successCount": 95,
+  "errorCount": 3,
+  "skippedCount": 2,
+  "timestamp": "2025-10-21T10:30:30.000Z"
+}
+```
+
+### User Guide
+
+#### How to Use
+
+1. **Prepare CSV File**: Create a CSV file with the following format:
+   ```csv
+   ticketId
+   YESS25001
+   YESS25002
+   YESS25003
+   ```
+
+2. **Upload File**: Navigate to "Mark Attendance" page from admin dashboard and upload your CSV file
+
+3. **Review Preview**: Check the number of entries found and verify ticket IDs
+
+4. **Process Attendance**: Click "Mark Attendance for X Entries" button and watch real-time progress
+
+5. **Review Results**: After completion, review the summary with success/skipped/failed counts
+
+### API Endpoint
+
+**Endpoint:** `POST /api/admin/mark-attendance-bulk`
+
+**Headers:**
+```
+Authorization: Bearer {token}
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "tickets": [
+    { "ticketId": "YESS25001" },
+    { "ticketId": "YESS25002" }
+  ]
+}
+```
+
+### Files Modified
+
+1. **`/src/pages/MarkAttendance.jsx`** - Complete implementation with CSV upload and SSE handling
+2. **`/src/config/api.js`** - Added `ADMIN_MARK_ATTENDANCE_BULK` endpoint
+3. **`/src/pages/TicketDetails.jsx`** - Added "Mark Attendance" navigation links
+4. **`/src/App.jsx`** - Added MarkAttendance route
+
+### Security Considerations
+- JWT authentication required for all operations
+- Token validation on backend for SSE connection
+- File type validation (only .csv accepted)
+- XSS prevention (all user input sanitized)
+- CORS configuration for SSE endpoints
+
+---
+
 **Built with ❤️ for the engineering student community by IEEE LINK**

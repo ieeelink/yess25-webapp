@@ -36,6 +36,7 @@ import Venue from "./pages/Venue";
 import BulkIEEEVerification from "./pages/BulkIEEEVerification";
 import GenerateTickets from "./pages/GenerateTickets";
 import ExportTickets from "./pages/ExportTickets";
+import MarkAttendance from "./pages/MarkAttendance";
 import PaymentCallback from "./pages/PaymentCallback";
 import PaymentCancelled from "./pages/PaymentCancelled";
 import TestLandingSection from "./components/TestLandingSection";
@@ -114,10 +115,11 @@ function App() {
   const [showOverlay, setShowOverlay] = useState(false);
   const [showTicketForm, setShowTicketForm] = useState(false);
   const [showCheckStatus, setShowCheckStatus] = useState(false);
+  const [showCertificateDownload, setShowCertificateDownload] = useState(false);
 
   // Disable background scroll when any overlay/modal is open
   React.useEffect(() => {
-    if (showOverlay || showTicketForm || showCheckStatus) {
+    if (showOverlay || showTicketForm || showCheckStatus || showCertificateDownload) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -126,7 +128,7 @@ function App() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [showOverlay, showTicketForm, showCheckStatus]);
+  }, [showOverlay, showTicketForm, showCheckStatus, showCertificateDownload]);
 
   useEffect(() => {
     AOS.init({
@@ -139,6 +141,7 @@ function App() {
   const closeAllPopups = () => {
     setShowTicketForm(false);
     setShowCheckStatus(false);
+    setShowCertificateDownload(false);
   };
 
   // FooterWrapper is a child of Router, so useLocation is safe here
@@ -161,6 +164,8 @@ function App() {
                 setShowTicketForm={setShowTicketForm}
                 showCheckStatus={showCheckStatus}
                 setShowCheckStatus={setShowCheckStatus}
+                showCertificateDownload={showCertificateDownload}
+                setShowCertificateDownload={setShowCertificateDownload}
               />
               <FooterWrapper />
             </>
@@ -294,6 +299,7 @@ function App() {
           <Route path="update-update/:updateId" element={<UpdateUpdate />} />
           <Route path="event-details" element={<EventDetails />} />
           <Route path="updates" element={<Updates />} />
+          <Route path="mark-attendance" element={<MarkAttendance />} />
         </Route>
         {/* Redirects */}
         <Route

@@ -344,6 +344,16 @@ function TicketDetails() {
             Updates
           </a>
           
+          <a
+            onClick={() => navigate('/admin/mark-attendance')}
+            className="flex items-center gap-2 text-gray-300 hover:text-white hover:bg-green-700/20 px-3 py-2 rounded-lg font-medium transition-colors cursor-pointer border border-transparent hover:border-green-700/50"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Mark Attendance
+          </a>
+          
           {/* Ticket Options Dropdown */}
           <div className="relative ticket-options-dropdown">
             <button
@@ -566,6 +576,21 @@ function TicketDetails() {
                 >
                   <FiBell className="w-4 h-4" />
                   Updates
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate('/admin/mark-attendance');
+                    setShowMobileMenu(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-green-700/20 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500 text-left"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                  Mark Attendance
                 </button>
               <div className="space-y-1 pt-4 border-t border-gray-700">
                 <div className="text-sm text-gray-400 font-medium px-2 mb-2">Ticket Options</div>
