@@ -30,11 +30,11 @@ const LandingSection = ({
           <p className="text-lg text-white lg:text-2xl ">
             Yearly Engineering Students Summit
           </p>
-          <button
+          {/* <button
             onClick={onOpenCertificateDownload}
             className="inline-block px-8 py-3 text-lg hover:bg-transparent border-2 border-[#fe4a56]  rounded-full font-semibold bg-[#fe4a56] text-white transition-all duration-300 hover:scale-105 cursor-pointer">
             Download Certificate
-          </button>
+          </button> */}
           {/* View Map CTA */}
           {/* <button
             onClick={() => navigate("/venue")}
