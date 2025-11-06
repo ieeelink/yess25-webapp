@@ -15,6 +15,7 @@ function MarkAttendance() {
   const [statistics, setStatistics] = useState({ success: 0, error: 0, skipped: 0 });
   const [currentBatch, setCurrentBatch] = useState({ number: 0, total: 0 });
   const [showCompletionStats, setShowCompletionStats] = useState(false);
+  const [filterType, setFilterType] = useState('all'); // 'all', 'success', 'skipped', 'error'
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const readerRef = useRef(null);
@@ -99,6 +100,7 @@ function MarkAttendance() {
     setStatistics({ success: 0, error: 0, skipped: 0 });
     setCurrentBatch({ number: 0, total: 0 });
     setShowCompletionStats(false);
+    setFilterType('all');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -118,6 +120,7 @@ function MarkAttendance() {
     setStatistics({ success: 0, error: 0, skipped: 0 });
     setCurrentBatch({ number: 0, total: 0 });
     setMessage(null);
+    setFilterType('all');
 
     try {
       const token = localStorage.getItem('token');
@@ -417,7 +420,7 @@ function MarkAttendance() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#18181b]">
+    <div className="min-h-screen bg-[#18181b] nunito-sans-body">
       {/* Custom Scrollbar Styles */}
       <style dangerouslySetInnerHTML={{ __html: `
         .custom-scrollbar::-webkit-scrollbar {
@@ -449,30 +452,23 @@ function MarkAttendance() {
               <span className="font-medium">Back to Ticket Details</span>
             </button>
           </div>
-          <h1 className="text-2xl font-bold text-white">Mark Guest Attendance (Bulk)</h1>
+          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+            Mark Guest Attendance (Bulk)
+          </h1>
           <div className="w-48"></div> {/* Spacer for centering */}
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="p-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      <div className="h-[calc(100vh-81px)]">
+        <div className="h-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 h-full">
             
             {/* Left Column - Upload Section */}
-            <div className="bg-[#232326] rounded-xl shadow-lg p-6 flex flex-col border border-gray-700 h-[calc(100vh-180px)] sticky top-6">
-              <h2 className="text-xl font-semibold text-white mb-6">Upload Guest Check-In Data</h2>
-              
-              {/* Instructions */}
-              <div className="mb-6 p-4 bg-[#2a2a2c] rounded-lg border border-gray-600">
-                <h3 className="text-lg font-semibold text-blue-400 mb-3">Instructions:</h3>
-                <ul className="text-sm text-gray-300 space-y-2">
-                  <li>• Upload a CSV file with guest check-in data</li>
-                  <li>• Required columns: email, name, phone, checkInTime, checkInMethod</li>
-                  <li>• System will mark attendance for all guests in the file</li>
-                  <li>• Real-time progress updates during processing</li>
-                </ul>
-              </div>
+            <div className="flex flex-col h-full overflow-hidden p-6">
+              <h2 className="text-xl font-semibold text-white mb-6" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+                Upload Guest Check-In Data
+              </h2>
 
               {/* Status Messages */}
               {message && (
@@ -493,7 +489,7 @@ function MarkAttendance() {
               )}
 
               {/* File Upload Area */}
-              <div className="flex-1 min-h-0">
+              <div className="flex-1 min-h-0 overflow-hidden">
                 {!csvFile ? (
                   <div
                     className="relative border-2 border-dashed rounded-lg p-8 text-center transition-colors h-full flex flex-col justify-center border-gray-600 hover:border-gray-500"
@@ -517,7 +513,7 @@ function MarkAttendance() {
                     </div>
                   </div>
                 ) : (
-                  <div className="h-full flex flex-col">
+                  <div className="h-full flex flex-col overflow-hidden">
                     {/* Selected File Info */}
                     <div className="mb-4 bg-[#2a2a2c] border border-gray-600 rounded-lg p-4">
                       <div className="flex items-center justify-between">
@@ -540,9 +536,11 @@ function MarkAttendance() {
 
                     {/* Preview Data */}
                     {csvData.length > 0 && (
-                      <div className="flex-1 overflow-auto custom-scrollbar">
-                        <h4 className="text-white font-semibold mb-3">Preview (First 5 entries)</h4>
-                        <div className="space-y-2">
+                      <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0">
+                        <h4 className="text-white font-semibold mb-3" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+                          Preview (First 5 entries)
+                        </h4>
+                        <div className="space-y-2 pb-4">
                       {csvData.slice(0, 5).map((row, index) => (
                         <div key={index} className="bg-[#1a1a1a] p-3 rounded border border-gray-700">
                           <div className="grid grid-cols-2 gap-2 text-sm">
@@ -620,27 +618,38 @@ function MarkAttendance() {
             </div>
 
             {/* Right Column - Processing Results */}
-            <div className="bg-[#232326] rounded-xl shadow-lg p-6 flex flex-col border border-gray-700 min-h-[calc(100vh-180px)] max-h-[calc(100vh-180px)] overflow-y-auto custom-scrollbar">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-white">
+            <div className="flex flex-col h-full overflow-hidden p-6 border-l border-gray-700">
+              <div className="flex items-center justify-between mb-6 flex-shrink-0">
+                <h2 className="text-xl font-semibold text-white" style={{ fontFamily: 'Orbitron, sans-serif' }}>
                   {processingResults.length > 0 ? 'Processing Results' : 'Results Preview'}
                 </h2>
               </div>
 
-              <div className="flex-1 space-y-6">
+              <div className="flex-1 flex flex-col space-y-6 overflow-hidden min-h-0">
                 {/* Statistics Summary (shown during and after processing) */}
                 {(processing || showCompletionStats) && progress.total > 0 && (
-                  <div className="bg-[#1a1a1d] rounded-lg p-6 border border-gray-700">
+                  <div className="bg-[#1a1a1d] rounded-lg p-6 border border-gray-700 flex-shrink-0">
                     <div className="flex items-center gap-2 mb-4">
                       {showCompletionStats && !processing ? (
                         <>
                           <FiCheck className="w-6 h-6 text-green-400" />
-                          <h3 className="text-xl font-bold text-white">Processing Complete!</h3>
+                          <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+                            Processing Complete!
+                          </h3>
                         </>
                       ) : (
-                        <h3 className="text-xl font-bold text-white">Processing Status</h3>
+                        <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+                          Processing Status
+                        </h3>
                       )}
                     </div>
+
+                    {/* Hint text */}
+                    {processingResults.length > 0 && (
+                      <p className="text-xs text-gray-500 mb-3 italic">
+                        💡 Click on any statistic below to filter results
+                      </p>
+                    )}
               
                     {/* Batch Info (only during processing) */}
                     {processing && currentBatch.total > 0 && (
@@ -651,9 +660,16 @@ function MarkAttendance() {
                       </div>
                     )}
 
-                    {/* Statistics Grid */}
+                    {/* Statistics Grid - Clickable */}
                     <div className="grid grid-cols-3 gap-4 mb-4">
-                      <div className="bg-green-900/20 border border-green-700 rounded-lg p-4">
+                      <button
+                        onClick={() => setFilterType(filterType === 'success' ? 'all' : 'success')}
+                        className={`bg-green-900/20 border rounded-lg p-4 text-left transition-all duration-200 ${
+                          filterType === 'success' 
+                            ? 'border-green-400 ring-2 ring-green-400 shadow-lg' 
+                            : 'border-green-700 hover:border-green-500 hover:shadow-md'
+                        }`}
+                      >
                         <div className="flex items-center gap-2 mb-2">
                           <FiCheck className="w-5 h-5 text-green-400" />
                           <span className="text-gray-400 text-sm">Success</span>
@@ -662,9 +678,19 @@ function MarkAttendance() {
                         <p className="text-xs text-gray-400 mt-1">
                           {progress.total > 0 ? Math.round((statistics.success / progress.total) * 100) : 0}% of total
                         </p>
-                      </div>
+                        {filterType === 'success' && (
+                          <p className="text-xs text-green-400 mt-2 font-medium">✓ Showing filtered</p>
+                        )}
+                      </button>
                       
-                      <div className="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4">
+                      <button
+                        onClick={() => setFilterType(filterType === 'skipped' ? 'all' : 'skipped')}
+                        className={`bg-yellow-900/20 border rounded-lg p-4 text-left transition-all duration-200 ${
+                          filterType === 'skipped' 
+                            ? 'border-yellow-400 ring-2 ring-yellow-400 shadow-lg' 
+                            : 'border-yellow-700 hover:border-yellow-500 hover:shadow-md'
+                        }`}
+                      >
                         <div className="flex items-center gap-2 mb-2">
                           <FiAlertCircle className="w-5 h-5 text-yellow-400" />
                           <span className="text-gray-400 text-sm">Skipped</span>
@@ -673,9 +699,19 @@ function MarkAttendance() {
                         <p className="text-xs text-gray-400 mt-1">
                           {progress.total > 0 ? Math.round((statistics.skipped / progress.total) * 100) : 0}% of total
                         </p>
-                      </div>
+                        {filterType === 'skipped' && (
+                          <p className="text-xs text-yellow-400 mt-2 font-medium">✓ Showing filtered</p>
+                        )}
+                      </button>
                       
-                      <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
+                      <button
+                        onClick={() => setFilterType(filterType === 'error' ? 'all' : 'error')}
+                        className={`bg-red-900/20 border rounded-lg p-4 text-left transition-all duration-200 ${
+                          filterType === 'error' 
+                            ? 'border-red-400 ring-2 ring-red-400 shadow-lg' 
+                            : 'border-red-700 hover:border-red-500 hover:shadow-md'
+                        }`}
+                      >
                         <div className="flex items-center gap-2 mb-2">
                           <FiX className="w-5 h-5 text-red-400" />
                           <span className="text-gray-400 text-sm">Failed</span>
@@ -684,7 +720,10 @@ function MarkAttendance() {
                         <p className="text-xs text-gray-400 mt-1">
                           {progress.total > 0 ? Math.round((statistics.error / progress.total) * 100) : 0}% of total
                         </p>
-                      </div>
+                        {filterType === 'error' && (
+                          <p className="text-xs text-red-400 mt-2 font-medium">✓ Showing filtered</p>
+                        )}
+                      </button>
                     </div>
 
                     {/* Progress Bar */}
@@ -717,15 +756,48 @@ function MarkAttendance() {
 
           {/* Processing Results */}
           {processingResults.length > 0 && (
-            <div className="bg-[#232326] rounded-xl shadow-lg p-6 border border-gray-700">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-white">Processing Results</h3>
+            <div className="bg-[#232326] rounded-xl shadow-lg p-6 border border-gray-700 flex-1 flex flex-col overflow-hidden min-h-0">
+              <div className="flex items-center justify-between mb-4 flex-shrink-0">
+                <div>
+                  <h3 className="text-xl font-bold text-white" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+                    Processing Results
+                  </h3>
+                  {filterType !== 'all' && (
+                    <p className="text-sm text-gray-400 mt-1">
+                      Filtered: Showing only {filterType === 'success' ? 'successful' : filterType === 'skipped' ? 'skipped' : 'failed'} entries
+                      <button 
+                        onClick={() => setFilterType('all')}
+                        className="ml-2 text-blue-400 hover:text-blue-300 underline"
+                      >
+                        Show all
+                      </button>
+                    </p>
+                  )}
+                </div>
                 <div className="text-gray-400 text-sm">
-                  Showing {processingResults.length} of {progress.total} tickets
+                  Showing {processingResults.filter(r => filterType === 'all' || r.type === filterType).length} of {progress.total} entries
                 </div>
               </div>
-              <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
-                {processingResults.map((result, index) => (
+              <div className="space-y-2 overflow-y-auto custom-scrollbar flex-1 min-h-0">
+                {processingResults
+                  .filter(result => filterType === 'all' || result.type === filterType)
+                  .length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                      <FiAlertCircle className="w-12 h-12 mb-3 opacity-50" />
+                      <p className="text-base font-medium">No {filterType === 'all' ? '' : filterType} entries found</p>
+                      {filterType !== 'all' && (
+                        <button 
+                          onClick={() => setFilterType('all')}
+                          className="mt-2 text-blue-400 hover:text-blue-300 underline text-sm"
+                        >
+                          Show all results
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    processingResults
+                      .filter(result => filterType === 'all' || result.type === filterType)
+                      .map((result, index) => (
                   <div 
                     key={index}
                     className={`p-4 rounded-lg border ${
@@ -815,14 +887,15 @@ function MarkAttendance() {
                       </div>
                     </div>
                   </div>
-                    ))}
-                    </div>
-                  </div>
-                )}
+                      ))
+                  )}
+                </div>
+              </div>
+            )}
 
                 {/* Show placeholder when no results yet */}
                 {!processing && processingResults.length === 0 && (
-                  <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+                  <div className="flex flex-col items-center justify-center py-16 text-gray-500">
                     <FiCheck className="w-16 h-16 mb-4 opacity-50" />
                     <p className="text-lg font-medium">No results yet</p>
                     <p className="text-sm">Upload a CSV file and click "Mark Attendance" to begin</p>
