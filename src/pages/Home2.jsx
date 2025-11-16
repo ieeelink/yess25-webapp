@@ -238,11 +238,11 @@ const Home2 = ({
               <CheckStatus onClose={() => setShowCheckStatus(false)} />
           </div>
         )}
-        {showCertificateDownload && (
+        /* {showCertificateDownload && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm overflow-y-auto p-4">
               <CertificateDownload onClose={() => setShowCertificateDownload(false)} />
           </div>
-        )}
+        )} */
       </div>
       {/* Styles remain unchanged */}
     <style>{`
