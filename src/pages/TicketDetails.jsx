@@ -46,6 +46,8 @@ function TicketDetails() {
   const [editingTicket, setEditingTicket] = useState(null); // ticket being edited
   const [sendingEmail, setSendingEmail] = useState({}); // track email sending status per ticket
   const [emailStatus, setEmailStatus] = useState({}); // track email success/error messages
+  const [attendanceLoading, setAttendanceLoading] = useState({}); // track attendance marking in progress
+  const [attendanceStatus, setAttendanceStatus] = useState({}); // track attendance success/error messages
   const navigate = useNavigate();
 
   // Local filter states for UI components (synced with pagination hook)
@@ -235,6 +237,107 @@ function TicketDetails() {
     }
   };
 
+  const handleMarkAttendance = async (ticketId, email, isPresent) => {
+    setAttendanceLoading(prev => ({ ...prev, [ticketId]: true }));
+    setAttendanceStatus(prev => ({ ...prev, [ticketId]: null }));
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setAttendanceStatus(prev => ({ ...prev, [ticketId]: { type: 'error', message: 'Authentication required' } }));
+        return;
+      }
+
+      const response = await axios.post(
+        API_ENDPOINTS.ADMIN_MARK_ATTENDANCE,
+        {
+          email: email,
+          checkInMethod: 'MANUAL'
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      // Handle different response statuses
+      if (response.status === 200) {
+        const { status, message, data } = response.data;
+        
+        if (status === 'marked') {
+          setAttendanceStatus(prev => ({ 
+            ...prev, 
+            [ticketId]: { 
+              type: 'success', 
+              message: message || 'Attendance marked successfully!' 
+            } 
+          }));
+          
+          // Update the ticket in the local state
+          setTickets(prev => prev.map(t => 
+            t._id === ticketId 
+              ? { ...t, attendanceMarked: true, attendanceMarkedAt: data.attendanceMarkedAt }
+              : t
+          ));
+        } else if (status === 'already-marked') {
+          setAttendanceStatus(prev => ({ 
+            ...prev, 
+            [ticketId]: { 
+              type: 'info', 
+              message: message || 'Attendance already marked for this ticket' 
+            } 
+          }));
+        }
+      }
+
+      // Clear success/info message after 4 seconds
+      setTimeout(() => {
+        setAttendanceStatus(prev => ({ ...prev, [ticketId]: null }));
+      }, 4000);
+
+    } catch (err) {
+      console.error('Attendance marking error:', err);
+      
+      let errorMessage = 'Failed to mark attendance';
+      
+      if (err.response) {
+        const { status, message } = err.response.data || {};
+        
+        if (err.response.status === 401) {
+          errorMessage = 'Authentication failed. Please login again.';
+        } else if (err.response.status === 403) {
+          errorMessage = 'Not authorized to mark attendance';
+        } else if (err.response.status === 404 || status === 'not-found') {
+          errorMessage = message || 'Ticket not found for this email';
+        } else if (err.response.status === 400) {
+          errorMessage = message || 'Invalid request data';
+        } else if (err.response.status === 500) {
+          errorMessage = message || 'Server error. Please try again later.';
+        } else {
+          errorMessage = message || `Server error (${err.response.status})`;
+        }
+      } else if (err.request) {
+        errorMessage = 'Network error. Please check your connection.';
+      } else {
+        errorMessage = err.message || 'An unexpected error occurred';
+      }
+
+      setAttendanceStatus(prev => ({ 
+        ...prev, 
+        [ticketId]: { 
+          type: 'error', 
+          message: errorMessage
+        } 
+      }));
+
+      // Clear error message after 6 seconds
+      setTimeout(() => {
+        setAttendanceStatus(prev => ({ ...prev, [ticketId]: null }));
+      }, 6000);
+    } finally {
+      setAttendanceLoading(prev => ({ ...prev, [ticketId]: false }));
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('admin');
@@ -244,10 +347,6 @@ function TicketDetails() {
   const handleChangePassword = () => {
     setShowChangePassword(true);
   };
-
-  // Get unique institutions for dropdown
-  const institutions = Array.from(new Set(tickets.map(t => t.institution).filter(Boolean)));
-  const statuses = Array.from(new Set(tickets.map(t => t.status).filter(Boolean)));
 
   // Remove client-side filtering since it's now handled by the pagination hook
   const filteredTickets = tickets;
@@ -1032,6 +1131,9 @@ function TicketDetails() {
                       <span className={`px-2 py-1 rounded-full font-semibold text-xs inline-block whitespace-nowrap w-fit ${ticket.ieeeVerified === true ? 'bg-green-900/80 text-green-200' : 'bg-red-900/80 text-red-200'}`}>
                         Verified: {ticket.ieeeVerified === true ? 'Yes' : 'No'}
                       </span>
+                      <span className={`px-2 py-1 rounded-full font-semibold text-xs inline-block whitespace-nowrap w-fit ${ticket.attendanceMarked === true ? 'bg-green-900/80 text-green-200' : 'bg-red-900/80 text-red-200'}`}>
+                        Attendance: {ticket.attendanceMarked === true ? 'Yes' : 'No'}
+                      </span>
                     </div>
                   </div>
                   {/* Payment Details */}
@@ -1059,7 +1161,7 @@ function TicketDetails() {
                   </div>
                 </div>
                 {/* Action buttons below details, aligned right */}
-                <div className="flex justify-end mt-6 gap-3">
+                <div className="flex justify-end mt-6 gap-3 flex-wrap">
                   {/* Email status message */}
                   {emailStatus[ticket._id] && (
                     <div className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium ${
@@ -1070,6 +1172,31 @@ function TicketDetails() {
                       {emailStatus[ticket._id].message}
                     </div>
                   )}
+                  
+                  {/* Attendance status message */}
+                  {attendanceStatus[ticket._id] && (
+                    <div className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium ${
+                      attendanceStatus[ticket._id].type === 'success' 
+                        ? 'bg-green-900/20 text-green-400 border border-green-700' 
+                        : attendanceStatus[ticket._id].type === 'info'
+                        ? 'bg-blue-900/20 text-blue-400 border border-blue-700'
+                        : 'bg-red-900/20 text-red-400 border border-red-700'
+                    }`}>
+                      {attendanceStatus[ticket._id].message}
+                    </div>
+                  )}
+                  
+                  {/* Mark as Attended Button */}
+                  <button
+                    onClick={() => handleMarkAttendance(ticket._id, ticket.email, true)}
+                    disabled={attendanceLoading[ticket._id]}
+                    className="flex items-center gap-1 bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition-colors shadow border border-purple-600 hover:border-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2 nunito-sans-body disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    {attendanceLoading[ticket._id] ? 'Marking...' : 'Mark as Attended'}
+                  </button>
                   
                   <button
                     onClick={() => handleSendInvoiceEmail(ticket._id)}
