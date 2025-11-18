@@ -92,7 +92,7 @@ function CertificateDownload({ onClose }) {
       // ❌ Case 3: Attendance Not Marked (403)
       else if (response.status === 403 && result.error === 'Attendance not marked') {
         console.error('⚠️ Attendance not marked');
-        setError(result.message || 'Certificate can only be generated after attendance has been marked. Please check in at the event first.');
+        setError(result.message || 'Certificate can be provided to attendees only. If this is a mistake, please contact support.');
       } 
       // ❌ Case 4: Certificate Already Sent (409)
       else if (response.status === 409 && result.error === 'Certificate already sent') {
@@ -171,7 +171,7 @@ function CertificateDownload({ onClose }) {
         </h1>
         
         <div>
-          <label htmlFor="email" className="block text-sm sm:text-base font-medium text-white mb-2">
+          <label htmlFor="email" className="block text-sm sm:text-base font-medium text-white mb-2 nunito-sans-body">
             Email Address
           </label>
           <input
@@ -181,24 +181,24 @@ function CertificateDownload({ onClose }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-3 py-3 sm:py-2 bg-white/5 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white placeholder-gray-400 text-base sm:text-sm"
+            className="w-full px-3 py-3 sm:py-2 bg-white/5 border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:border-transparent text-white placeholder-gray-400 text-base sm:text-sm nunito-sans-body"
             placeholder="Enter your registered email address"
             disabled={isLoading || success}
           />
-          <p className="text-xs sm:text-sm text-gray-400 mt-1">
+          <p className="text-xs sm:text-sm text-gray-400 mt-1 nunito-sans-body">
             Enter the email address you used when registering for the event
           </p>
         </div>
 
         {error && (
           <div className="p-3 sm:p-4 bg-red-500/20 border border-red-500 rounded-md">
-            <p className="text-red-400 text-sm sm:text-base leading-relaxed">{error}</p>
+            <p className="text-red-400 text-sm sm:text-base leading-relaxed nunito-sans-body">{error}</p>
           </div>
         )}
 
         {success && (
           <div className="p-3 sm:p-4 bg-green-500/20 border border-green-500 rounded-md">
-            <p className="text-green-400 text-sm sm:text-base leading-relaxed">{success}</p>
+            <p className="text-green-400 text-sm sm:text-base leading-relaxed nunito-sans-body">{success}</p>
           </div>
         )}
 
@@ -212,7 +212,7 @@ function CertificateDownload({ onClose }) {
                 navigate(-1);
               }
             }}
-            className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base underline order-2 sm:order-1 py-2"
+            className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base underline order-2 sm:order-1 py-2 nunito-sans-body"
             disabled={isLoading}
           >
             Cancel
@@ -221,7 +221,7 @@ function CertificateDownload({ onClose }) {
           <button
             type="submit"
             disabled={isLoading || success}
-            className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3 bg-[#fe4a56] text-white rounded-md hover:bg-[#8c0505] transition-colors focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2 text-base sm:text-lg font-semibold flex items-center justify-center gap-2 order-1 sm:order-2 min-h-[48px] ${
+            className={`w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3 bg-[#fe4a56] text-white rounded-md hover:bg-[#8c0505] transition-colors focus:outline-none focus:ring-2 focus:ring-[#fe4a56] focus:ring-offset-2 text-base sm:text-lg font-semibold flex items-center justify-center gap-2 order-1 sm:order-2 min-h-[48px] nunito-sans-body ${
               (isLoading || success) ? 'opacity-75 cursor-not-allowed' : ''
             }`}
           >

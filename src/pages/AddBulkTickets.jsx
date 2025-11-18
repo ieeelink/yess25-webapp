@@ -102,7 +102,43 @@ function AddBulkTickets() {
     
     try {
       const csvText = await file.text();
-      const lines = csvText.split('\n').filter(line => line.trim());
+      
+      // Proper CSV parsing that handles quoted fields with commas
+      const parseCSVLine = (line) => {
+        const result = [];
+        let currentField = '';
+        let insideQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          const nextChar = line[i + 1];
+          
+          if (char === '"') {
+            if (insideQuotes && nextChar === '"') {
+              // Escaped quote (double quote inside quoted field)
+              currentField += '"';
+              i++; // Skip next quote
+            } else {
+              // Toggle quote state
+              insideQuotes = !insideQuotes;
+            }
+          } else if (char === ',' && !insideQuotes) {
+            // Field separator (only when not inside quotes)
+            result.push(currentField.trim());
+            currentField = '';
+          } else {
+            currentField += char;
+          }
+        }
+        
+        // Add the last field
+        result.push(currentField.trim());
+        
+        return result;
+      };
+      
+      // Split by line breaks, handling both CRLF and LF
+      const lines = csvText.split(/\r?\n/).filter(line => line.trim());
       
       if (lines.length < 2) {
         setError('CSV file must contain at least a header row and one data row.');
@@ -111,20 +147,22 @@ function AddBulkTickets() {
         return;
       }
       
-      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+      const headers = parseCSVLine(lines[0]);
       const data = lines.slice(1).map((line, index) => {
-        const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+        const values = parseCSVLine(line);
         const row = { id: index + 1 };
         
         headers.forEach((header, i) => {
           row[header] = values[i] || '';
         });
         
+        console.log('Parsed row:', row);
         return row;
       });
       
       setCsvData(data);
     } catch (err) {
+      console.error('CSV parsing error:', err);
       setError('Failed to parse CSV file. Please check the format.');
       setCsvData([]);
     } finally {
