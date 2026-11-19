@@ -7,7 +7,6 @@ const LandingSection = ({
   isScrolled,
   onOpenTicketForm,
   onOpenCheckStatus,
-  onOpenCertificateDownload,
 }) => {
   const navigate = useNavigate();
   return (
@@ -30,11 +29,6 @@ const LandingSection = ({
           <p className="text-lg text-white lg:text-2xl ">
             Yearly Engineering Students Summit
           </p>
-          <button
-            onClick={onOpenCertificateDownload}
-            className="inline-block px-8 py-3 text-lg hover:bg-transparent border-2 border-[#fe4a56]  rounded-full font-semibold bg-[#fe4a56] text-white transition-all duration-300 hover:scale-105 cursor-pointer">
-            Download Certificate
-          </button>
           {/* Event Location and Date - Single Line */}
           <div className="flex flex-col items-center justify-center gap-2 mb-2 text-sm sm:flex-row sm:gap-6 text-white/90 sm:text-base lg:text-lg">
             <span className="flex items-center gap-1">

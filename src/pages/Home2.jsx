@@ -220,7 +220,7 @@ const Home2 = ({
           <BgAnimation />
         </div>
         <Header2 isScrolled={isScrolled} onNavigate={scrollToSection}/>
-        <LandingSection scrollToSection={scrollToSection} isScrolled={isScrolled} onOpenTicketForm={() => setShowTicketForm(true)} onOpenCheckStatus={() => setShowCheckStatus(true)} onOpenCertificateDownload={() => setShowCertificateDownload(true)} />
+        <LandingSection scrollToSection={scrollToSection} isScrolled={isScrolled} onOpenTicketForm={() => setShowTicketForm(true)} onOpenCheckStatus={() => setShowCheckStatus(true)} />
         <PartnersSection images={partnerImages} />
         <UpdatesSection />
         <ExploreEventsSection />
